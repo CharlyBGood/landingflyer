@@ -1,0 +1,30 @@
+node_modules
+# Dependencies
+node_modules/
+# Logs
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+# Environment variables
+.env
+# Build output
+dist/
+# Coverage reports
+coverage/
+# IDE specific files
+.vscode/
+# OS specific files
+.DS_Store
+# Temporary files
+*.tmp
+# Miscellaneous
+*.log
+# Ignore package-lock.json if you are using yarn
+package-lock.json
+# Ignore yarn.lock if you are using npm
+# Ignore lock files if you are using pnpm
+pnpm-lock.yaml
+# Ignore lock files if you are using bun
+bun.lockb
+# Ignore lock files if you are using pnpm
+pnpm-lock.yaml
