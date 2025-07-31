@@ -28,3 +28,9 @@ pnpm-lock.yaml
 bun.lockb
 # Ignore lock files if you are using pnpm
 pnpm-lock.yaml
+
+credentials.json
+# Ignore local development files
+local-dev.json
+# Ignore test files
+test/
