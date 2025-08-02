@@ -1,7 +1,8 @@
 {
   "name": "backend",
   "version": "1.0.0",
-  "main": "index.js",
+  "main": "server.js",
+  "type": "module",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
@@ -10,6 +11,7 @@
   "license": "ISC",
   "description": "",
   "dependencies": {
+    "@google-cloud/vertexai": "^1.10.0",
     "@google-cloud/vision": "^5.3.2",
     "cors": "^2.8.5",
     "dotenv": "^17.2.1",

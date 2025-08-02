@@ -1,143 +1,111 @@
 // frontend/src/App.jsx
-import { useState, useMemo } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import axios from 'axios';
 import './App.css';
 
 function App() {
-  // --- ESTADOS PRINCIPALES ---
-  const [selectedFile, setSelectedFile] = useState(null); // <-- VOLVEMOS A AÑADIR EL ESTADO PARA EL ARCHIVO
-  const [pageData, setPageData] = useState(null);
+  const [selectedFile, setSelectedFile] = useState(null);
+  const [generatedHtml, setGeneratedHtml] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState('');
+  const iframeRef = useRef(null); // Ref para acceder al iframe
 
-  // --- NUEVO MANEJADOR: SOLO GUARDA EL ARCHIVO SELECCIONADO ---
   const handleFileChange = (event) => {
     const file = event.target.files[0];
     if (file) {
       setSelectedFile(file);
-      setError(''); // Limpia cualquier error anterior al seleccionar un nuevo archivo
-      setPageData(null); // Limpia la vista previa anterior
+      setGeneratedHtml(null);
+      setError('');
     }
   };
 
-  // --- MANEJADOR DEL CLIC EN EL BOTÓN "GENERAR VISTA PREVIA" ---
   const handleUpload = async () => {
-    if (!selectedFile) {
-      setError('Por favor, selecciona una imagen primero.');
-      return;
-    }
-
+    if (!selectedFile) return;
     setIsLoading(true);
     setError('');
-    setPageData(null);
+    setGeneratedHtml(null);
     const formData = new FormData();
-    formData.append('flyerImage', selectedFile); // Usa el archivo guardado en el estado
+    formData.append('flyerImage', selectedFile);
 
     try {
-      const response = await axios.post('http://localhost:3001/api/upload', formData, {
-        headers: { 'Content-Type': 'multipart/form-data' },
-      });
-      setPageData(response.data);
+      const response = await axios.post('http://localhost:3001/api/upload', formData);
+      setGeneratedHtml(response.data.generatedHtml);
     } catch (err) {
-      setError('Hubo un error al subir o procesar la imagen.');
+      setError('Hubo un error al generar la página.');
       console.error(err);
     } finally {
       setIsLoading(false);
     }
   };
-  
-  // --- MANEJADORES PARA LA EDICIÓN DEL CONTENIDO ---
-  const handleContentUpdate = (field, value) => {
-    setPageData(prevData => ({
-      ...prevData,
-      content: {
-        ...prevData.content,
-        [field]: value
-      }
-    }));
-  };
 
-  const handleParagraphUpdate = (index, value) => {
-    setPageData(prevData => {
-      const newParagraphs = [...prevData.content.paragraphs];
-      newParagraphs[index] = value;
-      return {
-        ...prevData,
-        content: {
-          ...prevData.content,
-          paragraphs: newParagraphs
-        }
-      };
-    });
-  };
+  // --- EFECTO PARA HACER EL CONTENIDO DEL IFRAME INTERACTIVO ---
+  useEffect(() => {
+    const iframe = iframeRef.current;
+    if (!iframe) return;
 
-  // --- LÓGICA PARA CREAR LOS ESTILOS DINÁMICOS ---
-  const dynamicStyles = useMemo(() => {
-    if (!pageData?.palette) return {};
+    // Esta función se ejecutará CADA VEZ que el contenido del iframe termine de cargar
+    const makeContentEditable = () => {
+      // Accedemos al documento DENTRO del iframe
+      const iframeDocument = iframe.contentDocument;
+      if (!iframeDocument) return;
 
-    const sortedPalette = [...pageData.palette].sort((a, b) => b.score - a.score);
-    const toRgbString = (color) => `rgb(${color.red || 0}, ${color.green || 0}, ${color.blue || 0})`;
-    
-    return {
-      '--color-background': toRgbString(sortedPalette[0]?.rgb),
-      '--color-text': toRgbString(sortedPalette[1]?.rgb),
-      '--color-primary': toRgbString(sortedPalette[1]?.rgb),
-      '--color-accent': toRgbString(sortedPalette[2]?.rgb),
+      // Buscamos todos los elementos que la IA marcó como editables
+      const editableElements = iframeDocument.querySelectorAll('[data-editable="true"]');
+      editableElements.forEach(el => {
+        el.setAttribute('contentEditable', 'true');
+        el.style.outline = '2px dashed transparent'; // Borde invisible
+        el.style.transition = 'outline 0.2s';
+        
+        el.addEventListener('focus', () => el.style.outline = '2px dashed #007bff');
+        el.addEventListener('blur', () => el.style.outline = '2px dashed transparent');
+      });
     };
-  }, [pageData]);
 
-  // --- RENDERIZADO DEL COMPONENTE ---
+    // Añadimos el "listener" para cuando el iframe esté listo
+    iframe.addEventListener('load', makeContentEditable);
+
+    // Función de limpieza para evitar errores cuando el componente se desmonte
+    return () => {
+      iframe.removeEventListener('load', makeContentEditable);
+    };
+  }, [generatedHtml]); // Se ejecuta cuando 'generatedHtml' cambia
+
   return (
     <div className="App">
       <header className="App-header">
         <h1>Sube tu Flyer y crea tu Landing Page</h1>
-        <p>Transforma tu diseño en una página web editable con su propia paleta de colores en segundos.</p>
+        <p>Nuestra IA analizará tu flyer y generará una propuesta de landing page en segundos.</p>
       </header>
 
       <main className="App-main">
         <div className="uploader">
-          {/* El input ahora solo llama a handleFileChange */}
           <input type="file" onChange={handleFileChange} accept="image/*" disabled={isLoading} />
-          
-          {/* ESTE ES EL BOTÓN QUE FALTABA */}
           <button onClick={handleUpload} disabled={isLoading || !selectedFile}>
-            {isLoading ? 'Procesando...' : 'Generar Vista Previa'}
+            {isLoading ? 'Procesando con IA...' : 'Generar Vista Previa'}
           </button>
         </div>
-        {isLoading && <p>Procesando tu flyer... ¡La magia está en camino!</p>}
+        {isLoading && <p>Analizando diseño y construyendo tu web...</p>}
         {error && <p className="error-message">{error}</p>}
       </main>
 
-      {/* --- SECCIÓN DE VISTA PREVIA --- */}
-      {pageData && pageData.content && (
-        <section
-          className="landing-preview"
-          style={dynamicStyles}
-        >
-          <h1
-            contentEditable
-            suppressContentEditableWarning={true}
-            onBlur={e => handleContentUpdate('title', e.currentTarget.textContent)}
-          >
-            {pageData.content.title}
-          </h1>
-
-          {pageData.content.paragraphs && pageData.content.paragraphs.map((p, index) => (
-            <p
-              key={index}
-              contentEditable
-              suppressContentEditableWarning={true}
-              onBlur={e => handleParagraphUpdate(index, e.currentTarget.textContent)}
-            >
-              {p}
-            </p>
-          ))}
-          
-          <div className="cta-buttons">
-            <button>Contactar para un diseño Pro</button>
-            <button>Pagar y Desplegar este Template</button>
+      {generatedHtml && (
+        <div className="preview-container">
+          <div className="preview-toolbar">
+            <h2>✨ ¡Tu vista previa está lista! ✨</h2>
+            <p>Puedes hacer clic en cualquier texto para editarlo directamente.</p>
+            <div className='cta-buttons'>
+              <button className='contact-button'>Contactar para Mejoras</button>
+              <button className='buy-button'>Pagar y Descargar Template</button>
+            </div>
           </div>
-        </section>
+          {/* Volvemos a usar el iframe para un aislamiento perfecto */}
+          <iframe
+            ref={iframeRef}
+            srcDoc={generatedHtml}
+            title="Vista Previa de la Landing Page"
+            className="preview-iframe"
+          />
+        </div>
       )}
     </div>
   );
