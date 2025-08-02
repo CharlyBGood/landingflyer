@@ -23,7 +23,6 @@ function App() {
       const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:3001';
       const response = await axios.post(`${apiUrl}/api/generate-preview`, formData);
       setGeneratedHtml(response.data.generatedHtml);
-      // Guardamos el HTML inicial en localStorage para que el editor lo pueda leer
       localStorage.setItem('editableHtml', response.data.generatedHtml);
     } catch (err) {
       setError('Hubo un error al generar la página.', err);
