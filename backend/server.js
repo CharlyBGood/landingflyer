@@ -56,7 +56,7 @@ app.post('/api/generate-preview', upload.single('flyerImage'), async (req, res) 
     }
 });
 
-const PORT = process.env.PORT || 3001;
+const PORT = process.env.PORT || 8080;
 app.listen(PORT, () => {
     console.log(`Servidor escuchando en el puerto ${PORT}`);
 });
