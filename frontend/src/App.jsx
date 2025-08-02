@@ -1,89 +1,76 @@
 // frontend/src/App.jsx
 import React, { useState, useEffect, useRef } from 'react';
 import axios from 'axios';
-import './App.css';
+import './App.css'; // Usaremos el CSS de App para la estructura principal
 
 function App() {
   const [selectedFile, setSelectedFile] = useState(null);
   const [generatedHtml, setGeneratedHtml] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState('');
-  const iframeRef = useRef(null); // Ref para acceder al iframe
+  const iframeRef = useRef(null);
 
-  const handleFileChange = (event) => {
-    const file = event.target.files[0];
-    if (file) {
-      setSelectedFile(file);
-      setGeneratedHtml(null);
-      setError('');
-    }
-  };
-
-  const handleUpload = async () => {
+  const handleGeneratePreview = async () => {
     if (!selectedFile) return;
     setIsLoading(true);
     setError('');
     setGeneratedHtml(null);
+
     const formData = new FormData();
     formData.append('flyerImage', selectedFile);
 
     try {
-      const response = await axios.post('http://localhost:3001/api/upload', formData);
+      const response = await axios.post('http://localhost:3001/api/generate-preview', formData);
       setGeneratedHtml(response.data.generatedHtml);
+      // Guardamos el HTML inicial en localStorage para que el editor lo pueda leer
+      localStorage.setItem('editableHtml', response.data.generatedHtml);
     } catch (err) {
-      setError('Hubo un error al generar la página.');
-      console.error(err);
+      setError('Hubo un error al generar la página.', err);
     } finally {
       setIsLoading(false);
     }
   };
 
-  // --- EFECTO PARA HACER EL CONTENIDO DEL IFRAME INTERACTIVO ---
+  const handleFileChange = (event) => {
+    const file = event.target.files[0];
+    if (file) {
+      setSelectedFile(file);
+      setError('');
+      setGeneratedHtml(null);
+    }
+  };
+
+  // Efecto para escuchar cambios guardados en el editor
   useEffect(() => {
-    const iframe = iframeRef.current;
-    if (!iframe) return;
-
-    // Esta función se ejecutará CADA VEZ que el contenido del iframe termine de cargar
-    const makeContentEditable = () => {
-      // Accedemos al documento DENTRO del iframe
-      const iframeDocument = iframe.contentDocument;
-      if (!iframeDocument) return;
-
-      // Buscamos todos los elementos que la IA marcó como editables
-      const editableElements = iframeDocument.querySelectorAll('[data-editable="true"]');
-      editableElements.forEach(el => {
-        el.setAttribute('contentEditable', 'true');
-        el.style.outline = '2px dashed transparent'; // Borde invisible
-        el.style.transition = 'outline 0.2s';
-        
-        el.addEventListener('focus', () => el.style.outline = '2px dashed #007bff');
-        el.addEventListener('blur', () => el.style.outline = '2px dashed transparent');
-      });
+    const handleStorageChange = () => {
+      const updatedHtml = localStorage.getItem('editableHtml');
+      if (updatedHtml && updatedHtml !== generatedHtml) {
+        setGeneratedHtml(updatedHtml);
+      }
     };
 
-    // Añadimos el "listener" para cuando el iframe esté listo
-    iframe.addEventListener('load', makeContentEditable);
-
-    // Función de limpieza para evitar errores cuando el componente se desmonte
+    window.addEventListener('storage', handleStorageChange);
     return () => {
-      iframe.removeEventListener('load', makeContentEditable);
+      window.removeEventListener('storage', handleStorageChange);
     };
-  }, [generatedHtml]); // Se ejecuta cuando 'generatedHtml' cambia
+  }, [generatedHtml]);
+
 
   return (
     <div className="App">
       <header className="App-header">
         <h1>Sube tu Flyer y crea tu Landing Page</h1>
-        <p>Nuestra IA analizará tu flyer y generará una propuesta de landing page en segundos.</p>
+        <p>Nuestra IA generará una vista previa. Luego, podrás abrirla en un editor a pantalla completa para perfeccionarla.</p>
       </header>
 
       <main className="App-main">
         <div className="uploader">
           <input type="file" onChange={handleFileChange} accept="image/*" disabled={isLoading} />
-          <button onClick={handleUpload} disabled={isLoading || !selectedFile}>
-            {isLoading ? 'Procesando con IA...' : 'Generar Vista Previa'}
+          <button onClick={handleGeneratePreview} disabled={isLoading || !selectedFile}>
+            {isLoading ? 'Generando...' : 'Generar Vista Previa'}
           </button>
         </div>
+
         {isLoading && <p>Analizando diseño y construyendo tu web...</p>}
         {error && <p className="error-message">{error}</p>}
       </main>
@@ -92,18 +79,20 @@ function App() {
         <div className="preview-container">
           <div className="preview-toolbar">
             <h2>✨ ¡Tu vista previa está lista! ✨</h2>
-            <p>Puedes hacer clic en cualquier texto para editarlo directamente.</p>
+            <p>Abre el editor para personalizar tu página, guardar los cambios y prepararla para el lanzamiento.</p>
             <div className='cta-buttons'>
-              <button className='contact-button'>Contactar para Mejoras</button>
-              <button className='buy-button'>Pagar y Descargar Template</button>
+              <a href="/editor" target="_blank" className='contact-button' rel="noopener noreferrer">
+                Abrir Editor a Pantalla Completa
+              </a>
             </div>
           </div>
-          {/* Volvemos a usar el iframe para un aislamiento perfecto */}
+          {/* El iframe ahora es solo un visor, no un editor */}
           <iframe
             ref={iframeRef}
             srcDoc={generatedHtml}
             title="Vista Previa de la Landing Page"
             className="preview-iframe"
+            key={generatedHtml} // Forza la recarga si el HTML cambia
           />
         </div>
       )}
