@@ -27,7 +27,7 @@ app.post('/api/generate-preview', upload.single('flyerImage'), async (req, res) 
 
     try {
         const imageBuffer = req.file.buffer;
-        
+
         // Cargar el prompt desde el archivo externo
         const promptTemplate = await fs.readFile(path.join(__dirname, 'prompt.md'), 'utf8');
 
@@ -36,17 +36,17 @@ app.post('/api/generate-preview', upload.single('flyerImage'), async (req, res) 
             { text: promptTemplate },
             { inlineData: { mimeType: req.file.mimetype, data: imageBuffer.toString('base64') } },
         ];
-        
+
         // Llamar a la IA
         const result = await textModel.generateContent({ contents: [{ role: 'user', parts: requestParts }] });
         const response = result.response;
 
         if (!response.candidates || response.candidates.length === 0) {
-             throw new Error('La respuesta de la IA estaba vacía.');
+            throw new Error('La respuesta de la IA estaba vacía.');
         }
 
         const generatedHtml = response.candidates[0].content.parts[0].text.replace(/^```html\n?/, '').replace(/```$/, '');
-        
+
         // Enviar el HTML generado al frontend
         res.json({ generatedHtml });
 
