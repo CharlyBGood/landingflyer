@@ -1,5 +1,5 @@
 // frontend/src/App.jsx
-import React, { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import axios from 'axios';
 import './App.css'; // Usaremos el CSS de App para la estructura principal
 
@@ -20,7 +20,8 @@ function App() {
     formData.append('flyerImage', selectedFile);
 
     try {
-      const response = await axios.post('http://localhost:3001/api/generate-preview', formData);
+      const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:3001';
+      const response = await axios.post(`${apiUrl}/api/generate-preview`, formData);
       setGeneratedHtml(response.data.generatedHtml);
       // Guardamos el HTML inicial en localStorage para que el editor lo pueda leer
       localStorage.setItem('editableHtml', response.data.generatedHtml);
@@ -60,7 +61,7 @@ function App() {
     <div className="App">
       <header className="App-header">
         <h1>Sube tu Flyer y crea tu Landing Page</h1>
-        <p>Nuestra IA generará una vista previa. Luego, podrás abrirla en un editor a pantalla completa para perfeccionarla.</p>
+        <p>Vamos a generar una vista previa. Luego, podrás abrirla en un editor a pantalla completa para perfeccionarla.</p>
       </header>
 
       <main className="App-main">
@@ -86,13 +87,12 @@ function App() {
               </a>
             </div>
           </div>
-          {/* El iframe ahora es solo un visor, no un editor */}
           <iframe
             ref={iframeRef}
             srcDoc={generatedHtml}
             title="Vista Previa de la Landing Page"
             className="preview-iframe"
-            key={generatedHtml} // Forza la recarga si el HTML cambia
+            key={generatedHtml}
           />
         </div>
       )}
