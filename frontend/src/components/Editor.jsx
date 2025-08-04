@@ -31,11 +31,6 @@ function Editor() {
     contentRef.current.querySelectorAll('[data-editable="true"]').forEach(el => {
       el.setAttribute('contentEditable', isEditMode);
       el.style.outline = isEditMode ? '2px dashed #007bff' : 'none';
-      if (isEditMode) {
-        el.addEventListener('input', handleTextInput);
-      } else {
-        el.removeEventListener('input', handleTextInput);
-      }
     });
   }, [isEditMode, htmlContent]);
 
@@ -46,10 +41,8 @@ function Editor() {
     const handleClick = e => {
       if (e.target.getAttribute('data-editable') === 'true') {
         setSelectedElement(e.target);
-        const bg = e.target.style.backgroundColor || window.getComputedStyle(e.target).backgroundColor;
-        const fg = e.target.style.color || window.getComputedStyle(e.target).color;
-        setColor(rgbToHex(bg));
-        setTextColor(rgbToHex(fg));
+        setColor(e.target.style.backgroundColor || window.getComputedStyle(e.target).backgroundColor);
+        setTextColor(e.target.style.color || window.getComputedStyle(e.target).color);
       } else {
         setSelectedElement(null);
       }
@@ -110,74 +103,27 @@ function Editor() {
     });
   }, [isEditMode, htmlContent]);
 
-  // Genera un id único para cada elemento editable
-  function generateEditableIds() {
-    if (!contentRef.current) return;
-    let counter = 0;
-    contentRef.current.querySelectorAll('[data-editable="true"]').forEach(el => {
-      el.setAttribute('data-editable-id', counter);
-      counter++;
-    });
-  }
-
-  useEffect(() => {
-    if (!isEditMode || !contentRef.current) return;
-    generateEditableIds();
-  }, [isEditMode, htmlContent]);
-  
-
-  function rgbToHex(rgb) {
-    // Convierte 'rgb(255, 255, 255)' a '#ffffff'
-    const result = /^rgb\((\d+),\s*(\d+),\s*(\d+)\)$/.exec(rgb);
-    if (!result) return rgb;
-    return (
-      '#' +
-      ((1 << 24) + (parseInt(result[1]) << 16) + (parseInt(result[2]) << 8) + parseInt(result[3]))
-        .toString(16)
-        .slice(1)
-    );
-  }
-
-  // Captura edición de texto y actualiza el HTML persistido
-  function handleTextInput(e) {
-    if (!selectedElement) return;
-    const editableId = selectedElement.getAttribute('data-editable-id');
-    if (!editableId) return;
-
-    // Parsear el HTML y buscar el elemento editable por id
-    const parser = new window.DOMParser();
-    const doc = parser.parseFromString(htmlContent, 'text/html');
-    const el = doc.querySelector(`[data-editable-id="${editableId}"]`);
-    if (!el) return;
-
-    // Actualizar el texto
-    el.innerHTML = e.target.innerHTML;
-    const newHtml = doc.body.innerHTML;
-    setHtmlContent(newHtml);
-    localStorage.setItem('editableHtml', newHtml);
-
-    // Re-asignar el elemento seleccionado en el nuevo DOM
-    setTimeout(() => {
-      if (contentRef.current) {
-        const newEl = contentRef.current.querySelector(`[data-editable-id="${editableId}"]`);
-        if (newEl) setSelectedElement(newEl);
-      }
-    }, 0);
+  function getEditableIndex(element) {
+    if (!contentRef.current) return -1;
+    const all = Array.from(contentRef.current.querySelectorAll('[data-editable="true"]'));
+    return all.indexOf(element);
   }
 
   // Color inline directo
   function handleColorChange(type, value) {
     if (!selectedElement) return;
-    const editableId = selectedElement.getAttribute('data-editable-id');
-    if (!editableId) return;
+    // 1. Obtener el índice del elemento editable
+    const idx = getEditableIndex(selectedElement);
+    if (idx === -1) return;
 
-    // Parsear el HTML y buscar el elemento editable por id
+    // 2. Parsear el HTML y buscar el elemento editable por índice
     const parser = new window.DOMParser();
     const doc = parser.parseFromString(htmlContent, 'text/html');
-    const el = doc.querySelector(`[data-editable-id="${editableId}"]`);
+    const editables = doc.querySelectorAll('[data-editable="true"]');
+    const el = editables[idx];
     if (!el) return;
 
-    // Modificar el atributo style
+    // 3. Modificar el atributo style
     if (type === 'bg') {
       el.style.backgroundColor = value;
       setColor(value);
@@ -186,18 +132,10 @@ function Editor() {
       setTextColor(value);
     }
 
-    // Actualizar el HTML y el estado
+    // 4. Actualizar el HTML y el estado
     const newHtml = doc.body.innerHTML;
     setHtmlContent(newHtml);
     localStorage.setItem('editableHtml', newHtml);
-
-    // Re-asignar el elemento seleccionado en el nuevo DOM
-    setTimeout(() => {
-      if (contentRef.current) {
-        const newEl = contentRef.current.querySelector(`[data-editable-id="${editableId}"]`);
-        if (newEl) setSelectedElement(newEl);
-      }
-    }, 0);
   }
 
   // Guardar
