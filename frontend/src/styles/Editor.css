@@ -1,17 +1,18 @@
-/* frontend/src/Editor.css */
 .editor-toolbar {
   position: fixed;
-  top: 20px;
-  left: 50%;
-  transform: translateX(-50%);
-  background-color: rgba(0, 0, 0, 0.8);
-  padding: 0.75rem;
-  border-radius: 50px;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  background: rgba(255, 255, 255, 0.85);
+  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.08), 0 1.5px 0 rgba(0, 0, 0, 0.03);
+  padding: 1rem 2rem;
   z-index: 9999;
   display: flex;
-  gap: 1rem;
-  backdrop-filter: blur(5px);
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  align-items: center;
+  justify-content: space-between;
+  gap: 2rem;
+  backdrop-filter: blur(8px);
+  border: none;
 }
 
 .edit-mode-btn,
@@ -19,20 +20,67 @@
   display: flex;
   align-items: center;
   gap: 0.5rem;
-  background-color: #555;
-  color: white;
+  background: linear-gradient(90deg, #2563eb 0%, #1e40af 100%);
+  color: #fff;
   border: none;
-  padding: 0.5rem 1rem;
-  border-radius: 50px;
+  padding: 0.6rem 1.4rem;
+  border-radius: 32px;
   cursor: pointer;
-  transition: background-color 0.2s;
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+  font-size: 1rem;
+  font-weight: 600;
+  box-shadow: 0 2px 8px rgba(37, 99, 235, 0.08);
+  transition: background 0.2s, box-shadow 0.2s;
+  font-family: 'Inter', 'Segoe UI', Arial, sans-serif;
 }
 
 .edit-mode-btn.active {
-  background-color: #007bff;
+  background: linear-gradient(90deg, #007bff 0%, #2563eb 100%);
+  box-shadow: 0 2px 12px rgba(0, 123, 255, 0.12);
 }
 
 .save-changes-btn {
-  background-color: #28a745;
+  background: linear-gradient(90deg, #22c55e 0%, #16a34a 100%);
+  box-shadow: 0 2px 8px rgba(34, 197, 94, 0.08);
+}
+
+.editor-toolbar .edit-panel {
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+  background: rgba(226, 232, 240, 0.7);
+  padding: 0.5rem 1.2rem;
+  border-radius: 18px;
+  box-shadow: 0 1px 6px rgba(0, 0, 0, 0.04);
+}
+
+.editor-toolbar .edit-panel label {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.98rem;
+  color: #1e293b;
+}
+
+.editor-toolbar .edit-panel input[type="color"] {
+  width: 2rem;
+  height: 2rem;
+  border: none;
+  border-radius: 50%;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.07);
+  cursor: pointer;
+}
+
+.editor-toolbar .edit-panel .close-btn {
+  background: #e2e8f0;
+  color: #334155;
+  border: none;
+  border-radius: 12px;
+  padding: 0.4rem 1rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.editor-toolbar .edit-panel .close-btn:hover {
+  background: #cbd5e1;
 }
