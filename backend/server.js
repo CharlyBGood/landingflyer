@@ -19,6 +19,22 @@ const __dirname = path.dirname(__filename);
 const vertex_ai = new VertexAI({ project: process.env.GCLOUD_PROJECT, location: 'us-central1' });
 const textModel = vertex_ai.getGenerativeModel({ model: 'gemini-2.0-flash' });
 
+// Logs de variables de entorno y acceso a credenciales
+console.log('Variables de entorno:');
+console.log('GCLOUD_PROJECT:', process.env.GCLOUD_PROJECT);
+console.log('GOOGLE_APPLICATION_CREDENTIALS:', process.env.GOOGLE_APPLICATION_CREDENTIALS);
+
+// Verificar acceso al archivo de credenciales
+import fsSync from 'fs';
+if (process.env.GOOGLE_APPLICATION_CREDENTIALS) {
+    try {
+        fsSync.accessSync(process.env.GOOGLE_APPLICATION_CREDENTIALS, fsSync.constants.R_OK);
+        console.log('Credenciales accesibles:', process.env.GOOGLE_APPLICATION_CREDENTIALS);
+    } catch (err) {
+        console.error('No se pudo acceder al archivo de credenciales:', err);
+    }
+}
+
 // --- ÚNICO ENDPOINT: Generar la Vista Previa ---
 app.post('/api/generate-preview', upload.single('flyerImage'), async (req, res) => {
     if (!req.file) {
@@ -51,8 +67,13 @@ app.post('/api/generate-preview', upload.single('flyerImage'), async (req, res) 
         res.json({ generatedHtml });
 
     } catch (error) {
-        console.error('Error en el proceso de IA:', error.message, error.stack);
-        res.status(500).json({ error: 'Error al generar la vista previa con IA.' });
+        console.error('Error en el proceso de IA:', error);
+        console.error('Stacktrace:', error.stack);
+        console.error('Variables de entorno al fallar:', {
+            GCLOUD_PROJECT: process.env.GCLOUD_PROJECT,
+            GOOGLE_APPLICATION_CREDENTIALS: process.env.GOOGLE_APPLICATION_CREDENTIALS
+        });
+        res.status(500).json({ error: 'Error al generar la vista previa con IA.', details: error.message });
     }
 });
 
