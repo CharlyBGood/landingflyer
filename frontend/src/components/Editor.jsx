@@ -1,6 +1,5 @@
-// frontend/src/Editor.jsx
-import React, { useState, useEffect, useRef } from 'react';
-import './Editor.css'; // Usamos el CSS dedicado para la barra de herramientas
+import { useState, useEffect, useRef } from 'react';
+import '../styles/Editor.css'; 
 
 const PencilIcon = () => (
   <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M17 3a2.828 2.828 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5L17 3z"></path></svg>
@@ -11,7 +10,6 @@ function Editor() {
   const [isEditMode, setIsEditMode] = useState(false);
   const contentRef = useRef(null);
 
-  // Al cargar, lee el HTML del localStorage. Ya no necesita limpiar el body.
   useEffect(() => {
     const storedHtml = localStorage.getItem('editableHtml');
     if (storedHtml) {

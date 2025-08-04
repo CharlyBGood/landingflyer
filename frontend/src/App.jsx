@@ -1,7 +1,7 @@
-// frontend/src/App.jsx
 import { useState, useEffect, useRef } from 'react';
 import axios from 'axios';
-import './App.css'; // Usaremos el CSS de App para la estructura principal
+import './App.css';
+import Editor from './components/Editor.jsx';
 
 function App() {
   const [selectedFile, setSelectedFile] = useState(null);
@@ -20,7 +20,7 @@ function App() {
     formData.append('flyerImage', selectedFile);
 
     try {
-      const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:3001';
+      const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:8080';
       const response = await axios.post(`${apiUrl}/api/generate-preview`, formData);
       setGeneratedHtml(response.data.generatedHtml);
       localStorage.setItem('editableHtml', response.data.generatedHtml);
@@ -40,7 +40,6 @@ function App() {
     }
   };
 
-  // Efecto para escuchar cambios guardados en el editor
   useEffect(() => {
     const handleStorageChange = () => {
       const updatedHtml = localStorage.getItem('editableHtml');
