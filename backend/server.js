@@ -19,12 +19,6 @@ const __dirname = path.dirname(__filename);
 const vertex_ai = new VertexAI({ project: process.env.GCLOUD_PROJECT, location: 'us-central1' });
 const textModel = vertex_ai.getGenerativeModel({ model: 'gemini-2.0-flash' });
 
-// Logs de variables de entorno y acceso a credenciales
-console.log('Variables de entorno:');
-console.log('GCLOUD_PROJECT:', process.env.GCLOUD_PROJECT);
-console.log('GOOGLE_APPLICATION_CREDENTIALS:', process.env.GOOGLE_APPLICATION_CREDENTIALS);
-
-// Verificar acceso al archivo de credenciales
 import fsSync from 'fs';
 if (process.env.GOOGLE_APPLICATION_CREDENTIALS) {
     try {
