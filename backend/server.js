@@ -22,8 +22,7 @@ const textModel = vertex_ai.getGenerativeModel({ model: 'gemini-2.0-flash' });
 import fsSync from 'fs';
 if (process.env.GOOGLE_APPLICATION_CREDENTIALS) {
     try {
-        fsSync.accessSync(process.env.GOOGLE_APPLICATION_CREDENTIALS, fsSync.constants.R_OK);
-        console.log('Credenciales accesibles:', process.env.GOOGLE_APPLICATION_CREDENTIALS);
+        fsSync.accessSync(process.env.GOOGLE_APPLICATION_CREDENTIALS, fsSync.constants.R_OK);        
     } catch (err) {
         console.error('No se pudo acceder al archivo de credenciales:', err);
     }
