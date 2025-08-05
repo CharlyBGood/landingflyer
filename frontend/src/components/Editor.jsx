@@ -36,18 +36,20 @@ function Editor() {
     });
   }, [isEditMode, htmlContent]);
 
-  // Agregar botones de imagen de fondo - SIMPLE
+  // Agregar/quitar botones de imagen de fondo según el modo
   useEffect(() => {
-    if (!contentRef.current || !isEditMode) return;
+    if (!contentRef.current) return;
     
-    // Limpiar botones existentes
+    // Limpiar TODOS los botones existentes primero
     contentRef.current.querySelectorAll('.editor-bg-btn').forEach(btn => btn.remove());
     
-    // Agregar botones a elementos contenedores
-    contentRef.current.querySelectorAll('section, div, header, main').forEach(element => {
-      // Solo si el elemento tiene cierto tamaño (evitar divs pequeños)
-      const rect = element.getBoundingClientRect();
-      if (rect.width > 200 && rect.height > 100) {
+    // Solo agregar botones si estamos en modo edición
+    if (isEditMode) {
+      // Agregar botones a elementos contenedores
+      contentRef.current.querySelectorAll('section, div, header, main').forEach(element => {
+        // Solo si el elemento tiene cierto tamaño (evitar divs pequeños)
+        const rect = element.getBoundingClientRect();
+        if (rect.width > 200 && rect.height > 100) {
         element.style.position = 'relative';
         
         const btn = document.createElement('button');
@@ -99,11 +101,16 @@ function Editor() {
         element.appendChild(btn);
       }
     });
+    }
   }, [isEditMode, htmlContent]);
 
   // Guardar cambios - SIMPLE
   const handleSaveChanges = () => {
     if (!contentRef.current) return;
+    
+    // Limpiar botones antes de guardar
+    contentRef.current.querySelectorAll('.editor-bg-btn').forEach(btn => btn.remove());
+    
     const clone = contentRef.current.cloneNode(true);
     localStorage.setItem('editableHtml', clone.innerHTML);
     setHtmlContent(clone.innerHTML);
