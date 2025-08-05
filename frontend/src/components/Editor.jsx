@@ -36,6 +36,71 @@ function Editor() {
     });
   }, [isEditMode, htmlContent]);
 
+  // Agregar botones de imagen de fondo - SIMPLE
+  useEffect(() => {
+    if (!contentRef.current || !isEditMode) return;
+    
+    // Limpiar botones existentes
+    contentRef.current.querySelectorAll('.editor-bg-btn').forEach(btn => btn.remove());
+    
+    // Agregar botones a elementos contenedores
+    contentRef.current.querySelectorAll('section, div, header, main').forEach(element => {
+      // Solo si el elemento tiene cierto tamaño (evitar divs pequeños)
+      const rect = element.getBoundingClientRect();
+      if (rect.width > 200 && rect.height > 100) {
+        element.style.position = 'relative';
+        
+        const btn = document.createElement('button');
+        btn.className = 'editor-bg-btn';
+        btn.innerText = '🖼️ Fondo';
+        btn.style.cssText = `
+          position: absolute;
+          top: 10px;
+          right: 10px;
+          background: rgba(59, 130, 246, 0.9);
+          color: white;
+          border: none;
+          padding: 6px 12px;
+          border-radius: 6px;
+          font-size: 12px;
+          cursor: pointer;
+          z-index: 1000;
+          box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+        `;
+        
+        btn.onclick = () => {
+          const input = document.createElement('input');
+          input.type = 'file';
+          input.accept = 'image/*';
+          input.onchange = e => {
+            const file = e.target.files[0];
+            if (file) {
+              const reader = new FileReader();
+              reader.onload = ev => {
+                element.style.backgroundImage = `url(${ev.target.result})`;
+                element.style.backgroundSize = 'cover';
+                element.style.backgroundPosition = 'center';
+                element.style.backgroundRepeat = 'no-repeat';
+                
+                // Guardar cambios
+                if (contentRef.current) {
+                  const clone = contentRef.current.cloneNode(true);
+                  clone.querySelectorAll('.editor-bg-btn').forEach(btn => btn.remove());
+                  localStorage.setItem('editableHtml', clone.innerHTML);
+                  setHtmlContent(clone.innerHTML);
+                }
+              };
+              reader.readAsDataURL(file);
+            }
+          };
+          input.click();
+        };
+        
+        element.appendChild(btn);
+      }
+    });
+  }, [isEditMode, htmlContent]);
+
   // Guardar cambios - SIMPLE
   const handleSaveChanges = () => {
     if (!contentRef.current) return;
