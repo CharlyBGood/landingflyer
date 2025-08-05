@@ -58,19 +58,21 @@ function App() {
   }, [generatedHtml]);
 
   return (
-    <div className="App">
+    <div className="min-h-screen">
       <Navbar />
-      <section className="p-16">
-        <HeroSection
-          isLoading={isLoading}
-          handleGeneratePreview={handleGeneratePreview}
-          handleFileChange={handleFileChange}
-          selectedFile={selectedFile}
-          error={error}
-        />
-        {generatedHtml && (
-          <LandingPreview generatedHtml={generatedHtml} iframeRef={iframeRef} />
-        )}
+      <section className="px-4 py-8 sm:px-8 sm:py-12 lg:px-16 lg:py-16 pt-20 sm:pt-24">
+        <div className="max-w-6xl mx-auto text-center">
+          <HeroSection
+            isLoading={isLoading}
+            handleGeneratePreview={handleGeneratePreview}
+            handleFileChange={handleFileChange}
+            selectedFile={selectedFile}
+            error={error}
+          />
+          {generatedHtml && (
+            <LandingPreview generatedHtml={generatedHtml} iframeRef={iframeRef} />
+          )}
+        </div>
       </section>
       <Footer />
     </div>
