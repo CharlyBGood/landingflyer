@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef } from 'react';
 import { PencilIcon, CheckIcon } from '../utilities';
 import { useBackgroundButtons } from '../hooks/useBackgroundButtons';
+import { DOMUtils } from '../utilities/domUtils';
 import '../styles/Editor.css';
 
 function Editor() {
@@ -10,15 +11,30 @@ function Editor() {
   const contentRef = useRef(null);
   const toolbarRef = useRef(null);
 
-  // Callback para cuando se cambia una imagen de fondo
+  // Utilidad para guardar contenido limpio
+  const saveCleanContent = (container) => {
+    const clone = container.cloneNode(true);
+    DOMUtils.cleanAllEditingElements(clone);
+    localStorage.setItem('editableHtml', clone.innerHTML);
+    return clone.innerHTML;
+  };
+
+  // Utilidad para mostrar mensaje de éxito
+  const showSuccessMessage = (message) => {
+    setSaveMessage(message);
+    setTimeout(() => setSaveMessage(''), 3000);
+  };
+
   const handleBackgroundImageChange = (imageUrl, element) => {
-    console.log('Background changed:', element.tagName, element.id);
-    
-    // Guardar cambios
-    if (contentRef.current) {
-      const clone = contentRef.current.cloneNode(true);
-      clone.querySelectorAll('.bg-btn-container').forEach(container => container.remove());
-      localStorage.setItem('editableHtml', clone.innerHTML);
+    console.log(`Background changed to ${imageUrl.substring(0, 50)}... on ${element.tagName}#${element.id}`);
+
+    if (!element.parentNode) {
+      console.warn('Element was removed from DOM, skipping save');
+      return;
+    }
+
+    if (contentRef.current && imageUrl) {
+      saveCleanContent(contentRef.current);
     }
   };
 
@@ -48,40 +64,33 @@ function Editor() {
     setHtmlContent(savedContent);
   }, []);
 
-  // Sincroniza cambios externos
   useEffect(() => {
     const handler = e => e.key === 'editableHtml' && setHtmlContent(e.newValue || '');
     window.addEventListener('storage', handler);
     return () => window.removeEventListener('storage', handler);
   }, []);
 
-  // Activa edición de texto
   useEffect(() => {
-    if (!contentRef.current) return;
-
-    // Limpiar estilos de edición
-    const allElements = contentRef.current.querySelectorAll('*');
-    allElements.forEach(el => {
-      el.removeAttribute('contenteditable');
-      el.style.outline = '';
-      el.style.outlineOffset = '';
-    });
-
-    // Aplicar edición solo si está activa
-    if (isEditMode) {
-      const editableElements = contentRef.current.querySelectorAll('[data-editable="true"], button, a');
-      
-      editableElements.forEach(el => {
-        el.setAttribute('contenteditable', 'true');
-        el.style.outline = '2px dashed #007bff';
-        el.style.outlineOffset = '2px';
-      });
+    if (!isEditMode && contentRef.current) {
+      DOMUtils.removeContentEditableAttributes(contentRef.current);
     }
-  }, [isEditMode, htmlContent]);
+  }, [isEditMode]);
+
+  useEffect(() => {
+    if (isEditMode && contentRef.current) {
+      DOMUtils.applyContentEditableAttributes(contentRef.current);
+    }
+  }, [isEditMode]);
+
+  useEffect(() => {
+    if (isEditMode && contentRef.current && htmlContent) {
+      DOMUtils.applyContentEditableAttributes(contentRef.current);
+    }
+  }, [htmlContent, isEditMode]);
 
   useEffect(() => {
     const handleClick = (e) => {
-      if (isEditMode && (e.target.tagName === 'BUTTON' || e.target.tagName === 'A')) {        
+      if (isEditMode && (e.target.tagName === 'BUTTON' || e.target.tagName === 'A')) {
         if (!e.target.closest('.editor-toolbar')) {
           e.preventDefault();
         }
@@ -101,24 +110,12 @@ function Editor() {
 
   const handleSaveChanges = () => {
     if (!contentRef.current) return;
-    
-    // Limpiar botones y estilos
-    contentRef.current.querySelectorAll('.bg-btn-container').forEach(container => container.remove());
-    const allElements = contentRef.current.querySelectorAll('*');
-    allElements.forEach(el => {
-      el.removeAttribute('contenteditable');
-      el.style.outline = '';
-      el.style.outlineOffset = '';
-    });
 
-    // Guardar
-    const clone = contentRef.current.cloneNode(true);
-    localStorage.setItem('editableHtml', clone.innerHTML);
-    setHtmlContent(clone.innerHTML);
+    const savedContent = saveCleanContent(contentRef.current);
+    setHtmlContent(savedContent);
     setIsEditMode(false);
-    setSaveMessage('Cambios guardados exitosamente');
 
-    setTimeout(() => setSaveMessage(''), 3000);
+    showSuccessMessage('Cambios guardados exitosamente');
   };
 
   return (

@@ -1,12 +1,9 @@
-/* ===== TOOLBAR MODERNO MOBILE-FIRST ===== */
 .editor-toolbar {
   position: fixed;
   top: 0;
   left: 0;
   right: 0;
   z-index: 1000;
-
-  /* Mobile-first: Layout vertical compacto */
   padding: 0.75rem 1rem;
   background: rgba(255, 255, 255, 0.95);
   backdrop-filter: blur(12px);
@@ -14,15 +11,12 @@
   box-shadow:
     0 1px 3px rgba(0, 0, 0, 0.1),
     0 4px 20px rgba(0, 0, 0, 0.05);
-
   display: flex;
   flex-direction: column;
   gap: 0.5rem;
-
   transition: all 0.3s ease;
 }
 
-/* Tablet y Desktop: Layout horizontal */
 @media (min-width: 640px) {
   .editor-toolbar {
     flex-direction: row;
@@ -40,7 +34,6 @@
   }
 }
 
-/* ===== SECCIÓN PRINCIPAL DE BOTONES ===== */
 .toolbar-main {
   display: flex;
   align-items: center;
@@ -54,30 +47,22 @@
   }
 }
 
-/* ===== BOTONES MODERNOS ===== */
 .edit-mode-btn,
 .save-changes-btn {
   display: flex;
   align-items: center;
   gap: 0.5rem;
-
-  /* Mobile: Botones más compactos */
   padding: 0.625rem 1rem;
   font-size: 0.875rem;
-
   border: none;
   border-radius: 12px;
   font-weight: 600;
   cursor: pointer;
-
   transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
-
-  /* Prevenir selección de texto */
   user-select: none;
   -webkit-user-select: none;
 }
 
-/* Desktop: Botones más grandes */
 @media (min-width: 640px) {
 
   .edit-mode-btn,
@@ -144,20 +129,17 @@
   transform: translateY(0);
 }
 
-/* ===== TEXTO DE BOTONES RESPONSIVE ===== */
 .btn-text {
   font-weight: 600;
   letter-spacing: 0.025em;
 }
 
-/* Mobile: Texto más corto */
 @media (max-width: 374px) {
   .btn-text {
     display: none;
   }
 }
 
-/* ===== INSTRUCCIONES MODERNAS ===== */
 .toolbar-instructions {
   display: flex;
   justify-content: center;
@@ -175,21 +157,16 @@
   display: flex;
   align-items: center;
   gap: 0.5rem;
-
-  /* Mobile: Más compacto */
   padding: 0.5rem 0.75rem;
   font-size: 0.8rem;
-
   background: rgba(16, 185, 129, 0.1);
   color: #047857;
   border-radius: 8px;
   border: 1px solid rgba(16, 185, 129, 0.2);
-
   backdrop-filter: blur(4px);
   transition: all 0.3s ease;
 }
 
-/* Estilo especial para mensaje de éxito */
 .instructions-content.success-message {
   background: rgba(34, 197, 94, 0.15);
   color: #15803d;
@@ -215,7 +192,6 @@
   line-height: 1.2;
 }
 
-/* ===== ÁREA DE CONTENIDO ===== */
 .content-area {
   margin-top: 0;
   padding-top: var(--toolbar-height, 4rem);
@@ -227,13 +203,11 @@
 
 @media (min-width: 1024px) {
   .content-area {
-    /* En desktop mantener el padding calculado dinámicamente */
     margin-top: 0;
     min-height: auto;
   }
 }
 
-/* ===== ANIMACIONES DE ENTRADA ===== */
 @keyframes slideDown {
   from {
     opacity: 0;
@@ -250,21 +224,19 @@
   animation: slideDown 0.3s ease-out;
 }
 
-/* ===== MEJORAS ACCESIBILIDAD ===== */
 .edit-mode-btn:focus,
 .save-changes-btn:focus {
   outline: 2px solid #3b82f6;
   outline-offset: 2px;
 }
 
-/* ===== ESTILOS PARA ELEMENTOS EDITABLES ===== */
-/* Mejor visual para elementos siendo editados */
 .content-area [contenteditable="true"] {
   cursor: text !important;
   position: relative;
+  outline: 2px dashed #007bff;
+  outline-offset: 2px;
 }
 
-/* Estilos específicos para botones editables */
 .content-area button[contenteditable="true"],
 .content-area .btn[contenteditable="true"],
 .content-area .button[contenteditable="true"] {
@@ -273,7 +245,6 @@
   -webkit-user-select: text;
 }
 
-/* Estilos específicos para enlaces editables */
 .content-area a[contenteditable="true"] {
   cursor: text !important;
   user-select: text;
@@ -281,7 +252,6 @@
   text-decoration: none;
 }
 
-/* Indicador visual mejorado para elementos editables */
 .content-area [contenteditable="true"]:hover {
   background-color: rgba(59, 130, 246, 0.05);
   border-radius: 4px;
@@ -296,7 +266,6 @@
   background-color: rgba(245, 158, 11, 0.1) !important;
 }
 
-/* Reducir movimiento si el usuario lo prefiere */
 @media (prefers-reduced-motion: reduce) {
 
   .edit-mode-btn,
@@ -314,33 +283,6 @@
   }
 }
 
-/* ===== ESTADO DE CARGA (para futuro) ===== */
-.edit-mode-btn.loading {
-  pointer-events: none;
-  opacity: 0.7;
-}
-
-.edit-mode-btn.loading::after {
-  content: '';
-  width: 1rem;
-  height: 1rem;
-  border: 2px solid transparent;
-  border-top-color: currentColor;
-  border-radius: 50%;
-  animation: spin 1s linear infinite;
-}
-
-@keyframes spin {
-  to {
-    transform: rotate(360deg);
-  }
-}
-
-/* ===== ESTILOS LEGACY (por eliminar en futuras versiones) ===== */
-
-/* ===== BOTONES DE IMAGEN DE FONDO ===== */
-
-/* Asegurar que elementos con botones de fondo tengan position relative */
 .content-area section:has(.bg-btn-container),
 .content-area div:has(.bg-btn-container),
 .content-area header:has(.bg-btn-container),
@@ -358,70 +300,51 @@
 }
 
 .editor-bg-btn {
-  /* Layout y posicionamiento */
   position: absolute;
   top: 10px;
   right: 10px;
   z-index: 1000;
-
-  /* Visual base */
   background: rgba(59, 130, 246, 0.95);
   color: white;
   border: none;
   border-radius: 8px;
   cursor: pointer;
-
-  /* Typography */
   font-size: 0.75rem;
   font-weight: 500;
   letter-spacing: 0.025em;
-
-  /* Layout interno */
   display: flex;
   align-items: center;
   gap: 0.25rem;
-
-  /* Spacing */
   padding: 0.5rem 0.75rem;
-
-  /* Efectos */
-  box-shadow: 
+  box-shadow:
     0 2px 8px rgba(0, 0, 0, 0.15),
     0 1px 3px rgba(0, 0, 0, 0.1);
   backdrop-filter: blur(4px);
-
-  /* Transiciones */
   transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
-
-  /* Prevenir selección */
   user-select: none;
   -webkit-user-select: none;
 }
 
-/* Hover effects */
 .editor-bg-btn:hover {
   background: rgba(37, 99, 235, 0.95);
   transform: translateY(-1px);
-  box-shadow: 
+  box-shadow:
     0 4px 12px rgba(59, 130, 246, 0.25),
     0 2px 6px rgba(0, 0, 0, 0.15);
 }
 
-/* Active state */
 .editor-bg-btn:active {
   transform: translateY(0);
-  box-shadow: 
+  box-shadow:
     0 2px 4px rgba(0, 0, 0, 0.1),
     0 1px 2px rgba(0, 0, 0, 0.05);
 }
 
-/* Focus para accesibilidad */
 .editor-bg-btn:focus {
   outline: 2px solid rgba(59, 130, 246, 0.5);
   outline-offset: 2px;
 }
 
-/* Responsive adjustments */
 @media (max-width: 640px) {
   .editor-bg-btn {
     font-size: 0.7rem;
@@ -432,47 +355,10 @@
   }
 }
 
-/* Variantes de posición */
-.editor-bg-btn--top-left {
-  top: 10px;
-  left: 10px;
-  right: auto;
-}
-
-.editor-bg-btn--bottom-right {
-  top: auto;
-  bottom: 10px;
-  right: 10px;
-}
-
-.editor-bg-btn--bottom-left {
-  top: auto;
-  bottom: 10px;
-  left: 10px;
-  right: auto;
-}
-
-/* Variantes de color */
 .editor-bg-btn--success {
   background: rgba(16, 185, 129, 0.95);
 }
 
 .editor-bg-btn--success:hover {
   background: rgba(5, 150, 105, 0.95);
-}
-
-.editor-bg-btn--warning {
-  background: rgba(245, 158, 11, 0.95);
-}
-
-.editor-bg-btn--warning:hover {
-  background: rgba(217, 119, 6, 0.95);
-}
-
-.editor-bg-btn--danger {
-  background: rgba(239, 68, 68, 0.95);
-}
-
-.editor-bg-btn--danger:hover {
-  background: rgba(220, 38, 38, 0.95);
 }
