@@ -47,24 +47,38 @@ function Editor() {
     return () => window.removeEventListener('storage', handler);
   }, []);
 
-  // Activa edición de texto - EXPANDIDO para incluir botones
+  // Activa edición de texto - EXPANDIDO para incluir botones - VERSIÓN CORREGIDA
   useEffect(() => {
     if (!contentRef.current) return;
     
-    // Seleccionar elementos editables: textos con data-editable y botones/enlaces
-    const editableElements = contentRef.current.querySelectorAll([
-      '[data-editable="true"]',
-      'button:not(.editor-bg-btn)',
-      'a',
-      '.btn',
-      '.button',
-      '[role="button"]'
-    ].join(', '));
+    // LIMPIEZA RADICAL: Limpiar TODOS los elementos de estilos de edición
+    const allElements = contentRef.current.querySelectorAll('*');
+    allElements.forEach(el => {
+      // Remover completamente el atributo contenteditable
+      el.removeAttribute('contenteditable');
+      // Limpiar estilos inline de edición
+      el.style.outline = '';
+      el.style.outlineOffset = '';
+      el.style.pointerEvents = '';
+    });
     
-    editableElements.forEach(el => {
-      if (isEditMode) {
-        el.setAttribute('contentEditable', 'true');
-        // Diferentes estilos según el tipo de elemento
+    // Solo aplicar estilos si estamos en modo edición
+    if (isEditMode) {
+      // Seleccionar elementos editables
+      const editableElements = contentRef.current.querySelectorAll([
+        '[data-editable="true"]',
+        'button:not(.editor-bg-btn)',
+        'a',
+        '.btn',
+        '.button',
+        '[role="button"]'
+      ].join(', '));
+      
+      editableElements.forEach(el => {
+        // Usar setAttribute con minúsculas para que coincida con CSS
+        el.setAttribute('contenteditable', 'true');
+        
+        // Aplicar estilos inline específicos
         if (el.tagName === 'BUTTON' || el.classList.contains('btn') || el.classList.contains('button')) {
           el.style.outline = '2px dashed #10b981'; // Verde para botones
           el.style.outlineOffset = '2px';
@@ -73,28 +87,37 @@ function Editor() {
           el.style.outlineOffset = '2px';
         } else {
           el.style.outline = '2px dashed #007bff'; // Azul para textos normales
+          el.style.outlineOffset = '2px';
         }
         
-        // Prevenir comportamiento por defecto de botones/enlaces mientras se edita
         el.style.pointerEvents = 'auto';
-        el.addEventListener('click', preventDefaultWhileEditing);
-      } else {
-        el.setAttribute('contentEditable', 'false');
-        el.style.outline = 'none';
-        el.style.outlineOffset = '';
-        el.style.pointerEvents = '';
-        el.removeEventListener('click', preventDefaultWhileEditing);
-      }
-    });
+      });
+    }
   }, [isEditMode, htmlContent]);
 
-  // Función para prevenir clicks accidentales durante edición
-  const preventDefaultWhileEditing = (e) => {
-    if (isEditMode && (e.target.tagName === 'BUTTON' || e.target.tagName === 'A')) {
-      e.preventDefault();
-      e.stopPropagation();
+  // Función para prevenir clicks accidentales durante edición usando delegación de eventos
+  useEffect(() => {
+    const handleClick = (e) => {
+      if (isEditMode && (e.target.tagName === 'BUTTON' || e.target.tagName === 'A')) {
+        // Solo prevenir si es un elemento editable, no los botones del editor
+        if (!e.target.classList.contains('editor-bg-btn') && 
+            !e.target.closest('.editor-toolbar')) {
+          e.preventDefault();
+          e.stopPropagation();
+        }
+      }
+    };
+
+    if (contentRef.current) {
+      contentRef.current.addEventListener('click', handleClick, true);
     }
-  };
+
+    return () => {
+      if (contentRef.current) {
+        contentRef.current.removeEventListener('click', handleClick, true);
+      }
+    };
+  }, [isEditMode]);
 
   // Agregar/quitar botones de imagen de fondo según el modo
   useEffect(() => {
@@ -164,12 +187,21 @@ function Editor() {
     }
   }, [isEditMode, htmlContent]);
 
-  // Guardar cambios - SIMPLE
+  // Guardar cambios - CON LIMPIEZA COMPLETA
   const handleSaveChanges = () => {
     if (!contentRef.current) return;
 
-    // Limpiar botones antes de guardar
+    // Limpiar botones de fondo antes de guardar
     contentRef.current.querySelectorAll('.editor-bg-btn').forEach(btn => btn.remove());
+    
+    // LIMPIEZA RADICAL antes de guardar
+    const allElements = contentRef.current.querySelectorAll('*');
+    allElements.forEach(el => {
+      el.removeAttribute('contenteditable');
+      el.style.outline = '';
+      el.style.outlineOffset = '';
+      el.style.pointerEvents = '';
+    });
 
     const clone = contentRef.current.cloneNode(true);
     localStorage.setItem('editableHtml', clone.innerHTML);

@@ -5,20 +5,20 @@
   left: 0;
   right: 0;
   z-index: 1000;
-  
+
   /* Mobile-first: Layout vertical compacto */
   padding: 0.75rem 1rem;
   background: rgba(255, 255, 255, 0.95);
   backdrop-filter: blur(12px);
   border-bottom: 1px solid rgba(0, 0, 0, 0.06);
-  box-shadow: 
+  box-shadow:
     0 1px 3px rgba(0, 0, 0, 0.1),
     0 4px 20px rgba(0, 0, 0, 0.05);
-  
+
   display: flex;
   flex-direction: column;
   gap: 0.5rem;
-  
+
   transition: all 0.3s ease;
 }
 
@@ -60,18 +60,18 @@
   display: flex;
   align-items: center;
   gap: 0.5rem;
-  
+
   /* Mobile: Botones más compactos */
   padding: 0.625rem 1rem;
   font-size: 0.875rem;
-  
+
   border: none;
   border-radius: 12px;
   font-weight: 600;
   cursor: pointer;
-  
+
   transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
-  
+
   /* Prevenir selección de texto */
   user-select: none;
   -webkit-user-select: none;
@@ -79,6 +79,7 @@
 
 /* Desktop: Botones más grandes */
 @media (min-width: 640px) {
+
   .edit-mode-btn,
   .save-changes-btn {
     padding: 0.75rem 1.25rem;
@@ -91,7 +92,7 @@
 .edit-mode-btn {
   background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
   color: white;
-  box-shadow: 
+  box-shadow:
     0 2px 8px rgba(59, 130, 246, 0.25),
     0 1px 2px rgba(0, 0, 0, 0.1);
 }
@@ -99,7 +100,7 @@
 .edit-mode-btn:hover {
   background: linear-gradient(135deg, #2563eb 0%, #1e40af 100%);
   transform: translateY(-1px);
-  box-shadow: 
+  box-shadow:
     0 4px 12px rgba(59, 130, 246, 0.3),
     0 2px 4px rgba(0, 0, 0, 0.1);
 }
@@ -110,14 +111,14 @@
 
 .edit-mode-btn.active {
   background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
-  box-shadow: 
+  box-shadow:
     0 2px 8px rgba(239, 68, 68, 0.25),
     0 1px 2px rgba(0, 0, 0, 0.1);
 }
 
 .edit-mode-btn.active:hover {
   background: linear-gradient(135deg, #dc2626 0%, #b91c1c 100%);
-  box-shadow: 
+  box-shadow:
     0 4px 12px rgba(239, 68, 68, 0.3),
     0 2px 4px rgba(0, 0, 0, 0.1);
 }
@@ -126,7 +127,7 @@
 .save-changes-btn {
   background: linear-gradient(135deg, #10b981 0%, #059669 100%);
   color: white;
-  box-shadow: 
+  box-shadow:
     0 2px 8px rgba(16, 185, 129, 0.25),
     0 1px 2px rgba(0, 0, 0, 0.1);
 }
@@ -134,7 +135,7 @@
 .save-changes-btn:hover {
   background: linear-gradient(135deg, #059669 0%, #047857 100%);
   transform: translateY(-1px);
-  box-shadow: 
+  box-shadow:
     0 4px 12px rgba(16, 185, 129, 0.3),
     0 2px 4px rgba(0, 0, 0, 0.1);
 }
@@ -174,16 +175,16 @@
   display: flex;
   align-items: center;
   gap: 0.5rem;
-  
+
   /* Mobile: Más compacto */
   padding: 0.5rem 0.75rem;
   font-size: 0.8rem;
-  
+
   background: rgba(16, 185, 129, 0.1);
   color: #047857;
   border-radius: 8px;
   border: 1px solid rgba(16, 185, 129, 0.2);
-  
+
   backdrop-filter: blur(4px);
   transition: all 0.3s ease;
 }
@@ -216,22 +217,13 @@
 
 /* ===== ÁREA DE CONTENIDO ===== */
 .content-area {
-  /* Se adapta dinámicamente a la altura del toolbar */
   margin-top: 0;
   padding-top: var(--toolbar-height, 4rem);
   min-height: calc(100vh - var(--toolbar-height, 4rem));
-  padding-left: 1rem;
-  padding-right: 1rem;
   padding-bottom: 1rem;
   transition: padding-top 0.3s ease;
 }
 
-@media (min-width: 640px) {
-  .content-area {
-    padding-left: 1.5rem;
-    padding-right: 1.5rem;
-  }
-}
 
 @media (min-width: 1024px) {
   .content-area {
@@ -239,8 +231,6 @@
     padding-top: 1rem;
     margin-top: 0;
     min-height: auto;
-    padding-left: 2rem;
-    padding-right: 2rem;
   }
 }
 
@@ -250,6 +240,7 @@
     opacity: 0;
     transform: translateY(-10px);
   }
+
   to {
     opacity: 1;
     transform: translateY(0);
@@ -308,16 +299,17 @@
 
 /* Reducir movimiento si el usuario lo prefiere */
 @media (prefers-reduced-motion: reduce) {
+
   .edit-mode-btn,
   .save-changes-btn {
     transition: none;
   }
-  
+
   .edit-mode-btn:hover,
   .save-changes-btn:hover {
     transform: none;
   }
-  
+
   .toolbar-instructions {
     animation: none;
   }
