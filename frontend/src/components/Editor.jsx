@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef } from 'react';
 import { PencilIcon, CheckIcon } from '../utilities';
+import { useBackgroundButtons } from '../hooks/useBackgroundButtons';
 import '../styles/Editor.css';
 
 function Editor() {
@@ -9,7 +10,20 @@ function Editor() {
   const contentRef = useRef(null);
   const toolbarRef = useRef(null);
 
-  // Actualizar altura del toolbar dinámicamente
+  // Callback para cuando se cambia una imagen de fondo
+  const handleBackgroundImageChange = (imageUrl, element) => {
+    console.log('Background changed:', element.tagName, element.id);
+    
+    // Guardar cambios
+    if (contentRef.current) {
+      const clone = contentRef.current.cloneNode(true);
+      clone.querySelectorAll('.bg-btn-container').forEach(container => container.remove());
+      localStorage.setItem('editableHtml', clone.innerHTML);
+    }
+  };
+
+  useBackgroundButtons(contentRef, isEditMode, handleBackgroundImageChange);
+
   useEffect(() => {
     const updateToolbarHeight = () => {
       if (toolbarRef.current) {
@@ -18,23 +32,20 @@ function Editor() {
       }
     };
 
-    // Actualizar al montar y cuando cambie el modo de edición
     updateToolbarHeight();
 
-    // Observer para detectar cambios de tamaño del toolbar
     const resizeObserver = new ResizeObserver(updateToolbarHeight);
     if (toolbarRef.current) {
       resizeObserver.observe(toolbarRef.current);
     }
-
     return () => {
       resizeObserver.disconnect();
     };
   }, [isEditMode]);
 
-  // Carga inicial
   useEffect(() => {
-    setHtmlContent(localStorage.getItem('editableHtml') || '<h1>No hay contenido para editar. Genera una vista previa en la página principal.</h1>');
+    const savedContent = localStorage.getItem('editableHtml') || '<h1>No hay contenido para editar. Genera una vista previa en la página principal.</h1>';
+    setHtmlContent(savedContent);
   }, []);
 
   // Sincroniza cambios externos
@@ -44,63 +55,35 @@ function Editor() {
     return () => window.removeEventListener('storage', handler);
   }, []);
 
-  // Activa edición de texto - EXPANDIDO para incluir botones - VERSIÓN CORREGIDA
+  // Activa edición de texto
   useEffect(() => {
     if (!contentRef.current) return;
 
-    // LIMPIEZA RADICAL: Limpiar TODOS los elementos de estilos de edición
+    // Limpiar estilos de edición
     const allElements = contentRef.current.querySelectorAll('*');
     allElements.forEach(el => {
-      // Remover completamente el atributo contenteditable
       el.removeAttribute('contenteditable');
-      // Limpiar estilos inline de edición
       el.style.outline = '';
       el.style.outlineOffset = '';
-      el.style.pointerEvents = '';
     });
 
-    // Solo aplicar estilos si estamos en modo edición
+    // Aplicar edición solo si está activa
     if (isEditMode) {
-      // Seleccionar elementos editables
-      const editableElements = contentRef.current.querySelectorAll([
-        '[data-editable="true"]',
-        'button:not(.editor-bg-btn)',
-        'a',
-        '.btn',
-        '.button',
-        '[role="button"]'
-      ].join(', '));
-
+      const editableElements = contentRef.current.querySelectorAll('[data-editable="true"], button, a');
+      
       editableElements.forEach(el => {
-        // Usar setAttribute con minúsculas para que coincida con CSS
         el.setAttribute('contenteditable', 'true');
-
-        // Aplicar estilos inline específicos
-        if (el.tagName === 'BUTTON' || el.classList.contains('btn') || el.classList.contains('button')) {
-          el.style.outline = '2px dashed #10b981'; // Verde para botones
-          el.style.outlineOffset = '2px';
-        } else if (el.tagName === 'A') {
-          el.style.outline = '2px dashed #f59e0b'; // Amarillo para enlaces
-          el.style.outlineOffset = '2px';
-        } else {
-          el.style.outline = '2px dashed #007bff'; // Azul para textos normales
-          el.style.outlineOffset = '2px';
-        }
-
-        el.style.pointerEvents = 'auto';
+        el.style.outline = '2px dashed #007bff';
+        el.style.outlineOffset = '2px';
       });
     }
   }, [isEditMode, htmlContent]);
 
-  // Función para prevenir clicks accidentales durante edición usando delegación de eventos
   useEffect(() => {
     const handleClick = (e) => {
-      if (isEditMode && (e.target.tagName === 'BUTTON' || e.target.tagName === 'A')) {
-        // Solo prevenir si es un elemento editable, no los botones del editor
-        if (!e.target.classList.contains('editor-bg-btn') &&
-          !e.target.closest('.editor-toolbar')) {
+      if (isEditMode && (e.target.tagName === 'BUTTON' || e.target.tagName === 'A')) {        
+        if (!e.target.closest('.editor-toolbar')) {
           e.preventDefault();
-          e.stopPropagation();
         }
       }
     };
@@ -116,109 +99,31 @@ function Editor() {
     };
   }, [isEditMode]);
 
-  // Agregar/quitar botones de imagen de fondo según el modo
-  useEffect(() => {
-    if (!contentRef.current) return;
-
-    // Limpiar TODOS los botones existentes primero
-    contentRef.current.querySelectorAll('.editor-bg-btn').forEach(btn => btn.remove());
-
-    // Solo agregar botones si estamos en modo edición
-    if (isEditMode) {
-      // Agregar botones a elementos contenedores
-      contentRef.current.querySelectorAll('section, div, header, main').forEach(element => {
-        // Solo si el elemento tiene cierto tamaño (evitar divs pequeños)
-        const rect = element.getBoundingClientRect();
-        if (rect.width > 200 && rect.height > 100) {
-          element.style.position = 'relative';
-
-          const btn = document.createElement('button');
-          btn.className = 'editor-bg-btn';
-          btn.innerText = '🖼️ Fondo';
-          btn.style.cssText = `
-          position: absolute;
-          top: 10px;
-          right: 10px;
-          background: rgba(59, 130, 246, 0.9);
-          color: white;
-          border: none;
-          padding: 6px 12px;
-          border-radius: 6px;
-          font-size: 12px;
-          cursor: pointer;
-          z-index: 1000;
-          box-shadow: 0 2px 4px rgba(0,0,0,0.2);
-        `;
-
-          btn.onclick = () => {
-            const input = document.createElement('input');
-            input.type = 'file';
-            input.accept = 'image/*';
-            input.onchange = e => {
-              const file = e.target.files[0];
-              if (file) {
-                const reader = new FileReader();
-                reader.onload = ev => {
-                  element.style.backgroundImage = `url(${ev.target.result})`;
-                  element.style.backgroundSize = 'cover';
-                  element.style.backgroundPosition = 'center';
-                  element.style.backgroundRepeat = 'no-repeat';
-
-                  // Guardar cambios
-                  if (contentRef.current) {
-                    const clone = contentRef.current.cloneNode(true);
-                    clone.querySelectorAll('.editor-bg-btn').forEach(btn => btn.remove());
-                    localStorage.setItem('editableHtml', clone.innerHTML);
-                    setHtmlContent(clone.innerHTML);
-                  }
-                };
-                reader.readAsDataURL(file);
-              }
-            };
-            input.click();
-          };
-
-          element.appendChild(btn);
-        }
-      });
-    }
-  }, [isEditMode, htmlContent]);
-
-  // Guardar cambios - CON LIMPIEZA COMPLETA
   const handleSaveChanges = () => {
     if (!contentRef.current) return;
-
-    // Limpiar botones de fondo antes de guardar
-    contentRef.current.querySelectorAll('.editor-bg-btn').forEach(btn => btn.remove());
-
-    // LIMPIEZA RADICAL antes de guardar
+    
+    // Limpiar botones y estilos
+    contentRef.current.querySelectorAll('.bg-btn-container').forEach(container => container.remove());
     const allElements = contentRef.current.querySelectorAll('*');
     allElements.forEach(el => {
       el.removeAttribute('contenteditable');
       el.style.outline = '';
       el.style.outlineOffset = '';
-      el.style.pointerEvents = '';
     });
 
+    // Guardar
     const clone = contentRef.current.cloneNode(true);
     localStorage.setItem('editableHtml', clone.innerHTML);
     setHtmlContent(clone.innerHTML);
     setIsEditMode(false);
-
-    // Mostrar mensaje de éxito
     setSaveMessage('Cambios guardados exitosamente');
 
-    // Limpiar mensaje después de 3 segundos
-    setTimeout(() => {
-      setSaveMessage('');
-    }, 3000);
+    setTimeout(() => setSaveMessage(''), 3000);
   };
 
   return (
     <div>
-      {/* Toolbar Moderno Mobile-First */}
       <div className="editor-toolbar" ref={toolbarRef}>
-        {/* Sección Principal - Siempre visible */}
         <div className="toolbar-main">
           <button
             onClick={() => setIsEditMode(!isEditMode)}
@@ -243,7 +148,6 @@ function Editor() {
           )}
         </div>
 
-        {/* Instrucciones - Responsive */}
         {(isEditMode || saveMessage) && (
           <div className="toolbar-instructions">
             <div className={`instructions-content ${saveMessage ? 'success-message' : ''}`}>
