@@ -1,9 +1,6 @@
 import { useState, useEffect, useRef } from 'react';
+import { PencilIcon, CheckIcon } from '../utilities';
 import '../styles/Editor.css';
-
-const PencilIcon = () => (
-  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M17 3a2.828 2.828 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5L17 3z"></path></svg>
-);
 
 function Editor() {
   const [htmlContent, setHtmlContent] = useState('');
@@ -50,7 +47,7 @@ function Editor() {
   // Activa edición de texto - EXPANDIDO para incluir botones - VERSIÓN CORREGIDA
   useEffect(() => {
     if (!contentRef.current) return;
-    
+
     // LIMPIEZA RADICAL: Limpiar TODOS los elementos de estilos de edición
     const allElements = contentRef.current.querySelectorAll('*');
     allElements.forEach(el => {
@@ -61,7 +58,7 @@ function Editor() {
       el.style.outlineOffset = '';
       el.style.pointerEvents = '';
     });
-    
+
     // Solo aplicar estilos si estamos en modo edición
     if (isEditMode) {
       // Seleccionar elementos editables
@@ -73,11 +70,11 @@ function Editor() {
         '.button',
         '[role="button"]'
       ].join(', '));
-      
+
       editableElements.forEach(el => {
         // Usar setAttribute con minúsculas para que coincida con CSS
         el.setAttribute('contenteditable', 'true');
-        
+
         // Aplicar estilos inline específicos
         if (el.tagName === 'BUTTON' || el.classList.contains('btn') || el.classList.contains('button')) {
           el.style.outline = '2px dashed #10b981'; // Verde para botones
@@ -89,7 +86,7 @@ function Editor() {
           el.style.outline = '2px dashed #007bff'; // Azul para textos normales
           el.style.outlineOffset = '2px';
         }
-        
+
         el.style.pointerEvents = 'auto';
       });
     }
@@ -100,8 +97,8 @@ function Editor() {
     const handleClick = (e) => {
       if (isEditMode && (e.target.tagName === 'BUTTON' || e.target.tagName === 'A')) {
         // Solo prevenir si es un elemento editable, no los botones del editor
-        if (!e.target.classList.contains('editor-bg-btn') && 
-            !e.target.closest('.editor-toolbar')) {
+        if (!e.target.classList.contains('editor-bg-btn') &&
+          !e.target.closest('.editor-toolbar')) {
           e.preventDefault();
           e.stopPropagation();
         }
@@ -193,7 +190,7 @@ function Editor() {
 
     // Limpiar botones de fondo antes de guardar
     contentRef.current.querySelectorAll('.editor-bg-btn').forEach(btn => btn.remove());
-    
+
     // LIMPIEZA RADICAL antes de guardar
     const allElements = contentRef.current.querySelectorAll('*');
     allElements.forEach(el => {
@@ -228,7 +225,7 @@ function Editor() {
             className={`edit-mode-btn ${isEditMode ? 'active' : ''}`}
             aria-label={isEditMode ? 'Salir de edición' : 'Activar edición'}
           >
-            <PencilIcon />
+            <PencilIcon size={20} />
             <span className="btn-text">
               {isEditMode ? 'Salir' : 'Editar'}
             </span>
@@ -240,9 +237,7 @@ function Editor() {
               className="save-changes-btn"
               aria-label="Guardar cambios"
             >
-              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7" />
-              </svg>
+              <CheckIcon className="w-4 h-4" size={16} />
               <span className="btn-text">Guardar</span>
             </button>
           )}
