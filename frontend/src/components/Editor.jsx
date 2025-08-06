@@ -8,7 +8,32 @@ const PencilIcon = () => (
 function Editor() {
   const [htmlContent, setHtmlContent] = useState('');
   const [isEditMode, setIsEditMode] = useState(false);
+  const [saveMessage, setSaveMessage] = useState('');
   const contentRef = useRef(null);
+  const toolbarRef = useRef(null);
+
+  // Actualizar altura del toolbar dinámicamente
+  useEffect(() => {
+    const updateToolbarHeight = () => {
+      if (toolbarRef.current) {
+        const height = toolbarRef.current.offsetHeight;
+        document.documentElement.style.setProperty('--toolbar-height', `${height}px`);
+      }
+    };
+
+    // Actualizar al montar y cuando cambie el modo de edición
+    updateToolbarHeight();
+
+    // Observer para detectar cambios de tamaño del toolbar
+    const resizeObserver = new ResizeObserver(updateToolbarHeight);
+    if (toolbarRef.current) {
+      resizeObserver.observe(toolbarRef.current);
+    }
+
+    return () => {
+      resizeObserver.disconnect();
+    };
+  }, [isEditMode]);
 
   // Carga inicial
   useEffect(() => {
@@ -22,27 +47,62 @@ function Editor() {
     return () => window.removeEventListener('storage', handler);
   }, []);
 
-  // Activa edición de texto - SIMPLE
+  // Activa edición de texto - EXPANDIDO para incluir botones
   useEffect(() => {
     if (!contentRef.current) return;
-    contentRef.current.querySelectorAll('[data-editable="true"]').forEach(el => {
+    
+    // Seleccionar elementos editables: textos con data-editable y botones/enlaces
+    const editableElements = contentRef.current.querySelectorAll([
+      '[data-editable="true"]',
+      'button:not(.editor-bg-btn)',
+      'a',
+      '.btn',
+      '.button',
+      '[role="button"]'
+    ].join(', '));
+    
+    editableElements.forEach(el => {
       if (isEditMode) {
         el.setAttribute('contentEditable', 'true');
-        el.style.outline = '2px dashed #007bff';
+        // Diferentes estilos según el tipo de elemento
+        if (el.tagName === 'BUTTON' || el.classList.contains('btn') || el.classList.contains('button')) {
+          el.style.outline = '2px dashed #10b981'; // Verde para botones
+          el.style.outlineOffset = '2px';
+        } else if (el.tagName === 'A') {
+          el.style.outline = '2px dashed #f59e0b'; // Amarillo para enlaces
+          el.style.outlineOffset = '2px';
+        } else {
+          el.style.outline = '2px dashed #007bff'; // Azul para textos normales
+        }
+        
+        // Prevenir comportamiento por defecto de botones/enlaces mientras se edita
+        el.style.pointerEvents = 'auto';
+        el.addEventListener('click', preventDefaultWhileEditing);
       } else {
         el.setAttribute('contentEditable', 'false');
         el.style.outline = 'none';
+        el.style.outlineOffset = '';
+        el.style.pointerEvents = '';
+        el.removeEventListener('click', preventDefaultWhileEditing);
       }
     });
   }, [isEditMode, htmlContent]);
 
+  // Función para prevenir clicks accidentales durante edición
+  const preventDefaultWhileEditing = (e) => {
+    if (isEditMode && (e.target.tagName === 'BUTTON' || e.target.tagName === 'A')) {
+      e.preventDefault();
+      e.stopPropagation();
+    }
+  };
+
   // Agregar/quitar botones de imagen de fondo según el modo
   useEffect(() => {
     if (!contentRef.current) return;
-    
+
     // Limpiar TODOS los botones existentes primero
     contentRef.current.querySelectorAll('.editor-bg-btn').forEach(btn => btn.remove());
-    
+
     // Solo agregar botones si estamos en modo edición
     if (isEditMode) {
       // Agregar botones a elementos contenedores
@@ -50,12 +110,12 @@ function Editor() {
         // Solo si el elemento tiene cierto tamaño (evitar divs pequeños)
         const rect = element.getBoundingClientRect();
         if (rect.width > 200 && rect.height > 100) {
-        element.style.position = 'relative';
-        
-        const btn = document.createElement('button');
-        btn.className = 'editor-bg-btn';
-        btn.innerText = '🖼️ Fondo';
-        btn.style.cssText = `
+          element.style.position = 'relative';
+
+          const btn = document.createElement('button');
+          btn.className = 'editor-bg-btn';
+          btn.innerText = '🖼️ Fondo';
+          btn.style.cssText = `
           position: absolute;
           top: 10px;
           right: 10px;
@@ -69,77 +129,119 @@ function Editor() {
           z-index: 1000;
           box-shadow: 0 2px 4px rgba(0,0,0,0.2);
         `;
-        
-        btn.onclick = () => {
-          const input = document.createElement('input');
-          input.type = 'file';
-          input.accept = 'image/*';
-          input.onchange = e => {
-            const file = e.target.files[0];
-            if (file) {
-              const reader = new FileReader();
-              reader.onload = ev => {
-                element.style.backgroundImage = `url(${ev.target.result})`;
-                element.style.backgroundSize = 'cover';
-                element.style.backgroundPosition = 'center';
-                element.style.backgroundRepeat = 'no-repeat';
-                
-                // Guardar cambios
-                if (contentRef.current) {
-                  const clone = contentRef.current.cloneNode(true);
-                  clone.querySelectorAll('.editor-bg-btn').forEach(btn => btn.remove());
-                  localStorage.setItem('editableHtml', clone.innerHTML);
-                  setHtmlContent(clone.innerHTML);
-                }
-              };
-              reader.readAsDataURL(file);
-            }
+
+          btn.onclick = () => {
+            const input = document.createElement('input');
+            input.type = 'file';
+            input.accept = 'image/*';
+            input.onchange = e => {
+              const file = e.target.files[0];
+              if (file) {
+                const reader = new FileReader();
+                reader.onload = ev => {
+                  element.style.backgroundImage = `url(${ev.target.result})`;
+                  element.style.backgroundSize = 'cover';
+                  element.style.backgroundPosition = 'center';
+                  element.style.backgroundRepeat = 'no-repeat';
+
+                  // Guardar cambios
+                  if (contentRef.current) {
+                    const clone = contentRef.current.cloneNode(true);
+                    clone.querySelectorAll('.editor-bg-btn').forEach(btn => btn.remove());
+                    localStorage.setItem('editableHtml', clone.innerHTML);
+                    setHtmlContent(clone.innerHTML);
+                  }
+                };
+                reader.readAsDataURL(file);
+              }
+            };
+            input.click();
           };
-          input.click();
-        };
-        
-        element.appendChild(btn);
-      }
-    });
+
+          element.appendChild(btn);
+        }
+      });
     }
   }, [isEditMode, htmlContent]);
 
   // Guardar cambios - SIMPLE
   const handleSaveChanges = () => {
     if (!contentRef.current) return;
-    
+
     // Limpiar botones antes de guardar
     contentRef.current.querySelectorAll('.editor-bg-btn').forEach(btn => btn.remove());
-    
+
     const clone = contentRef.current.cloneNode(true);
     localStorage.setItem('editableHtml', clone.innerHTML);
     setHtmlContent(clone.innerHTML);
     setIsEditMode(false);
-    alert('Cambios guardados. Puedes cerrar esta pestaña.');
+
+    // Mostrar mensaje de éxito
+    setSaveMessage('Cambios guardados exitosamente');
+
+    // Limpiar mensaje después de 3 segundos
+    setTimeout(() => {
+      setSaveMessage('');
+    }, 3000);
   };
 
   return (
     <div>
-      <div className="editor-toolbar flex items-center justify-between bg-white shadow-lg px-8 py-4 fixed top-0 left-0 w-full z-50 gap-6">
-        <div className="flex items-center gap-4">
-          <button onClick={() => setIsEditMode(!isEditMode)} className={`edit-mode-btn px-4 py-2 rounded bg-blue-500 text-white font-bold hover:bg-blue-600 transition ${isEditMode ? 'ring ring-blue-300' : ''}`}>
+      {/* Toolbar Moderno Mobile-First */}
+      <div className="editor-toolbar" ref={toolbarRef}>
+        {/* Sección Principal - Siempre visible */}
+        <div className="toolbar-main">
+          <button
+            onClick={() => setIsEditMode(!isEditMode)}
+            className={`edit-mode-btn ${isEditMode ? 'active' : ''}`}
+            aria-label={isEditMode ? 'Salir de edición' : 'Activar edición'}
+          >
             <PencilIcon />
-            {isEditMode ? 'Salir de Edición' : 'Activar Edición'}
+            <span className="btn-text">
+              {isEditMode ? 'Salir' : 'Editar'}
+            </span>
           </button>
+
           {isEditMode && (
-            <button onClick={handleSaveChanges} className='save-changes-btn px-4 py-2 rounded bg-green-500 text-white font-bold hover:bg-green-600 transition'>Guardar Cambios</button>
+            <button
+              onClick={handleSaveChanges}
+              className="save-changes-btn"
+              aria-label="Guardar cambios"
+            >
+              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7" />
+              </svg>
+              <span className="btn-text">Guardar</span>
+            </button>
           )}
         </div>
-        {isEditMode && (
-          <div className="bg-green-50 px-4 py-2 rounded-xl shadow text-sm">
-            <span className="text-green-700 font-semibold">💡 Instrucciones:</span>
-            <span className="text-green-600 ml-2">Click directamente en cualquier texto para editarlo</span>
+
+        {/* Instrucciones - Responsive */}
+        {(isEditMode || saveMessage) && (
+          <div className="toolbar-instructions">
+            <div className={`instructions-content ${saveMessage ? 'success-message' : ''}`}>
+              <span className="instruction-icon">
+                {saveMessage ? '✅' : '💡'}
+              </span>
+              <span className="instruction-text">
+                {saveMessage ? (
+                  <span className="font-medium">{saveMessage}</span>
+                ) : (
+                  <>
+                    <span className="font-medium">Editar:</span>
+                    <span className="hidden sm:inline"> Click en textos y botones</span>
+                    <span className="sm:hidden"> Toca textos/botones</span>
+                  </>
+                )}
+              </span>
+            </div>
           </div>
         )}
       </div>
+
       <div
         ref={contentRef}
-        className="mt-28"
+        className="content-area"
         dangerouslySetInnerHTML={{ __html: htmlContent }}
       />
     </div>

@@ -1,86 +1,348 @@
+/* ===== TOOLBAR MODERNO MOBILE-FIRST ===== */
 .editor-toolbar {
   position: fixed;
   top: 0;
   left: 0;
-  width: 100vw;
-  background: rgba(255, 255, 255, 0.85);
-  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.08), 0 1.5px 0 rgba(0, 0, 0, 0.03);
-  padding: 1rem 2rem;
-  z-index: 9999;
+  right: 0;
+  z-index: 1000;
+  
+  /* Mobile-first: Layout vertical compacto */
+  padding: 0.75rem 1rem;
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(12px);
+  border-bottom: 1px solid rgba(0, 0, 0, 0.06);
+  box-shadow: 
+    0 1px 3px rgba(0, 0, 0, 0.1),
+    0 4px 20px rgba(0, 0, 0, 0.05);
+  
   display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 2rem;
-  backdrop-filter: blur(8px);
-  border: none;
+  flex-direction: column;
+  gap: 0.5rem;
+  
+  transition: all 0.3s ease;
 }
 
+/* Tablet y Desktop: Layout horizontal */
+@media (min-width: 640px) {
+  .editor-toolbar {
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    padding: 1rem 1.5rem;
+    gap: 1rem;
+  }
+}
+
+@media (min-width: 1024px) {
+  .editor-toolbar {
+    padding: 1rem 2rem;
+    gap: 1.5rem;
+  }
+}
+
+/* ===== SECCIÓN PRINCIPAL DE BOTONES ===== */
+.toolbar-main {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  justify-content: center;
+}
+
+@media (min-width: 640px) {
+  .toolbar-main {
+    justify-content: flex-start;
+  }
+}
+
+/* ===== BOTONES MODERNOS ===== */
 .edit-mode-btn,
 .save-changes-btn {
   display: flex;
   align-items: center;
   gap: 0.5rem;
-  background: linear-gradient(90deg, #2563eb 0%, #1e40af 100%);
-  color: #fff;
+  
+  /* Mobile: Botones más compactos */
+  padding: 0.625rem 1rem;
+  font-size: 0.875rem;
+  
   border: none;
-  padding: 0.6rem 1.4rem;
-  border-radius: 32px;
-  cursor: pointer;
-  font-size: 1rem;
+  border-radius: 12px;
   font-weight: 600;
-  box-shadow: 0 2px 8px rgba(37, 99, 235, 0.08);
-  transition: background 0.2s, box-shadow 0.2s;
-  font-family: 'Inter', 'Segoe UI', Arial, sans-serif;
+  cursor: pointer;
+  
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  
+  /* Prevenir selección de texto */
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+/* Desktop: Botones más grandes */
+@media (min-width: 640px) {
+  .edit-mode-btn,
+  .save-changes-btn {
+    padding: 0.75rem 1.25rem;
+    font-size: 0.9rem;
+    border-radius: 16px;
+  }
+}
+
+/* ===== BOTÓN DE EDICIÓN ===== */
+.edit-mode-btn {
+  background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
+  color: white;
+  box-shadow: 
+    0 2px 8px rgba(59, 130, 246, 0.25),
+    0 1px 2px rgba(0, 0, 0, 0.1);
+}
+
+.edit-mode-btn:hover {
+  background: linear-gradient(135deg, #2563eb 0%, #1e40af 100%);
+  transform: translateY(-1px);
+  box-shadow: 
+    0 4px 12px rgba(59, 130, 246, 0.3),
+    0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.edit-mode-btn:active {
+  transform: translateY(0);
 }
 
 .edit-mode-btn.active {
-  background: linear-gradient(90deg, #007bff 0%, #2563eb 100%);
-  box-shadow: 0 2px 12px rgba(0, 123, 255, 0.12);
+  background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+  box-shadow: 
+    0 2px 8px rgba(239, 68, 68, 0.25),
+    0 1px 2px rgba(0, 0, 0, 0.1);
 }
 
+.edit-mode-btn.active:hover {
+  background: linear-gradient(135deg, #dc2626 0%, #b91c1c 100%);
+  box-shadow: 
+    0 4px 12px rgba(239, 68, 68, 0.3),
+    0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+/* ===== BOTÓN DE GUARDAR ===== */
 .save-changes-btn {
-  background: linear-gradient(90deg, #22c55e 0%, #16a34a 100%);
-  box-shadow: 0 2px 8px rgba(34, 197, 94, 0.08);
+  background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+  color: white;
+  box-shadow: 
+    0 2px 8px rgba(16, 185, 129, 0.25),
+    0 1px 2px rgba(0, 0, 0, 0.1);
 }
 
-.editor-toolbar .edit-panel {
+.save-changes-btn:hover {
+  background: linear-gradient(135deg, #059669 0%, #047857 100%);
+  transform: translateY(-1px);
+  box-shadow: 
+    0 4px 12px rgba(16, 185, 129, 0.3),
+    0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.save-changes-btn:active {
+  transform: translateY(0);
+}
+
+/* ===== TEXTO DE BOTONES RESPONSIVE ===== */
+.btn-text {
+  font-weight: 600;
+  letter-spacing: 0.025em;
+}
+
+/* Mobile: Texto más corto */
+@media (max-width: 374px) {
+  .btn-text {
+    display: none;
+  }
+}
+
+/* ===== INSTRUCCIONES MODERNAS ===== */
+.toolbar-instructions {
   display: flex;
-  align-items: center;
-  gap: 1.5rem;
-  background: rgba(226, 232, 240, 0.7);
-  padding: 0.5rem 1.2rem;
-  border-radius: 18px;
-  box-shadow: 0 1px 6px rgba(0, 0, 0, 0.04);
+  justify-content: center;
+  margin-top: 0.25rem;
 }
 
-.editor-toolbar .edit-panel label {
+@media (min-width: 640px) {
+  .toolbar-instructions {
+    justify-content: flex-end;
+    margin-top: 0;
+  }
+}
+
+.instructions-content {
   display: flex;
   align-items: center;
   gap: 0.5rem;
-  font-size: 0.98rem;
-  color: #1e293b;
+  
+  /* Mobile: Más compacto */
+  padding: 0.5rem 0.75rem;
+  font-size: 0.8rem;
+  
+  background: rgba(16, 185, 129, 0.1);
+  color: #047857;
+  border-radius: 8px;
+  border: 1px solid rgba(16, 185, 129, 0.2);
+  
+  backdrop-filter: blur(4px);
+  transition: all 0.3s ease;
 }
 
-.editor-toolbar .edit-panel input[type="color"] {
-  width: 2rem;
-  height: 2rem;
-  border: none;
-  border-radius: 50%;
-  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.07);
-  cursor: pointer;
+/* Estilo especial para mensaje de éxito */
+.instructions-content.success-message {
+  background: rgba(34, 197, 94, 0.15);
+  color: #15803d;
+  border-color: rgba(34, 197, 94, 0.3);
+  box-shadow: 0 2px 8px rgba(34, 197, 94, 0.1);
 }
 
-.editor-toolbar .edit-panel .close-btn {
-  background: #e2e8f0;
-  color: #334155;
-  border: none;
-  border-radius: 12px;
-  padding: 0.4rem 1rem;
+@media (min-width: 640px) {
+  .instructions-content {
+    padding: 0.625rem 1rem;
+    font-size: 0.875rem;
+    border-radius: 12px;
+  }
+}
+
+.instruction-icon {
+  font-size: 1rem;
+  flex-shrink: 0;
+}
+
+.instruction-text {
   font-weight: 500;
-  cursor: pointer;
-  transition: background 0.2s;
+  line-height: 1.2;
 }
 
-.editor-toolbar .edit-panel .close-btn:hover {
-  background: #cbd5e1;
+/* ===== ÁREA DE CONTENIDO ===== */
+.content-area {
+  /* Se adapta dinámicamente a la altura del toolbar */
+  margin-top: 0;
+  padding-top: var(--toolbar-height, 4rem);
+  min-height: calc(100vh - var(--toolbar-height, 4rem));
+  padding-left: 1rem;
+  padding-right: 1rem;
+  padding-bottom: 1rem;
+  transition: padding-top 0.3s ease;
 }
+
+@media (min-width: 640px) {
+  .content-area {
+    padding-left: 1.5rem;
+    padding-right: 1.5rem;
+  }
+}
+
+@media (min-width: 1024px) {
+  .content-area {
+    /* En desktop no es fijo, usar margin normal */
+    padding-top: 1rem;
+    margin-top: 0;
+    min-height: auto;
+    padding-left: 2rem;
+    padding-right: 2rem;
+  }
+}
+
+/* ===== ANIMACIONES DE ENTRADA ===== */
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.toolbar-instructions {
+  animation: slideDown 0.3s ease-out;
+}
+
+/* ===== MEJORAS ACCESIBILIDAD ===== */
+.edit-mode-btn:focus,
+.save-changes-btn:focus {
+  outline: 2px solid #3b82f6;
+  outline-offset: 2px;
+}
+
+/* ===== ESTILOS PARA ELEMENTOS EDITABLES ===== */
+/* Mejor visual para elementos siendo editados */
+.content-area [contenteditable="true"] {
+  cursor: text !important;
+  position: relative;
+}
+
+/* Estilos específicos para botones editables */
+.content-area button[contenteditable="true"],
+.content-area .btn[contenteditable="true"],
+.content-area .button[contenteditable="true"] {
+  cursor: text !important;
+  user-select: text;
+  -webkit-user-select: text;
+}
+
+/* Estilos específicos para enlaces editables */
+.content-area a[contenteditable="true"] {
+  cursor: text !important;
+  user-select: text;
+  -webkit-user-select: text;
+  text-decoration: none;
+}
+
+/* Indicador visual mejorado para elementos editables */
+.content-area [contenteditable="true"]:hover {
+  background-color: rgba(59, 130, 246, 0.05);
+  border-radius: 4px;
+}
+
+.content-area button[contenteditable="true"]:hover,
+.content-area .btn[contenteditable="true"]:hover {
+  background-color: rgba(16, 185, 129, 0.1) !important;
+}
+
+.content-area a[contenteditable="true"]:hover {
+  background-color: rgba(245, 158, 11, 0.1) !important;
+}
+
+/* Reducir movimiento si el usuario lo prefiere */
+@media (prefers-reduced-motion: reduce) {
+  .edit-mode-btn,
+  .save-changes-btn {
+    transition: none;
+  }
+  
+  .edit-mode-btn:hover,
+  .save-changes-btn:hover {
+    transform: none;
+  }
+  
+  .toolbar-instructions {
+    animation: none;
+  }
+}
+
+/* ===== ESTADO DE CARGA (para futuro) ===== */
+.edit-mode-btn.loading {
+  pointer-events: none;
+  opacity: 0.7;
+}
+
+.edit-mode-btn.loading::after {
+  content: '';
+  width: 1rem;
+  height: 1rem;
+  border: 2px solid transparent;
+  border-top-color: currentColor;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* ===== ESTILOS LEGACY (por eliminar en futuras versiones) ===== */
