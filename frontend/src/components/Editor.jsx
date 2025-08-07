@@ -11,7 +11,40 @@ function Editor() {
   const contentRef = useRef(null);
   const toolbarRef = useRef(null);
 
-  // Utilidad para guardar contenido limpio
+  // Variables CSS comunes que suele generar la LLM
+  const commonCSSVariables = [
+    '--primary-color',
+    '--secondary-color', 
+    '--accent-color',
+    '--neutral-color',
+    '--neutral-light',
+    '--text-color',
+    '--bg-color'
+  ];
+
+
+  // Actualizar variable CSS de forma simple
+  const updateCSSVariable = (variableName, newValue) => {
+    console.log(`🎨 Actualizando ${variableName} a ${newValue}`);
+
+    // Actualizar en el DOM
+    document.documentElement.style.setProperty(variableName, newValue);
+
+    // Guardar cambios si hay contenido
+    if (contentRef.current) {
+      // También actualizar en el <style> embebido para persistencia
+      const styleElement = contentRef.current.querySelector('style');
+      if (styleElement) {
+        let cssText = styleElement.textContent;
+        const regex = new RegExp(`(${variableName}\\s*:\\s*)[^;]+`, 'g');
+        cssText = cssText.replace(regex, `$1${newValue}`);
+        styleElement.textContent = cssText;        
+      }
+
+      saveCleanContent(contentRef.current);
+    }
+  };
+
   const saveCleanContent = (container) => {
     const clone = container.cloneNode(true);
     DOMUtils.cleanAllEditingElements(clone);
@@ -19,15 +52,12 @@ function Editor() {
     return clone.innerHTML;
   };
 
-  // Utilidad para mostrar mensaje de éxito
   const showSuccessMessage = (message) => {
     setSaveMessage(message);
     setTimeout(() => setSaveMessage(''), 3000);
   };
 
   const handleBackgroundImageChange = (imageUrl, element) => {
-    console.log(`Background changed to ${imageUrl.substring(0, 50)}... on ${element.tagName}#${element.id}`);
-
     if (!element.parentNode) {
       console.warn('Element was removed from DOM, skipping save');
       return;
@@ -37,7 +67,6 @@ function Editor() {
       saveCleanContent(contentRef.current);
     }
   };
-
   useBackgroundButtons(contentRef, isEditMode, handleBackgroundImageChange);
 
   useEffect(() => {
@@ -47,7 +76,6 @@ function Editor() {
         document.documentElement.style.setProperty('--toolbar-height', `${height}px`);
       }
     };
-
     updateToolbarHeight();
 
     const resizeObserver = new ResizeObserver(updateToolbarHeight);
@@ -73,6 +101,7 @@ function Editor() {
   useEffect(() => {
     if (!isEditMode && contentRef.current) {
       DOMUtils.removeContentEditableAttributes(contentRef.current);
+      console.log('🧹 Limpieza al salir del modo edición');
     }
   }, [isEditMode]);
 
@@ -82,39 +111,13 @@ function Editor() {
     }
   }, [isEditMode]);
 
-  useEffect(() => {
-    if (isEditMode && contentRef.current && htmlContent) {
-      DOMUtils.applyContentEditableAttributes(contentRef.current);
-    }
-  }, [htmlContent, isEditMode]);
-
-  useEffect(() => {
-    const handleClick = (e) => {
-      if (isEditMode && (e.target.tagName === 'BUTTON' || e.target.tagName === 'A')) {
-        if (!e.target.closest('.editor-toolbar')) {
-          e.preventDefault();
-        }
-      }
-    };
-
-    if (contentRef.current) {
-      contentRef.current.addEventListener('click', handleClick, true);
-    }
-
-    return () => {
-      if (contentRef.current) {
-        contentRef.current.removeEventListener('click', handleClick, true);
-      }
-    };
-  }, [isEditMode]);
+  // NO más useEffect que cargue colores automáticamente
 
   const handleSaveChanges = () => {
     if (!contentRef.current) return;
-
     const savedContent = saveCleanContent(contentRef.current);
     setHtmlContent(savedContent);
     setIsEditMode(false);
-
     showSuccessMessage('Cambios guardados exitosamente');
   };
 
@@ -134,14 +137,29 @@ function Editor() {
           </button>
 
           {isEditMode && (
-            <button
-              onClick={handleSaveChanges}
-              className="save-changes-btn"
-              aria-label="Guardar cambios"
-            >
-              <CheckIcon className="w-4 h-4" size={16} />
-              <span className="btn-text">Guardar</span>
-            </button>
+            <>
+              <button
+                onClick={handleSaveChanges}
+                className="save-changes-btn"
+                aria-label="Guardar cambios"
+              >
+                <CheckIcon className="w-4 h-4" size={16} />
+                <span className="btn-text">Guardar</span>
+              </button>
+
+              <div style={{ display: 'flex', gap: '0.5rem', alignItems: 'center' }}>
+                {commonCSSVariables.map(variableName => (
+                  <input
+                    key={variableName}
+                    type="color"
+                    defaultValue="#2563eb"
+                    onChange={(e) => updateCSSVariable(variableName, e.target.value)}
+                    title={variableName}
+                    style={{ width: '32px', height: '32px', border: 'none', borderRadius: '6px', cursor: 'pointer' }}
+                  />
+                ))}
+              </div>
+            </>
           )}
         </div>
 
