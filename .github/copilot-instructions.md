@@ -1,3 +1,4 @@
+- **Never apply styles directly via the `style` attribute in JSX/HTML. Always use Tailwind CSS classes if available, or otherwise use the appropriate CSS file.**
 # Copilot Instructions for LandingFlyer
 
 ## Project Overview

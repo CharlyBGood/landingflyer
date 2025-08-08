@@ -1,3 +1,20 @@
+// Convierte #rgb o #rgba a #rrggbb o #rrggbbaa
+// Convierte #rgb o #rgba a #rrggbb o #rrggbbaa y valida para input type=color
+const expandHex = hex => {
+  if (/^#([\da-fA-F])([\da-fA-F])([\da-fA-F])$/.test(hex)) {
+    return '#' + hex[1] + hex[1] + hex[2] + hex[2] + hex[3] + hex[3];
+  }
+  if (/^#([\da-fA-F])([\da-fA-F])([\da-fA-F])([\da-fA-F])$/.test(hex)) {
+    return '#' + hex[1] + hex[1] + hex[2] + hex[2] + hex[3] + hex[3] + hex[4] + hex[4];
+  }
+  return hex;
+};
+
+// Devuelve un color válido para el input o undefined si no es válido
+const getInputColor = (value) => {
+  const hex = expandHex(value);
+  return /^#([0-9A-Fa-f]{6})$/.test(hex) ? hex : undefined;
+};
 import { useState, useEffect, useRef } from 'react';
 import { PencilIcon, CheckIcon } from '../utilities';
 import { useBackgroundButtons } from '../hooks/useBackgroundButtons';
@@ -11,37 +28,32 @@ function Editor() {
   const contentRef = useRef(null);
   const toolbarRef = useRef(null);
 
-  // Variables CSS comunes que suele generar la LLM
-  const commonCSSVariables = [
-    '--primary-color',
-    '--secondary-color', 
-    '--accent-color',
-    '--neutral-color',
-    '--neutral-light',
-    '--text-color',
-    '--bg-color'
-  ];
-
-
-  // Actualizar variable CSS de forma simple
+  // Extraer dinámicamente las variables CSS del bloque :root del <style> embebido
+  const [cssVars, setCssVars] = useState([]);
+  const extractRootCSSVariables = () => {
+    if (!contentRef.current) return [];
+    const styleTag = contentRef.current.querySelector('style');
+    if (!styleTag) return [];
+    const css = styleTag.textContent;
+    const rootBlock = css.match(/:root\s*{([^}]*)}/);
+    if (!rootBlock) return [];
+    return [...rootBlock[1].matchAll(/(--[a-zA-Z0-9-_]+)\s*:\s*([^;]+);/g)]
+      .map(m => ({ name: m[1], value: m[2].trim() }));
+  };
   const updateCSSVariable = (variableName, newValue) => {
-    console.log(`🎨 Actualizando ${variableName} a ${newValue}`);
-
-    // Actualizar en el DOM
     document.documentElement.style.setProperty(variableName, newValue);
-
-    // Guardar cambios si hay contenido
     if (contentRef.current) {
-      // También actualizar en el <style> embebido para persistencia
       const styleElement = contentRef.current.querySelector('style');
       if (styleElement) {
         let cssText = styleElement.textContent;
-        const regex = new RegExp(`(${variableName}\\s*:\\s*)[^;]+`, 'g');
-        cssText = cssText.replace(regex, `$1${newValue}`);
-        styleElement.textContent = cssText;        
+        // Solo modificar el valor de la variable en el bloque :root
+        cssText = cssText.replace(/(:root\s*{)([^}]*)}/, (match, p1, p2) => {
+          const newVars = p2.replace(new RegExp(`(${variableName}\\s*:\\s*)[^;]+`), `$1${newValue}`);
+          return `${p1}${newVars}}`;
+        });
+        styleElement.textContent = cssText;
       }
-
-      saveCleanContent(contentRef.current);
+      setCssVars(extractRootCSSVariables());
     }
   };
 
@@ -91,27 +103,15 @@ function Editor() {
     const savedContent = localStorage.getItem('editableHtml') || '<h1>No hay contenido para editar. Genera una vista previa en la página principal.</h1>';
     setHtmlContent(savedContent);
   }, []);
+  useEffect(() => {
+    setCssVars(extractRootCSSVariables());
+  }, [htmlContent, isEditMode]);
 
   useEffect(() => {
     const handler = e => e.key === 'editableHtml' && setHtmlContent(e.newValue || '');
     window.addEventListener('storage', handler);
     return () => window.removeEventListener('storage', handler);
   }, []);
-
-  useEffect(() => {
-    if (!isEditMode && contentRef.current) {
-      DOMUtils.removeContentEditableAttributes(contentRef.current);
-      console.log('🧹 Limpieza al salir del modo edición');
-    }
-  }, [isEditMode]);
-
-  useEffect(() => {
-    if (isEditMode && contentRef.current) {
-      DOMUtils.applyContentEditableAttributes(contentRef.current);
-    }
-  }, [isEditMode]);
-
-  // NO más useEffect que cargue colores automáticamente
 
   const handleSaveChanges = () => {
     if (!contentRef.current) return;
@@ -147,17 +147,19 @@ function Editor() {
                 <span className="btn-text">Guardar</span>
               </button>
 
-              <div style={{ display: 'flex', gap: '0.5rem', alignItems: 'center' }}>
-                {commonCSSVariables.map(variableName => (
-                  <input
-                    key={variableName}
-                    type="color"
-                    defaultValue="#2563eb"
-                    onChange={(e) => updateCSSVariable(variableName, e.target.value)}
-                    title={variableName}
-                    style={{ width: '32px', height: '32px', border: 'none', borderRadius: '6px', cursor: 'pointer' }}
-                  />
+              <div className='flex gap-0.5 items-center'>
+                {cssVars.map(({ name, value }) => (
+                  <div key={name} className='flex flex-col items-center'>
+                    <input
+                      type="color"
+                      value={getInputColor(value)}
+                      disabled={!getInputColor(value)}
+                      onChange={e => updateCSSVariable(name, e.target.value)}
+                      title={name}
+                    />
+                  </div>
                 ))}
+                <span className="block w-full text-center text-xs text-gray-700 mt-2 sm:mt-0 sm:w-auto sm:ml-4 sm:text-left">paleta de colores</span>
               </div>
             </>
           )}

@@ -1,5 +1,5 @@
 
-export default function HeroSection({isLoading, handleGeneratePreview, handleFileChange, selectedFile, error}) {
+export default function HeroSection({ isLoading, handleGeneratePreview, handleFileChange, selectedFile, error }) {
   return (
     <>
       <header className="mb-8 sm:mb-12 text-center">
@@ -13,16 +13,16 @@ export default function HeroSection({isLoading, handleGeneratePreview, handleFil
       <main className="bg-gray-800 p-4 sm:p-8 rounded-lg border border-gray-600 mx-auto max-w-4xl">
         <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 items-center justify-center">
           <div className="relative w-full sm:w-auto">
-            <input 
-              type="file" 
+            <input
+              type="file"
               id="file-input"
-              onChange={handleFileChange} 
-              accept="image/*" 
+              onChange={handleFileChange}
+              accept="image/*"
               disabled={isLoading}
-              className="sr-only" 
+              className="sr-only"
             />
-            <label 
-              htmlFor="file-input" 
+            <label
+              htmlFor="file-input"
               className="inline-flex items-center justify-center w-full sm:w-auto px-4 py-2.5 bg-emerald-600 hover:bg-emerald-700 disabled:bg-gray-500 text-white font-medium text-sm sm:text-base rounded-lg cursor-pointer transition-all duration-200 transform hover:-translate-y-0.5 hover:shadow-lg min-w-0 sm:min-w-44"
             >
               <span className="truncate">
@@ -30,10 +30,10 @@ export default function HeroSection({isLoading, handleGeneratePreview, handleFil
               </span>
             </label>
           </div>
-          <button 
-            onClick={handleGeneratePreview} 
+          <button
+            onClick={handleGeneratePreview}
             disabled={isLoading || !selectedFile}
-            className="w-full sm:w-auto px-4 py-2.5 bg-blue-600 hover:bg-blue-700 disabled:bg-gray-500 text-white font-medium text-sm sm:text-base rounded-lg transition-all duration-200 transform hover:-translate-y-0.5 hover:shadow-lg disabled:transform-none disabled:shadow-none min-w-0 sm:min-w-44"
+            className="w-full sm:w-auto px-4 py-2.5 bg-blue-600 hover:bg-blue-700 disabled:bg-gray-500 text-white font-medium text-sm sm:text-base rounded-lg transition-all duration-200 transform hover:-translate-y-0.5 hover:shadow-lg disabled:transform-none disabled:shadow-none min-w-0 sm:min-w-44 cursor-pointer"
           >
             {isLoading ? 'Generando...' : 'Generar Vista Previa'}
           </button>
