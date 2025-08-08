@@ -11,6 +11,9 @@ export * from './Icons';
 // Re-exportar utilidades DOM
 export * from './domUtils';
 
+// Re-exportar utilidades de colores hexadecimales
+export * from './hexColorUtils';
+
 // Si en el futuro agregamos más utilidades, las exportamos aquí
 // export * from './helpers';
 // export * from './constants';

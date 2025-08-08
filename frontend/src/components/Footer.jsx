@@ -6,7 +6,7 @@ export default function Footer() {
         © {new Date().getFullYear()} Creado con ❤️ por
       </p>
       <a
-        href="https://www.charlybgood.com"
+        href="https://www.sinapsialab.com"
         className="gradient-link"
         target="_blank"
         rel="noopener noreferrer"
