@@ -64,6 +64,9 @@ function Editor() {
           }
         );
         styleElement.textContent = cssText;
+        
+        // ACTUALIZAR EL STATE DE REACT con el HTML modificado
+        setHtmlContent(contentRef.current.innerHTML);
       }
       setCssVars(extractRootCSSVariables());
     }
@@ -118,8 +121,17 @@ function Editor() {
   }, []);
 
   useEffect(() => {
-    setCssVars(extractRootCSSVariables());
-  }, [htmlContent, isEditMode]);
+    const variables = extractRootCSSVariables();
+    
+    // Aplicar las variables al DOM global para que los colores se vean
+    variables.forEach(({ name, value }) => {
+      document.documentElement.style.setProperty(name, value);
+    });
+    
+    setCssVars(variables);
+  }, [htmlContent]); // ← QUITÉ isEditMode de aquí
+
+
 
   useEffect(() => {
     const handler = e => e.key === 'editableHtml' && setHtmlContent(e.newValue || '');
