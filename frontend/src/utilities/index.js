@@ -11,7 +11,4 @@ export * from './Icons';
 // Re-exportar utilidades DOM
 export * from './domUtils';
 
-// Si en el futuro agregamos más utilidades, las exportamos aquí
-// export * from './helpers';
-// export * from './constants';
-// export * from './validators';
+export * from './hexColorUtils';

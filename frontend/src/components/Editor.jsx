@@ -1,25 +1,10 @@
-// Convierte #rgb o #rgba a #rrggbb o #rrggbbaa
-// Convierte #rgb o #rgba a #rrggbb o #rrggbbaa y valida para input type=color
-const expandHex = hex => {
-  if (/^#([\da-fA-F])([\da-fA-F])([\da-fA-F])$/.test(hex)) {
-    return '#' + hex[1] + hex[1] + hex[2] + hex[2] + hex[3] + hex[3];
-  }
-  if (/^#([\da-fA-F])([\da-fA-F])([\da-fA-F])([\da-fA-F])$/.test(hex)) {
-    return '#' + hex[1] + hex[1] + hex[2] + hex[2] + hex[3] + hex[3] + hex[4] + hex[4];
-  }
-  return hex;
-};
-
-// Devuelve un color válido para el input o undefined si no es válido
-const getInputColor = (value) => {
-  const hex = expandHex(value);
-  return /^#([0-9A-Fa-f]{6})$/.test(hex) ? hex : undefined;
-};
 import { useState, useEffect, useRef } from 'react';
 import { PencilIcon, CheckIcon } from '../utilities';
 import { useBackgroundButtons } from '../hooks/useBackgroundButtons';
 import { DOMUtils } from '../utilities/domUtils';
+import { getInputColor } from '../utilities';
 import '../styles/Editor.css';
+
 
 function Editor() {
   const [htmlContent, setHtmlContent] = useState('');
@@ -41,16 +26,24 @@ function Editor() {
       .map(m => ({ name: m[1], value: m[2].trim() }));
   };
   const updateCSSVariable = (variableName, newValue) => {
+    // Actualiza la variable en el DOM global (para reflejar el cambio en tiempo real)
     document.documentElement.style.setProperty(variableName, newValue);
+
+    // Actualiza el <style> embebido en el template
     if (contentRef.current) {
       const styleElement = contentRef.current.querySelector('style');
       if (styleElement) {
         let cssText = styleElement.textContent;
-        // Solo modificar el valor de la variable en el bloque :root
-        cssText = cssText.replace(/(:root\s*{)([^}]*)}/, (match, p1, p2) => {
-          const newVars = p2.replace(new RegExp(`(${variableName}\\s*:\\s*)[^;]+`), `$1${newValue}`);
-          return `${p1}${newVars}}`;
-        });
+        cssText = cssText.replace(
+          /(:root\s*{)([^}]*)}/,
+          (match, p1, p2) => {
+            const newVars = p2.replace(
+              new RegExp(`(${variableName}\\s*:\\s*)[^;]+`),
+              `$1${newValue}`
+            );
+            return `${p1}${newVars}}`;
+          }
+        );
         styleElement.textContent = cssText;
       }
       setCssVars(extractRootCSSVariables());
@@ -148,17 +141,25 @@ function Editor() {
               </button>
 
               <div className='flex gap-0.5 items-center'>
-                {cssVars.map(({ name, value }) => (
-                  <div key={name} className='flex flex-col items-center'>
-                    <input
-                      type="color"
-                      value={getInputColor(value)}
-                      disabled={!getInputColor(value)}
-                      onChange={e => updateCSSVariable(name, e.target.value)}
-                      title={name}
-                    />
-                  </div>
-                ))}
+                {cssVars.map(({ name, value }) => {
+                  // Obtener el valor computado real de la variable CSS en el DOM
+                  let computed = '';
+                  if (contentRef.current) {
+                    computed = getComputedStyle(contentRef.current).getPropertyValue(name).trim();
+                  }
+                  const colorValue = getInputColor(computed) || getInputColor(value);
+                  return (
+                    <div key={name} className='flex flex-col items-center'>
+                      <input
+                        type="color"
+                        value={colorValue}
+                        disabled={!colorValue}
+                        onChange={e => updateCSSVariable(name, e.target.value)}
+                        title={name}
+                      />
+                    </div>
+                  );
+                })}
                 <span className="block w-full text-center text-xs text-gray-700 mt-2 sm:mt-0 sm:w-auto sm:ml-4 sm:text-left">paleta de colores</span>
               </div>
             </>
