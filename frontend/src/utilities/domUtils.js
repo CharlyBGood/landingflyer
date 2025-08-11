@@ -50,7 +50,8 @@ export const DOMUtils = {
     if (!container) return;
     this.removeBackgroundContainers(container);
     this.removeBackgroundClasses(container);
-    this.removeContentEditableAttributes(container);
+    // NO remover contentEditable aquí para evitar conflictos con el editor
+    // this.removeContentEditableAttributes(container);
   },
 
   // Validar si un elemento es válido para botón de background

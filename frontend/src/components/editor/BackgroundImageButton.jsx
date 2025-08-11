@@ -33,8 +33,6 @@ const BackgroundImageButton = ({
             targetElement.style.backgroundSize = 'cover';
             targetElement.style.backgroundPosition = 'center center';
             targetElement.style.backgroundRepeat = 'no-repeat';
-            
-            console.log('Background applied to:', targetElement.tagName, targetElement.id);
 
             // Callback para guardar
             if (onImageChange) {

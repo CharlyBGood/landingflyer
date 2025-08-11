@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef, useMemo } from 'react';
 import { PencilIcon, CheckIcon } from '../utilities';
 import { useBackgroundButtons } from '../hooks/useBackgroundButtons';
 import { DOMUtils } from '../utilities/domUtils';
@@ -15,6 +15,27 @@ function Editor() {
 
   // Extraer dinámicamente las variables CSS del bloque :root del <style> embebido
   const [cssVars, setCssVars] = useState([]);
+
+  // Función para modificar el HTML y agregar/remover contentEditable antes del renderizado
+  const getEditableHtml = (originalHtml, editMode) => {
+    if (!originalHtml) return originalHtml;
+
+    if (editMode) {
+      // AGREGAR contentEditable cuando está en modo edición
+      const modifiedHtml = originalHtml.replace(
+        /(<[^>]+data-editable="true"[^>]*?)(?:\s+contenteditable="[^"]*")?(\s*>)/g,
+        '$1 contenteditable="true"$2'
+      );
+      return modifiedHtml;
+    } else {
+      // REMOVER contentEditable cuando NO está en modo edición
+      const modifiedHtml = originalHtml.replace(
+        /(<[^>]+data-editable="true"[^>]*?)\s+contenteditable="[^"]*"(\s*>)/g,
+        '$1$2'
+      );
+      return modifiedHtml;
+    }
+  };
   const extractRootCSSVariables = () => {
     if (!contentRef.current) return [];
     const styleTag = contentRef.current.querySelector('style');
@@ -26,10 +47,8 @@ function Editor() {
       .map(m => ({ name: m[1], value: m[2].trim() }));
   };
   const updateCSSVariable = (variableName, newValue) => {
-    // Actualiza la variable en el DOM global (para reflejar el cambio en tiempo real)
     document.documentElement.style.setProperty(variableName, newValue);
 
-    // Actualiza el <style> embebido en el template
     if (contentRef.current) {
       const styleElement = contentRef.current.querySelector('style');
       if (styleElement) {
@@ -72,6 +91,7 @@ function Editor() {
       saveCleanContent(contentRef.current);
     }
   };
+
   useBackgroundButtons(contentRef, isEditMode, handleBackgroundImageChange);
 
   useEffect(() => {
@@ -96,6 +116,7 @@ function Editor() {
     const savedContent = localStorage.getItem('editableHtml') || '<h1>No hay contenido para editar. Genera una vista previa en la página principal.</h1>';
     setHtmlContent(savedContent);
   }, []);
+
   useEffect(() => {
     setCssVars(extractRootCSSVariables());
   }, [htmlContent, isEditMode]);
@@ -105,6 +126,11 @@ function Editor() {
     window.addEventListener('storage', handler);
     return () => window.removeEventListener('storage', handler);
   }, []);
+
+  // Memoizar el HTML procesado para evitar re-cálculos innecesarios
+  const processedHtml = useMemo(() => {
+    return getEditableHtml(htmlContent, isEditMode);
+  }, [htmlContent, isEditMode]);
 
   const handleSaveChanges = () => {
     if (!contentRef.current) return;
@@ -142,7 +168,6 @@ function Editor() {
 
               <div className='flex gap-0.5 items-center'>
                 {cssVars.map(({ name, value }) => {
-                  // Obtener el valor computado real de la variable CSS en el DOM
                   let computed = '';
                   if (contentRef.current) {
                     computed = getComputedStyle(contentRef.current).getPropertyValue(name).trim();
@@ -191,7 +216,8 @@ function Editor() {
       <div
         ref={contentRef}
         className="content-area"
-        dangerouslySetInnerHTML={{ __html: htmlContent }}
+        data-edit-mode={isEditMode}
+        dangerouslySetInnerHTML={{ __html: processedHtml }}
       />
     </div>
   );

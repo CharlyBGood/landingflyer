@@ -239,11 +239,18 @@ input[type="color"] {
   outline-offset: 2px;
 }
 
-.content-area [contenteditable="true"] {
+/* Solo aplicar estilos cuando está en modo edición Y tiene contenteditable="true" */
+.content-area[data-edit-mode="true"] [contenteditable="true"] {
   cursor: text !important;
   position: relative;
-  outline: 2px dashed #007bff;
+  outline: 2px dashed #007bff !important;
   outline-offset: 2px;
+}
+
+/* Asegurar que NO hay estilos cuando no está en modo edición */
+.content-area[data-edit-mode="false"] [data-editable="true"],
+.content-area:not([data-edit-mode="true"]) [data-editable="true"] {
+  outline: none !important;
 }
 
 .content-area button[contenteditable="true"],
@@ -259,20 +266,6 @@ input[type="color"] {
   user-select: text;
   -webkit-user-select: text;
   text-decoration: none;
-}
-
-.content-area [contenteditable="true"]:hover {
-  background-color: rgba(59, 130, 246, 0.05);
-  border-radius: 4px;
-}
-
-.content-area button[contenteditable="true"]:hover,
-.content-area .btn[contenteditable="true"]:hover {
-  background-color: rgba(16, 185, 129, 0.1) !important;
-}
-
-.content-area a[contenteditable="true"]:hover {
-  background-color: rgba(245, 158, 11, 0.1) !important;
 }
 
 @media (prefers-reduced-motion: reduce) {
