@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef, useMemo } from 'react';
-import { PencilIcon, CheckIcon } from '../utilities';
+import { PencilIcon, CheckIcon, GlobeIcon } from '../utilities';
 import { useBackgroundButtons } from '../hooks/useBackgroundButtons';
 import { DOMUtils } from '../utilities/domUtils';
 import { getInputColor } from '../utilities';
@@ -13,22 +13,18 @@ function Editor() {
   const contentRef = useRef(null);
   const toolbarRef = useRef(null);
 
-  // Extraer dinámicamente las variables CSS del bloque :root del <style> embebido
   const [cssVars, setCssVars] = useState([]);
 
-  // Función para modificar el HTML y agregar/remover contentEditable antes del renderizado
   const getEditableHtml = (originalHtml, editMode) => {
     if (!originalHtml) return originalHtml;
 
     if (editMode) {
-      // AGREGAR contentEditable cuando está en modo edición
       const modifiedHtml = originalHtml.replace(
         /(<[^>]+data-editable="true"[^>]*?)(?:\s+contenteditable="[^"]*")?(\s*>)/g,
         '$1 contenteditable="true"$2'
       );
       return modifiedHtml;
     } else {
-      // REMOVER contentEditable cuando NO está en modo edición
       const modifiedHtml = originalHtml.replace(
         /(<[^>]+data-editable="true"[^>]*?)\s+contenteditable="[^"]*"(\s*>)/g,
         '$1$2'
@@ -64,8 +60,7 @@ function Editor() {
           }
         );
         styleElement.textContent = cssText;
-        
-        // ACTUALIZAR EL STATE DE REACT con el HTML modificado
+
         setHtmlContent(contentRef.current.innerHTML);
       }
       setCssVars(extractRootCSSVariables());
@@ -122,16 +117,13 @@ function Editor() {
 
   useEffect(() => {
     const variables = extractRootCSSVariables();
-    
-    // Aplicar las variables al DOM global para que los colores se vean
+
     variables.forEach(({ name, value }) => {
       document.documentElement.style.setProperty(name, value);
     });
-    
+
     setCssVars(variables);
-  }, [htmlContent]); // ← QUITÉ isEditMode de aquí
-
-
+  }, [htmlContent]);
 
   useEffect(() => {
     const handler = e => e.key === 'editableHtml' && setHtmlContent(e.newValue || '');
@@ -139,7 +131,6 @@ function Editor() {
     return () => window.removeEventListener('storage', handler);
   }, []);
 
-  // Memoizar el HTML procesado para evitar re-cálculos innecesarios
   const processedHtml = useMemo(() => {
     return getEditableHtml(htmlContent, isEditMode);
   }, [htmlContent, isEditMode]);
@@ -150,6 +141,12 @@ function Editor() {
     setHtmlContent(savedContent);
     setIsEditMode(false);
     showSuccessMessage('Cambios guardados exitosamente');
+  };
+
+  const handlePublish = () => {
+    console.log('🚀 Publicar página - Iniciando proceso...');
+    console.log('📄 HTML a publicar:', htmlContent);
+    // TODO: Implementar lógica de publicación
   };
 
   return (
@@ -202,6 +199,16 @@ function Editor() {
             </>
           )}
         </div>
+
+        {/* Botón Publicar - Consistente con el diseño de la toolbar */}
+        <button
+          onClick={handlePublish}
+          className="edit-mode-btn publish-btn-custom flex items-center gap-2 px-3 py-2 sm:px-4 sm:py-3 text-sm sm:text-base font-semibold text-white bg-gradient-to-r from-purple-500 to-purple-600 hover:from-purple-600 hover:to-purple-700 rounded-xl sm:rounded-2xl transition-all duration-200 transform hover:-translate-y-0.5 hover:shadow-lg focus:outline-none focus:ring-2 focus:ring-purple-500 focus:ring-offset-2"
+          aria-label="Publicar página"
+        >
+          <GlobeIcon size={18} className="flex-shrink-0" />
+          <span className="btn-text">Publicar</span>
+        </button>
 
         {(isEditMode || saveMessage) && (
           <div className="toolbar-instructions">
