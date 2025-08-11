@@ -29,8 +29,6 @@ export default function LandingPreview({ generatedHtml, iframeRef }) {
             title="Vista Previa de la Landing Page"
             className="w-full h-[85vh] sm:h-[80vh] lg:h-[90vh] border-none block"
             key={generatedHtml}
-            sandbox="allow-scripts allow-same-origin"
-            style={{ background: '#fff' }}
           />
         </div>
       )}
