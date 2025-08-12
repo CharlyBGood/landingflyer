@@ -157,9 +157,22 @@ function Editor() {
     setIsPublishing(true);
     
     try {
-      // Timeout más largo para el deploy de Netlify con CLI (10 minutos)
+      // IMPORTANTE: Limpiar el HTML antes de publicar
+      // Remover contentEditable y otros elementos de edición
+      const clone = contentRef.current.cloneNode(true);
+      DOMUtils.cleanAllEditingElements(clone);
+      DOMUtils.removeContentEditableAttributes(clone); // Asegurar que se remueva contentEditable
+      
+      const cleanHtmlContent = clone.innerHTML;
+      
+      console.log('🧹 HTML limpiado para publicación:');
+      console.log('   Original length:', htmlContent.length);
+      console.log('   Cleaned length:', cleanHtmlContent.length);
+      console.log('   ContentEditable removed:', !cleanHtmlContent.includes('contenteditable'));
+
+      // Timeout optimizado para ZIP Method (2 minutos es más que suficiente)
       const controller = new AbortController();
-      const timeoutId = setTimeout(() => controller.abort(), 600000); // 10 minutos
+      const timeoutId = setTimeout(() => controller.abort(), 120000); // 2 minutos
 
       const response = await fetch('/api/publish', {
         method: 'POST',
@@ -167,7 +180,7 @@ function Editor() {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          htmlContent,
+          htmlContent: cleanHtmlContent, // Usar HTML limpio en lugar de htmlContent
           siteName
         }),
         signal: controller.signal

@@ -60,7 +60,7 @@ const PublishModal = ({ isOpen, onClose, onPublish, isPublishing }) => {
         <form onSubmit={handleSubmit}>
           <div className="mb-4">
             <label htmlFor="siteName" className="block text-sm font-medium text-gray-700 mb-2">
-              Nombre del sitio
+              Nombre de tu empresa o marca
             </label>
             <div className="space-y-2">
               <input
@@ -68,11 +68,14 @@ const PublishModal = ({ isOpen, onClose, onPublish, isPublishing }) => {
                 type="text"
                 value={siteName}
                 onChange={(e) => setSiteName(e.target.value)}
-                placeholder="nombre-empresa"
+                placeholder="Ej: Panadería San José, Tech Solutions, Belleza Total"
                 disabled={isPublishing}
                 className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent disabled:bg-gray-100"
                 autoFocus
               />
+              <p className="text-xs text-gray-500">
+                Se creará una URL corta y fácil de recordar basada en este nombre
+              </p>
             </div>
             {error && (
               <p className="text-red-600 text-sm mt-1">{error}</p>
@@ -107,15 +110,18 @@ const PublishModal = ({ isOpen, onClose, onPublish, isPublishing }) => {
 
         <div className="mt-4 p-3 bg-blue-50 rounded-lg">
           <p className="text-sm text-blue-800">
-            <strong>💡 Tip:</strong> Una vez publicado, tu página estará disponible en una URL lista para compartir
+            <strong>💡 URL inteligente:</strong> Crearemos una URL corta y memorable usando el nombre de tu empresa
+          </p>
+          <p className="text-xs text-blue-600 mt-1">
+            Ejemplo: "Panadería San José" → panaderiasr12345.netlify.app
           </p>
         </div>
 
         {isPublishing && (
           <div className="mt-4 p-3 bg-yellow-50 border border-yellow-200 rounded-lg">
             <p className="text-sm text-yellow-800">
-              <strong>⏱️ Publicando tu Landing Page...</strong> Creando sitio y desplegando contenido.
-              Esto puede tomar hasta 10 minutos para garantizar un deploy completo.
+              <strong>🚀 Publicando con ZIP Method...</strong> Deploy atómico directo a Netlify. 
+              Completado típicamente en menos de 30 segundos.
             </p>
           </div>
         )}
