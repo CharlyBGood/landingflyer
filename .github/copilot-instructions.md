@@ -1,4 +1,10 @@
 - **Never apply styles directly via the `style` attribute in JSX/HTML. Always use Tailwind CSS classes if available, or otherwise use the appropriate CSS file.**
+
+## ⚠️ CRITICAL GUIDELINES
+
+- **🔒 NEVER MAKE CODE CHANGES WITHOUT EXPLICIT USER AUTHORIZATION**: Always ask for explicit approval before implementing any code modifications. Present the plan first, wait for confirmation, then proceed.
+- **🚫 NEVER START SERVERS FOR TESTING WITHOUT USER REQUEST**: Do not automatically run `npm start`, `npm run dev`, or any server commands unless specifically asked by the user. Testing should only be done when explicitly requested.
+
 # Copilot Instructions for LandingFlyer
 
 ## Project Overview
