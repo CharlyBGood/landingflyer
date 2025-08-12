@@ -93,10 +93,18 @@ app.post('/api/publish', async (req, res) => {
         const { NetlifyZipService } = await import('./services/NetlifyZipService.js');
         const netlifyService = new NetlifyZipService();
 
-        console.log('🎯 Generando nombre válido para sitio...');
-        // Generar nombre válido para Netlify
-        const validSiteName = netlifyService.generateSiteName(siteName);
-        console.log('✅ Nombre generado:', validSiteName);
+        console.log('🎯 Extrayendo título del HTML y generando nombre de sitio...');
+        // NUEVO: Extraer título del HTML para usar en la URL
+        const htmlTitle = netlifyService.extractTitleFromHTML(htmlContent);
+        const titleForURL = htmlTitle || siteName; // Usar título del HTML, sino input del usuario
+        
+        console.log('📋 Título extraído del HTML:', htmlTitle || 'No encontrado');
+        console.log('📋 Input del usuario:', siteName);
+        console.log('🎯 Título seleccionado para URL:', titleForURL);
+        
+        // Generar nombre válido para Netlify usando el título apropiado
+        const validSiteName = netlifyService.generateSiteName(titleForURL);
+        console.log('✅ Nombre final generado:', validSiteName);
 
         console.log('🚀 Creando sitio en Netlify...');
         // Crear sitio en Netlify

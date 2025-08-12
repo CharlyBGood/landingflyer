@@ -153,16 +153,38 @@ ${bodyContent}
     }
 
     /**
+     * Extrae el título del HTML para usarlo en la generación de URLs
+     * @param {string} htmlContent - Contenido HTML completo
+     * @returns {string} Título extraído o fallback
+     */
+    extractTitleFromHTML(htmlContent) {
+        console.log('🔍 Extrayendo título del HTML para URL...');
+        
+        // Buscar título en el HTML
+        const titleMatch = htmlContent.match(/<title[^>]*>([^<]*)<\/title>/i);
+        let extractedTitle = '';
+        
+        if (titleMatch && titleMatch[1]) {
+            extractedTitle = titleMatch[1].trim();
+            console.log('✅ Título extraído del HTML:', extractedTitle);
+        } else {
+            console.log('❌ No se encontró título en el HTML');
+        }
+        
+        return extractedTitle;
+    }
+
+    /**
      * Crea y deploya un sitio usando el método ZIP oficial de Netlify
-     * @param {string} siteName - Nombre del sitio (será sanitizado)
+     * @param {string} validSiteName - Nombre del sitio ya validado y procesado
      * @param {string} htmlContent - Contenido HTML completo de la landing page
      * @returns {Promise<Object>} Resultado del deploy con URL y IDs
      */
-    async createSite(siteName, htmlContent) {
+    async createSite(validSiteName, htmlContent) {
         try {
             const startTime = Date.now();
             console.log('📦 Iniciando deploy con ZIP Method...');
-            console.log('🏷️  Sitio:', siteName);
+            console.log('🏷️  Sitio validado:', validSiteName);
             console.log('📄 Longitud HTML:', htmlContent.length);
 
             // DIAGNÓSTICO: Verificar contenido HTML
@@ -260,72 +282,86 @@ ${bodyContent}
                 console.log('⚠️ No se pudo guardar HTML para debug:', debugError.message);
             }
 
-            // PASO 2: Deploy atómico con ZIP y headers mejorados
-            console.log('🚀 Enviando ZIP a Netlify API...');
-            console.log('🎯 Endpoint:', `${this.baseURL}/sites`);
-            console.log('📦 Payload size:', zipBuffer.length, 'bytes');
+            // PASO 2: CREAR SITIO CON NOMBRE PERSONALIZADO PRIMERO
+            console.log('🏗️ Creando sitio con nombre personalizado...');
+            console.log('🎯 Nombre del sitio:', validSiteName);
             
-            const response = await axios.post(
+            // Crear sitio vacío con el nombre que queremos
+            const siteResponse = await axios.post(
                 `${this.baseURL}/sites`,
+                {
+                    name: validSiteName  // Especificar el nombre personalizado
+                },
+                {
+                    headers: {
+                        'Authorization': `Bearer ${this.apiToken}`,
+                        'Content-Type': 'application/json',
+                        'User-Agent': 'LandingFlyer/1.0.0 (Named Site Creation)'
+                    },
+                    timeout: 30000
+                }
+            );
+
+            const siteId = siteResponse.data.id;
+            const siteName = siteResponse.data.name;
+            const siteUrl = siteResponse.data.ssl_url || siteResponse.data.url;
+            
+            console.log('✅ Sitio creado con nombre personalizado:');
+            console.log('   🆔 Site ID:', siteId);
+            console.log('   🏷️ Nombre:', siteName);
+            console.log('   🔗 URL:', siteUrl);
+
+            // PASO 3: DEPLOY DEL ZIP AL SITIO CREADO
+            console.log('📦 Desplegando ZIP al sitio creado...');
+            
+            const deployResponse = await axios.post(
+                `${this.baseURL}/sites/${siteId}/deploys`,
                 zipBuffer,
                 {
                     headers: {
                         'Authorization': `Bearer ${this.apiToken}`,
                         'Content-Type': 'application/zip',
                         'Content-Length': zipBuffer.length.toString(),
-                        'User-Agent': 'LandingFlyer/1.0.0 (ZIP Method)',
-                        'Accept': 'application/json',
-                        // Headers adicionales para asegurar procesamiento correcto
-                        'X-Requested-With': 'XMLHttpRequest',
-                        'Cache-Control': 'no-cache'
+                        'User-Agent': 'LandingFlyer/1.0.0 (ZIP Deploy)'
                     },
-                    timeout: 120000, // 2 minutos (más tiempo por si hay procesamiento)
+                    timeout: 120000, // 2 minutos
                     maxContentLength: 50 * 1024 * 1024, // 50MB max
-                    maxBodyLength: 50 * 1024 * 1024,
-                    // Configuración adicional para axios
-                    responseType: 'json',
-                    validateStatus: function (status) {
-                        // Aceptar códigos 200-299 como exitosos
-                        return status >= 200 && status < 300;
-                    }
+                    maxBodyLength: 50 * 1024 * 1024
                 }
             );
 
             const deployTime = Date.now() - startTime;
-            console.log(`⚡ Deploy HTTP completado en ${deployTime}ms`);
-            console.log('📊 Response status:', response.status);
-            console.log('📊 Response headers:', response.headers);
+            console.log(`⚡ Deploy ZIP completado en ${deployTime}ms`);
+            console.log('📊 Deploy Response status:', deployResponse.status);
+            
+            const deployData = deployResponse.data;
+            console.log('🔍 DEPLOY RESPONSE:');
+            console.log('   Deploy ID:', deployData.id);
+            console.log('   Deploy URL:', deployData.deploy_ssl_url);
+            console.log('   Deploy State:', deployData.state);
 
-            // PASO 3: Extraer y validar información del response
-            const siteData = response.data;
-            console.log('🔍 ANÁLISIS RESPONSE:');
-            console.log('   Site ID:', siteData.id);
-            console.log('   Site Name:', siteData.name);
-            console.log('   URL:', siteData.url);
-            console.log('   SSL URL:', siteData.ssl_url);
-            console.log('   State:', siteData.state);
-            console.log('   Published Deploy:', siteData.published_deploy);
-            console.log('   Deploy State:', siteData.published_deploy?.state);
+            // PASO 4: Resultado final con URL personalizada
             
             const result = {
                 success: true,
-                siteId: siteData.id,
-                siteName: siteData.name,
-                url: siteData.ssl_url || siteData.url,
-                deployId: siteData.published_deploy?.id || siteData.deploy_id || 'initial',
-                adminUrl: siteData.admin_url,
+                siteId: siteId,
+                siteName: siteName,
+                url: siteUrl,  // Usar la URL del sitio con nombre personalizado
+                deployId: deployData.id,
+                adminUrl: siteResponse.data.admin_url,
                 deployTime: deployTime,
-                method: 'ZIP_ATOMIC'
+                method: 'HYBRID_ZIP_NAMED'
             };
 
-            console.log('🎉 Sitio creado exitosamente:');
+            console.log('🎉 Sitio creado exitosamente con nombre personalizado:');
             console.log('   🆔 Site ID:', result.siteId);
-            console.log('   🔗 URL:', result.url);
+            console.log('   🏷️ Nombre personalizado:', result.siteName);
+            console.log('   🔗 URL personalizada:', result.url);
             console.log('   📊 Deploy ID:', result.deployId);
             console.log('   ⏱️  Tiempo total:', deployTime, 'ms');
 
-            // PASO 4: Verificación adicional del estado del deploy
-            if (result.deployId && result.deployId !== 'initial') {
+            // PASO 5: Verificación adicional del estado del deploy
+            if (result.deployId) {
                 try {
                     console.log('🔍 Verificando estado del deploy...');
                     await this.verifyDeployment(result.siteId, result.deployId);
@@ -363,85 +399,41 @@ ${bodyContent}
     }
 
     /**
-     * Genera un nombre de sitio válido para Netlify basado en el nombre de la empresa
-     * Crea URLs más cortas y amigables manteniendo unicidad
-     * @param {string} baseName - Nombre de la empresa proporcionado por el usuario
+     * Genera un nombre de sitio válido para Netlify basado en el input del usuario
+     * Usa el algoritmo simple y efectivo similar al método CLI anterior
+     * @param {string} baseName - Nombre proporcionado por el usuario
      * @returns {string} Nombre sanitizado, corto y único
      */
     generateSiteName(baseName) {
         console.log('🏷️  Generando nombre de sitio desde:', baseName);
         
-        // PASO 1: Extraer palabras significativas del nombre de la empresa
-        let companyName = baseName
+        // Algoritmo simple y efectivo (similar al CLI anterior)
+        let siteName = baseName
             .toLowerCase()
             .trim()
-            // Remover palabras comunes que no agregan valor a la URL
-            .replace(/\b(empresa|company|corp|corporation|ltd|limited|inc|incorporated|sa|srl|sl|cia|co|group|grupo)\b/g, '')
-            // Remover artículos y preposiciones
-            .replace(/\b(el|la|los|las|de|del|y|and|the|of|&)\b/g, '')
-            .trim();
+            .replace(/[^a-z0-9-]/g, '-')    // Solo letras, números y guiones
+            .replace(/-+/g, '-')            // Eliminar guiones múltiples
+            .replace(/^-|-$/g, '');         // Eliminar guiones al inicio/final
 
-        console.log('📝 Después de limpiar palabras comunes:', companyName);
-
-        // PASO 2: Tomar las primeras 1-2 palabras más significativas
-        const words = companyName
-            .split(/\s+/)
-            .filter(word => word.length > 0);
-        
-        let siteName = '';
-        
-        if (words.length === 0) {
-            siteName = 'landing';
-        } else if (words.length === 1) {
-            siteName = words[0];
-        } else {
-            // Para múltiples palabras, tomar la primera completa + iniciales de las siguientes
-            siteName = words[0];
-            
-            // Si la primera palabra es muy corta, agregar la segunda completa
-            if (words[0].length <= 3 && words[1]) {
-                siteName += words[1];
-            } else {
-                // Agregar iniciales de palabras adicionales (máximo 2 más)
-                for (let i = 1; i < Math.min(words.length, 3); i++) {
-                    if (words[i].length > 0) {
-                        siteName += words[i][0];
-                    }
-                }
-            }
-        }
-
-        console.log('🔤 Nombre base extraído:', siteName);
-
-        // PASO 3: Sanitizar para Netlify (solo letras, números y guiones)
-        siteName = siteName
-            .replace(/[^a-z0-9]/g, '')  // Solo alfanuméricos
-            .substring(0, 20);          // Máximo 20 caracteres para el nombre base
-
-        // PASO 4: Asegurar nombre mínimo válido
+        // Si queda muy corto o vacío, usar nombre por defecto
         if (siteName.length < 3) {
-            siteName = 'landing';
+            siteName = 'landing-page';
         }
 
-        console.log('🧹 Después de sanitizar:', siteName);
+        // Agregar timestamp corto para asegurar unicidad
+        const timestamp = Date.now().toString().slice(-6); // Últimos 6 dígitos
+        const finalName = `${siteName}-${timestamp}`;
 
-        // PASO 5: Agregar sufijo único pero corto
-        // Usar timestamp reducido para mantener URLs cortas
-        const now = Date.now();
-        const shortTimestamp = (now % 100000).toString(); // Últimos 5 dígitos
-        const finalName = `${siteName}${shortTimestamp}`;
+        // Verificar longitud máxima de Netlify (63 caracteres)
+        if (finalName.length > 63) {
+            const maxBaseLength = 63 - timestamp.length - 1; // -1 por el guión
+            siteName = siteName.substring(0, maxBaseLength);
+            return `${siteName}-${timestamp}`;
+        }
 
         console.log('✅ Nombre final generado:', finalName);
-        console.log('📏 Longitud final:', finalName.length, 'caracteres');
-
-        // PASO 6: Verificar límite de Netlify (63 caracteres máximo)
-        if (finalName.length > 63) {
-            const truncatedBase = siteName.substring(0, 58 - shortTimestamp.length);
-            const truncatedFinal = `${truncatedBase}${shortTimestamp}`;
-            console.log('✂️ Nombre truncado por límite de longitud:', truncatedFinal);
-            return truncatedFinal;
-        }
-
+        console.log('📏 Longitud:', finalName.length, 'caracteres');
+        
         return finalName;
     }
 
