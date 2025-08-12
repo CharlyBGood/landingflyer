@@ -155,24 +155,15 @@ function Editor() {
 
   const handlePublishSubmit = async (siteName) => {
     setIsPublishing(true);
-    
+
     try {
-      // IMPORTANTE: Limpiar el HTML antes de publicar
-      // Remover contentEditable y otros elementos de edición
       const clone = contentRef.current.cloneNode(true);
       DOMUtils.cleanAllEditingElements(clone);
-      DOMUtils.removeContentEditableAttributes(clone); // Asegurar que se remueva contentEditable
-      
+      DOMUtils.removeContentEditableAttributes(clone);
       const cleanHtmlContent = clone.innerHTML;
-      
-      console.log('🧹 HTML limpiado para publicación:');
-      console.log('   Original length:', htmlContent.length);
-      console.log('   Cleaned length:', cleanHtmlContent.length);
-      console.log('   ContentEditable removed:', !cleanHtmlContent.includes('contenteditable'));
 
-      // Timeout optimizado para ZIP Method (2 minutos es más que suficiente)
       const controller = new AbortController();
-      const timeoutId = setTimeout(() => controller.abort(), 120000); // 2 minutos
+      const timeoutId = setTimeout(() => controller.abort(), 120000);
 
       const response = await fetch('/api/publish', {
         method: 'POST',
@@ -180,7 +171,7 @@ function Editor() {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          htmlContent: cleanHtmlContent, // Usar HTML limpio en lugar de htmlContent
+          htmlContent: cleanHtmlContent,
           siteName
         }),
         signal: controller.signal
@@ -194,14 +185,14 @@ function Editor() {
       }
 
       const result = await response.json();
-      
+
       setPublishResult(result);
       setShowPublishModal(false);
       setShowSuccessModal(true);
-      
+
     } catch (error) {
       console.error('Error publicando:', error);
-      
+
       if (error.name === 'AbortError') {
         alert('La publicación está tardando más de lo esperado. El proceso puede estar aún completándose en segundo plano.');
       } else {
@@ -268,8 +259,6 @@ function Editor() {
             </>
           )}
         </div>
-
-        {/* Botón Publicar - Consistente con el diseño de la toolbar */}
         <button
           onClick={handlePublish}
           className="edit-mode-btn publish-btn-custom flex items-center gap-2 px-3 py-2 sm:px-4 sm:py-3 text-sm sm:text-base font-semibold text-white bg-gradient-to-r from-purple-500 to-purple-600 hover:from-purple-600 hover:to-purple-700 rounded-xl sm:rounded-2xl transition-all duration-200 transform hover:-translate-y-0.5 hover:shadow-lg focus:outline-none focus:ring-2 focus:ring-purple-500 focus:ring-offset-2"
@@ -308,7 +297,6 @@ function Editor() {
         dangerouslySetInnerHTML={{ __html: processedHtml }}
       />
 
-      {/* Modales de Publicación */}
       <PublishModal
         isOpen={showPublishModal}
         onClose={handleCloseModals}
