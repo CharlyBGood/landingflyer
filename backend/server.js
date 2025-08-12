@@ -88,10 +88,10 @@ app.post('/api/publish', async (req, res) => {
             });
         }
 
-        console.log('🔄 Importando NetlifyServiceCLI...');
+        console.log('🔄 Importando NetlifyZipService (Método ZIP Oficial)...');
         // Importar dinámicamente el servicio
-        const { NetlifyServiceCLI } = await import('./services/NetlifyServiceCLI.js');
-        const netlifyService = new NetlifyServiceCLI();
+        const { NetlifyZipService } = await import('./services/NetlifyZipService.js');
+        const netlifyService = new NetlifyZipService();
 
         console.log('🎯 Generando nombre válido para sitio...');
         // Generar nombre válido para Netlify
@@ -126,11 +126,11 @@ app.get('/api/deploy-status/:siteId/:deployId', async (req, res) => {
         
         console.log('🔍 Verificando estado del deploy:', { siteId, deployId });
         
-        // Con CLI el deploy es inmediato, no necesitamos verificar estado
+        // Con ZIP Method el deploy es atómico e inmediato
         res.json({
             state: 'ready',
             ready: true,
-            message: 'Deploy completado con CLI'
+            message: 'Deploy completado con ZIP Method atómico'
         });
         
     } catch (error) {

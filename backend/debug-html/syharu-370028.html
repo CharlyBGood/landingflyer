@@ -1,0 +1,332 @@
+<!DOCTYPE html>
+<html lang="es">
+<meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Syharu - La Cocina de Mamaipapa</title>
+  <style>
+    :root {
+      --primary-color: #a52a2a; /* Marrón rojizo */
+      --secondary-color: #f0ead6; /* Beige claro */
+      --accent-color: #1a6718; /* Salmón */
+      --neutral-color: #1e4e09; /* Gris oscuro para texto */
+      --neutral-light: #041a0e; /* Gris claro para texto secundario */
+    }
+
+    body {
+      font-family: 'Roboto', sans-serif;
+      margin: 0;
+      padding: 0;
+      color: var(--neutral-color);
+      background-color: var(--secondary-color);
+      line-height: 1.6;
+    }
+
+    /* Navigation */
+    nav {
+      background-color: rgba(255, 255, 255, 0.9);
+      padding: 16px;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    }
+
+    nav ul {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+      text-align: center;
+    }
+
+    nav ul li {
+      display: inline;
+      margin: 0 16px;
+    }
+
+    nav a {
+      text-decoration: none;
+      color: var(--primary-color);
+      font-weight: bold;
+      transition: color 0.3s ease;
+    }
+
+    nav a:hover {
+      color: var(--accent-color);
+    }
+
+    /* Hero Section */
+    .hero {
+      background: linear-gradient(to bottom, var(--secondary-color), rgba(255, 255, 255, 0.8)), url('https://images.unsplash.com/photo-1565299624946-b28f40a0ee38?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2080&q=80'); /* Replace with actual image */
+      background-size: cover;
+      background-position: center;
+      color: var(--neutral-color);
+      text-align: center;
+      padding: 64px 16px;
+      min-height: 80vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .hero h1 {
+      font-size: 3em;
+      margin-bottom: 16px;
+      color: var(--primary-color);
+    }
+
+    .hero p {
+      font-size: 1.2em;
+      max-width: 600px;
+      margin-bottom: 32px;
+    }
+
+    .cta-button {
+      display: inline-block;
+      padding: 12px 24px;
+      background-color: var(--accent-color);
+      color: white;
+      text-decoration: none;
+      border-radius: 8px;
+      font-weight: bold;
+      transition: background-color 0.3s ease, transform 0.2s ease;
+    }
+
+    .cta-button:hover {
+      background-color: var(--primary-color);
+      transform: translateY(-2px);
+    }
+
+    /* Services Section */
+    .services {
+      padding: 48px 16px;
+      text-align: center;
+    }
+
+    .services h2 {
+      font-size: 2.5em;
+      color: var(--primary-color);
+      margin-bottom: 32px;
+    }
+
+    .services-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 32px;
+      padding: 0 16px;
+    }
+
+    .service-card {
+      background-color: white;
+      border-radius: 12px;
+      padding: 24px;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    .service-card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 6px 25px rgba(0, 0, 0, 0.1);
+    }
+
+    .service-card h3 {
+      color: var(--neutral-color);
+      margin-bottom: 16px;
+    }
+
+    .service-card p {
+      color: var(--neutral-light);
+    }
+
+    /* About Section */
+    .about {
+      padding: 48px 16px;
+      text-align: center;
+      background-color: #f9f9f9;
+    }
+
+    .about h2 {
+      font-size: 2.5em;
+      color: var(--primary-color);
+      margin-bottom: 32px;
+    }
+
+    .about-points {
+      max-width: 800px;
+      margin: 0 auto;
+      display: flex;
+      flex-direction: column;
+      gap: 24px;
+      padding: 0 16px;
+    }
+
+    .about-point {
+      text-align: left;
+    }
+
+    .about-point h3 {
+      color: var(--neutral-color);
+      margin-bottom: 8px;
+    }
+
+    .about-point p {
+      color: var(--neutral-light);
+    }
+
+    /* Contact Section */
+    .contact {
+      padding: 48px 16px;
+      text-align: center;
+    }
+
+    .contact h2 {
+      font-size: 2.5em;
+      color: var(--primary-color);
+      margin-bottom: 32px;
+    }
+
+    .contact-info {
+      max-width: 600px;
+      margin: 0 auto;
+      padding: 0 16px;
+    }
+
+    .contact-info p {
+      margin-bottom: 16px;
+      color: var(--neutral-light);
+    }
+
+    /* Footer */
+    footer {
+      background-color: var(--neutral-color);
+      color: white;
+      text-align: center;
+      padding: 24px;
+    }
+
+    /* Responsive Design */
+    @media (min-width: 640px) { /* Tablet */
+      .hero {
+        padding: 96px 32px;
+        min-height: 90vh;
+      }
+
+      .hero h1 {
+        font-size: 4em;
+      }
+       .services-grid {
+        grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+      }
+    }
+
+    @media (min-width: 1024px) { /* Desktop */
+      .hero {
+        min-height: 100vh;
+        padding: 128px 64px;
+      }
+
+      .hero h1 {
+        font-size: 5em;
+      }
+
+      nav ul li {
+        margin: 0 24px;
+      }
+
+      .services {
+        padding: 64px;
+      }
+
+      .about {
+        padding: 64px;
+      }
+
+      .contact {
+        padding: 64px;
+      }
+    }
+  </style>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="">
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&amp;display=swap" rel="stylesheet">
+
+
+
+  <nav>
+    <ul>
+      <li><a href="#" data-editable="true" contenteditable="true">Menú</a></li>
+      <li><a href="#services" data-editable="true" contenteditable="true">Especialidades</a></li>
+      <li><a href="#contact" data-editable="true" contenteditable="true">Contacto</a></li>
+    </ul>
+  </nav>
+
+  <section class="hero" id="bg-element-1">
+    <h1 data-editable="true" contenteditable="true">Syharu:&nbsp;<div>La Cocina de Mamaipápa</div></h1>
+    <p data-editable="true" contenteditable="true">Sabores auténticos directo a tu mesa. Sorrentinos, pizzas y más, hechos con amor y los mejores ingredientes.</p>
+    <a href="#menu" class="cta-button" data-editable="true" contenteditable="true">Ver Nuestro Menú</a>
+  </section>
+
+  <section id="services" class="services">
+    <h2 data-editable="true" contenteditable="true">Nuestras Especialidades</h2>
+    <div class="services-grid">
+
+      <div class="service-card">
+        <h3 data-editable="true" contenteditable="true">Sorrentinos Clásicos</h3>
+        <p data-editable="true" contenteditable="true">Rellenos de jamón y queso, espinaca y ricota, o puerros y parmesano. ¡Una delicia!</p>
+        <p data-editable="true" contenteditable="true">Precio: $195</p>
+      </div>
+
+      <div class="service-card">
+        <h3 data-editable="true" contenteditable="true">Sorrentinos Especiales</h3>
+        <p data-editable="true" contenteditable="true">Pruébalos con puerros y panceta, capresse o calabacín. ¡Una explosión de sabor!</p>
+        <p data-editable="true" contenteditable="true">Precio: $235</p>
+      </div>
+
+       <div class="service-card">
+        <h3 data-editable="true" contenteditable="true">Muzarella</h3>
+        <p data-editable="true" contenteditable="true">Muzarella de 28cm</p>
+        <p data-editable="true" contenteditable="true">Precio: $240</p>
+      </div>
+
+       <div class="service-card">
+        <h3 data-editable="true" contenteditable="true">Muzarella con gustos</h3>
+        <p data-editable="true" contenteditable="true">Con chorizo chacarero - Con jamón - 4 quesos
+         Capresse - Con morrón y aceitunas
+         Con morrón y panceta - Con mejillones</p>
+        <p data-editable="true" contenteditable="true">Precio: $280</p>
+      </div>
+
+    </div>
+  </section>
+
+  <section class="about" id="bg-element-3">
+    <h2 data-editable="true" contenteditable="true">¿Por qué elegir Syharu?</h2>
+    <div class="about-points">
+      <div class="about-point">
+        <h3 data-editable="true" contenteditable="true">Ingredientes Frescos</h3>
+        <p data-editable="true" contenteditable="true">Utilizamos solo los ingredientes más frescos y de la mejor calidad para garantizar un sabor excepcional en cada plato.</p>
+      </div>
+      <div class="about-point">
+        <h3 data-editable="true" contenteditable="true">Recetas Tradicionales</h3>
+        <p data-editable="true" contenteditable="true">Nuestras recetas se basan en la tradición familiar, transmitiendo el amor y la dedicación en cada bocado.</p>
+      </div>
+      <div class="about-point">
+        <h3 data-editable="true" contenteditable="true">Servicio a Domicilio</h3>
+        <p data-editable="true" contenteditable="true">Disfruta de nuestros platos en la comodidad de tu hogar. ¡Consulta por nuestros envíos!</p>
+      </div>
+    </div>
+  </section>
+
+  <section id="contact" class="contact">
+    <h2 data-editable="true" contenteditable="true">Contáctanos</h2>
+    <div class="contact-info">
+      <p data-editable="true" contenteditable="true">¡Estamos listos para tomar tu pedido!</p>
+      <p data-editable="true" contenteditable="true">Mariano: 091 887 157</p>
+      <p data-editable="true" contenteditable="true">Vianina: 099 537 661</p>
+    </div>
+  </section>
+
+  <footer>
+    <p data-editable="true" contenteditable="true">© 2025 Syharu - La Cocina de Mamaipapa</p>
+  </footer>
+</html>
