@@ -21,6 +21,22 @@ function Editor() {
 
   const [cssVars, setCssVars] = useState([]);
 
+  // Agregar un estado para el contenido original
+  const [originalContent, setOriginalContent] = useState('');
+
+  // En el useEffect de carga inicial, guardar también como "original"
+  useEffect(() => {
+    const savedContent = localStorage.getItem('editableHtml') || '<h1>No hay contenido...</h1>';
+    setHtmlContent(savedContent);
+    setOriginalContent(savedContent); // ✅ Guardar como original
+  }, []);
+
+  const handleReset = () => {
+    setHtmlContent(originalContent);
+    setIsEditMode(false);
+    showSuccessMessage('Página restaurada al estado original');
+  };
+
   const getEditableHtml = (originalHtml, editMode) => {
     if (!originalHtml) return originalHtml;
 
@@ -222,6 +238,13 @@ function Editor() {
             <span className="btn-text">
               {isEditMode ? 'Salir' : 'Editar'}
             </span>
+          </button>
+          <button
+            onClick={handleReset}
+            className="edit-mode-btn reset-btn"
+            aria-label="Restaurar al estado original"
+          >
+            <span className="btn-text">Reset</span>
           </button>
 
           {isEditMode && (
