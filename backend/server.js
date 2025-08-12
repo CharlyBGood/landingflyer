@@ -22,7 +22,7 @@ const textModel = vertex_ai.getGenerativeModel({ model: 'gemini-2.0-flash' });
 import fsSync from 'fs';
 if (process.env.GOOGLE_APPLICATION_CREDENTIALS) {
     try {
-        fsSync.accessSync(process.env.GOOGLE_APPLICATION_CREDENTIALS, fsSync.constants.R_OK);        
+        fsSync.accessSync(process.env.GOOGLE_APPLICATION_CREDENTIALS, fsSync.constants.R_OK);
     } catch (err) {
         console.error('No se pudo acceder al archivo de credenciales:', err);
     }
@@ -83,34 +83,22 @@ app.post('/api/publish', async (req, res) => {
 
         if (!htmlContent || !siteName) {
             console.log('❌ Faltan datos requeridos');
-            return res.status(400).json({ 
-                error: 'Se requiere htmlContent y siteName' 
+            return res.status(400).json({
+                error: 'Se requiere htmlContent y siteName'
             });
         }
 
-        console.log('🔄 Importando NetlifyZipService (Método ZIP Oficial)...');
         // Importar dinámicamente el servicio
         const { NetlifyZipService } = await import('./services/NetlifyZipService.js');
         const netlifyService = new NetlifyZipService();
 
-        console.log('🎯 Extrayendo título del HTML y generando nombre de sitio...');
-        // NUEVO: Extraer título del HTML para usar en la URL
         const htmlTitle = netlifyService.extractTitleFromHTML(htmlContent);
-        const titleForURL = htmlTitle || siteName; // Usar título del HTML, sino input del usuario
-        
-        console.log('📋 Título extraído del HTML:', htmlTitle || 'No encontrado');
-        console.log('📋 Input del usuario:', siteName);
-        console.log('🎯 Título seleccionado para URL:', titleForURL);
-        
-        // Generar nombre válido para Netlify usando el título apropiado
-        const validSiteName = netlifyService.generateSiteName(titleForURL);
-        console.log('✅ Nombre final generado:', validSiteName);
+        const titleForURL = htmlTitle || siteName; 
 
-        console.log('🚀 Creando sitio en Netlify...');
-        // Crear sitio en Netlify
+        const validSiteName = netlifyService.generateSiteName(titleForURL);
+
         const result = await netlifyService.createSite(validSiteName, htmlContent);
 
-        console.log('🎉 Sitio creado exitosamente:', result);
         res.json({
             success: true,
             url: result.url,
@@ -120,9 +108,9 @@ app.post('/api/publish', async (req, res) => {
 
     } catch (error) {
         console.error('Error publicando sitio:', error);
-        res.status(500).json({ 
-            error: 'Error al publicar el sitio', 
-            details: error.message 
+        res.status(500).json({
+            error: 'Error al publicar el sitio',
+            details: error.message
         });
     }
 });
@@ -130,22 +118,18 @@ app.post('/api/publish', async (req, res) => {
 // --- ENDPOINT: Verificar estado del deploy ---
 app.get('/api/deploy-status/:siteId/:deployId', async (req, res) => {
     try {
-        const { siteId, deployId } = req.params;
-        
-        console.log('🔍 Verificando estado del deploy:', { siteId, deployId });
-        
-        // Con ZIP Method el deploy es atómico e inmediato
+
         res.json({
             state: 'ready',
             ready: true,
             message: 'Deploy completado con ZIP Method atómico'
         });
-        
+
     } catch (error) {
         console.error('Error verificando estado:', error);
-        res.status(500).json({ 
-            error: 'Error al verificar estado del deploy', 
-            details: error.message 
+        res.status(500).json({
+            error: 'Error al verificar estado del deploy',
+            details: error.message
         });
     }
 });
