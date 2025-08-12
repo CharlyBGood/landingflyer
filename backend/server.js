@@ -10,7 +10,7 @@ import { fileURLToPath } from 'url';
 
 const app = express();
 app.use(cors());
-app.use(express.json()); // Necesario si en el futuro envías datos JSON
+app.use(express.json());
 const upload = multer({ storage: multer.memoryStorage() });
 
 const __filename = fileURLToPath(import.meta.url);
@@ -37,16 +37,13 @@ app.post('/api/generate-preview', upload.single('flyerImage'), async (req, res) 
     try {
         const imageBuffer = req.file.buffer;
 
-        // Cargar el prompt desde el archivo externo
         const promptTemplate = await fs.readFile(path.join(__dirname, 'prompt.md'), 'utf8');
 
-        // Preparar la petición multimodal para la IA
         const requestParts = [
             { text: promptTemplate },
             { inlineData: { mimeType: req.file.mimetype, data: imageBuffer.toString('base64') } },
         ];
 
-        // Llamar a la IA
         const result = await textModel.generateContent({ contents: [{ role: 'user', parts: requestParts }] });
         const response = result.response;
 
@@ -56,7 +53,6 @@ app.post('/api/generate-preview', upload.single('flyerImage'), async (req, res) 
 
         const generatedHtml = response.candidates[0].content.parts[0].text.replace(/^```html\n?/, '').replace(/```$/, '');
 
-        // Enviar el HTML generado al frontend
         res.json({ generatedHtml });
 
     } catch (error) {
@@ -73,16 +69,9 @@ app.post('/api/generate-preview', upload.single('flyerImage'), async (req, res) 
 // --- ENDPOINT: Publicar Landing Page ---
 app.post('/api/publish', async (req, res) => {
     try {
-        console.log('📥 Solicitud de publicación recibida');
         const { htmlContent, siteName } = req.body;
 
-        console.log('📋 Datos recibidos:', {
-            htmlContentLength: htmlContent?.length || 0,
-            siteName: siteName
-        });
-
         if (!htmlContent || !siteName) {
-            console.log('❌ Faltan datos requeridos');
             return res.status(400).json({
                 error: 'Se requiere htmlContent y siteName'
             });
@@ -93,7 +82,7 @@ app.post('/api/publish', async (req, res) => {
         const netlifyService = new NetlifyZipService();
 
         const htmlTitle = netlifyService.extractTitleFromHTML(htmlContent);
-        const titleForURL = htmlTitle || siteName; 
+        const titleForURL = htmlTitle || siteName;
 
         const validSiteName = netlifyService.generateSiteName(titleForURL);
 
@@ -115,7 +104,6 @@ app.post('/api/publish', async (req, res) => {
     }
 });
 
-// --- ENDPOINT: Verificar estado del deploy ---
 app.get('/api/deploy-status/:siteId/:deployId', async (req, res) => {
     try {
 
