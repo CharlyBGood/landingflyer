@@ -26,7 +26,10 @@ function App() {
       const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:8080';
       const response = await axios.post(`${apiUrl}/api/generate-preview`, formData);
       setGeneratedHtml(response.data.generatedHtml);
+      
+      // 🔒 NUEVO TEMPLATE: Guardar tanto contenido de trabajo como template original inmutable
       localStorage.setItem('editableHtml', response.data.generatedHtml);
+      localStorage.setItem('originalTemplate', response.data.generatedHtml);
     } catch (err) {
       setError('Hubo un error al generar la página.', err);
     } finally {

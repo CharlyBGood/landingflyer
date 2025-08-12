@@ -24,15 +24,25 @@ function Editor() {
   // Agregar un estado para el contenido original
   const [originalContent, setOriginalContent] = useState('');
 
-  // 🔒 SNAPSHOT INMUTABLE: Solo se establece una vez al cargar y NUNCA se modifica
+  // 🔒 SNAPSHOT INMUTABLE: Separación completa de storages
   useEffect(() => {
-    const savedContent = localStorage.getItem('editableHtml') || '<h1>No hay contenido...</h1>';
-    setHtmlContent(savedContent);
-    setOriginalContent(savedContent); // ✅ Snapshot inmutable del estado original
+    const workingContent = localStorage.getItem('editableHtml') || '<h1>No hay contenido...</h1>';
+    const originalTemplate = localStorage.getItem('originalTemplate');
+    
+    setHtmlContent(workingContent);
+    
+    if (originalTemplate) {
+      // ✅ Usar template original guardado (VERDADERAMENTE inmutable)
+      setOriginalContent(originalTemplate);
+    } else {
+      // 🆕 Primera vez: guardar template original inmutable
+      setOriginalContent(workingContent);
+      localStorage.setItem('originalTemplate', workingContent);
+    }
   }, []);
 
   const handleReset = () => {
-    // 🔄 Restaurar al snapshot inmutable original (descarta todos los cambios)
+    // 🔄 Restaurar al template original inmutable (NUNCA contaminado)
     setHtmlContent(originalContent);
     localStorage.setItem('editableHtml', originalContent);
     setIsEditMode(false);
