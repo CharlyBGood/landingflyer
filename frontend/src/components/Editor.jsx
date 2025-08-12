@@ -24,14 +24,15 @@ function Editor() {
   // Agregar un estado para el contenido original
   const [originalContent, setOriginalContent] = useState('');
 
-  // En el useEffect de carga inicial, guardar también como "original"
+  // 🔒 SNAPSHOT INMUTABLE: Solo se establece una vez al cargar y NUNCA se modifica
   useEffect(() => {
     const savedContent = localStorage.getItem('editableHtml') || '<h1>No hay contenido...</h1>';
     setHtmlContent(savedContent);
-    setOriginalContent(savedContent); // ✅ Guardar como original
+    setOriginalContent(savedContent); // ✅ Snapshot inmutable del estado original
   }, []);
 
   const handleReset = () => {
+    // 🔄 Restaurar al snapshot inmutable original (descarta todos los cambios)
     setHtmlContent(originalContent);
     localStorage.setItem('editableHtml', originalContent);
     setIsEditMode(false);
@@ -66,6 +67,7 @@ function Editor() {
       .map(m => ({ name: m[1], value: m[2].trim() }));
   };
   const updateCSSVariable = (variableName, newValue) => {
+    // 🎨 Actualizar variable CSS en tiempo real (solo estado de trabajo, no original)
     document.documentElement.style.setProperty(variableName, newValue);
 
     if (contentRef.current) {
@@ -84,6 +86,7 @@ function Editor() {
         );
         styleElement.textContent = cssText;
 
+        // ✅ Actualizar estado de trabajo (NO contamina originalContent)
         setHtmlContent(contentRef.current.innerHTML);
       }
       setCssVars(extractRootCSSVariables());
@@ -133,10 +136,7 @@ function Editor() {
     };
   }, [isEditMode]);
 
-  useEffect(() => {
-    const savedContent = localStorage.getItem('editableHtml') || '<h1>No hay contenido para editar. Genera una vista previa en la página principal.</h1>';
-    setHtmlContent(savedContent);
-  }, []);
+  // 🔄 CSS Variables Effect - Extrae y aplica variables CSS del contenido
 
   useEffect(() => {
     const variables = extractRootCSSVariables();
@@ -162,6 +162,8 @@ function Editor() {
     if (!contentRef.current) return;
     const savedContent = saveCleanContent(contentRef.current);
     setHtmlContent(savedContent);
+    // 🔒 NO actualizar originalContent - mantener snapshot inmutable
+    // setOriginalContent NO se llama aquí para preservar el estado original
     setIsEditMode(false);
     showSuccessMessage('Cambios guardados exitosamente');
   };
