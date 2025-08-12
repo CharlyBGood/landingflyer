@@ -33,6 +33,7 @@ function Editor() {
 
   const handleReset = () => {
     setHtmlContent(originalContent);
+    localStorage.setItem('editableHtml', originalContent);
     setIsEditMode(false);
     showSuccessMessage('Página restaurada al estado original');
   };
