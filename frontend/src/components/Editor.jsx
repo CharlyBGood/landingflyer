@@ -3,6 +3,8 @@ import { PencilIcon, CheckIcon, GlobeIcon } from '../utilities';
 import { useBackgroundButtons } from '../hooks/useBackgroundButtons';
 import { DOMUtils } from '../utilities/domUtils';
 import { getInputColor } from '../utilities';
+import PublishModal from './editor/PublishModal.jsx';
+import PublishSuccessModal from './editor/PublishSuccessModal.jsx';
 import '../styles/Editor.css';
 
 
@@ -10,6 +12,10 @@ function Editor() {
   const [htmlContent, setHtmlContent] = useState('');
   const [isEditMode, setIsEditMode] = useState(false);
   const [saveMessage, setSaveMessage] = useState('');
+  const [showPublishModal, setShowPublishModal] = useState(false);
+  const [showSuccessModal, setShowSuccessModal] = useState(false);
+  const [isPublishing, setIsPublishing] = useState(false);
+  const [publishResult, setPublishResult] = useState(null);
   const contentRef = useRef(null);
   const toolbarRef = useRef(null);
 
@@ -144,9 +150,59 @@ function Editor() {
   };
 
   const handlePublish = () => {
-    console.log('🚀 Publicar página - Iniciando proceso...');
-    console.log('📄 HTML a publicar:', htmlContent);
-    // TODO: Implementar lógica de publicación
+    setShowPublishModal(true);
+  };
+
+  const handlePublishSubmit = async (siteName) => {
+    setIsPublishing(true);
+    
+    try {
+      // Timeout más largo para el deploy de Netlify con CLI (10 minutos)
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => controller.abort(), 600000); // 10 minutos
+
+      const response = await fetch('/api/publish', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          htmlContent,
+          siteName
+        }),
+        signal: controller.signal
+      });
+
+      clearTimeout(timeoutId);
+
+      if (!response.ok) {
+        const errorData = await response.json().catch(() => ({}));
+        throw new Error(`Error HTTP ${response.status}: ${errorData.details || errorData.error || 'Error desconocido'}`);
+      }
+
+      const result = await response.json();
+      
+      setPublishResult(result);
+      setShowPublishModal(false);
+      setShowSuccessModal(true);
+      
+    } catch (error) {
+      console.error('Error publicando:', error);
+      
+      if (error.name === 'AbortError') {
+        alert('La publicación está tardando más de lo esperado. El proceso puede estar aún completándose en segundo plano.');
+      } else {
+        alert(`Error al publicar: ${error.message}`);
+      }
+    } finally {
+      setIsPublishing(false);
+    }
+  };
+
+  const handleCloseModals = () => {
+    setShowPublishModal(false);
+    setShowSuccessModal(false);
+    setPublishResult(null);
   };
 
   return (
@@ -237,6 +293,20 @@ function Editor() {
         className="content-area"
         data-edit-mode={isEditMode}
         dangerouslySetInnerHTML={{ __html: processedHtml }}
+      />
+
+      {/* Modales de Publicación */}
+      <PublishModal
+        isOpen={showPublishModal}
+        onClose={handleCloseModals}
+        onPublish={handlePublishSubmit}
+        isPublishing={isPublishing}
+      />
+
+      <PublishSuccessModal
+        isOpen={showSuccessModal}
+        onClose={handleCloseModals}
+        publishResult={publishResult}
       />
     </div>
   );

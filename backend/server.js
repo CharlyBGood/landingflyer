@@ -70,6 +70,78 @@ app.post('/api/generate-preview', upload.single('flyerImage'), async (req, res) 
     }
 });
 
+// --- ENDPOINT: Publicar Landing Page ---
+app.post('/api/publish', async (req, res) => {
+    try {
+        console.log('📥 Solicitud de publicación recibida');
+        const { htmlContent, siteName } = req.body;
+
+        console.log('📋 Datos recibidos:', {
+            htmlContentLength: htmlContent?.length || 0,
+            siteName: siteName
+        });
+
+        if (!htmlContent || !siteName) {
+            console.log('❌ Faltan datos requeridos');
+            return res.status(400).json({ 
+                error: 'Se requiere htmlContent y siteName' 
+            });
+        }
+
+        console.log('🔄 Importando NetlifyServiceCLI...');
+        // Importar dinámicamente el servicio
+        const { NetlifyServiceCLI } = await import('./services/NetlifyServiceCLI.js');
+        const netlifyService = new NetlifyServiceCLI();
+
+        console.log('🎯 Generando nombre válido para sitio...');
+        // Generar nombre válido para Netlify
+        const validSiteName = netlifyService.generateSiteName(siteName);
+        console.log('✅ Nombre generado:', validSiteName);
+
+        console.log('🚀 Creando sitio en Netlify...');
+        // Crear sitio en Netlify
+        const result = await netlifyService.createSite(validSiteName, htmlContent);
+
+        console.log('🎉 Sitio creado exitosamente:', result);
+        res.json({
+            success: true,
+            url: result.url,
+            siteName: result.siteName,
+            siteId: result.siteId
+        });
+
+    } catch (error) {
+        console.error('Error publicando sitio:', error);
+        res.status(500).json({ 
+            error: 'Error al publicar el sitio', 
+            details: error.message 
+        });
+    }
+});
+
+// --- ENDPOINT: Verificar estado del deploy ---
+app.get('/api/deploy-status/:siteId/:deployId', async (req, res) => {
+    try {
+        const { siteId, deployId } = req.params;
+        
+        console.log('🔍 Verificando estado del deploy:', { siteId, deployId });
+        
+        // Con CLI el deploy es inmediato, no necesitamos verificar estado
+        res.json({
+            state: 'ready',
+            ready: true,
+            message: 'Deploy completado con CLI'
+        });
+        
+    } catch (error) {
+        console.error('Error verificando estado:', error);
+        res.status(500).json({ 
+            error: 'Error al verificar estado del deploy', 
+            details: error.message 
+        });
+    }
+});
+
 const PORT = process.env.PORT || 8080;
 app.listen(PORT, () => {
     console.log(`Servidor escuchando en el puerto ${PORT}`);

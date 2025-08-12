@@ -1,0 +1,82 @@
+import React from 'react';
+import { CheckIcon, ExternalLinkIcon, XMarkIcon } from '../../utilities';
+
+const PublishSuccessModal = ({ isOpen, onClose, publishResult }) => {
+  if (!isOpen || !publishResult) return null;
+
+  const handleViewSite = () => {
+    window.open(publishResult.url, '_blank');
+  };
+
+  return (
+    <div className="fixed inset-0 bg-black/50 flex items-center justify-center p-4 z-50">
+      <div className="bg-white rounded-2xl p-6 w-full max-w-md mx-auto">
+        <div className="flex items-center justify-between mb-4">
+          <div className="flex items-center gap-3">
+            <div className="w-8 h-8 bg-green-100 rounded-full flex items-center justify-center">
+              <CheckIcon size={20} className="text-green-600" />
+            </div>
+            <h2 className="text-xl font-bold text-gray-900">
+              ¡Publicado con éxito!
+            </h2>
+          </div>
+          <button
+            onClick={onClose}
+            className="p-1 hover:bg-gray-100 rounded-lg transition-colors"
+          >
+            <XMarkIcon size={24} />
+          </button>
+        </div>
+
+        <div className="space-y-4">
+          <div className="p-4 bg-green-50 rounded-lg">
+            <p className="text-sm text-gray-700 mb-2">
+              Tu landing page está ahora disponible en:
+            </p>
+            <div className="space-y-2">
+              <div className="p-2 bg-white border border-green-200 rounded-lg">
+                <p className="text-sm font-medium text-gray-900">Dominio personalizado:</p>
+                <code className="text-green-600 text-sm">
+                  {publishResult.url}
+                </code>
+              </div>
+              {publishResult.netlifyUrl && (
+                <div className="p-2 bg-white border border-gray-200 rounded-lg">
+                  <p className="text-sm font-medium text-gray-700">URL alternativa:</p>
+                  <code className="text-gray-600 text-xs">
+                    {publishResult.netlifyUrl}
+                  </code>
+                </div>
+              )}
+            </div>
+          </div>
+
+          <div className="flex gap-3">
+            <button
+              onClick={onClose}
+              className="flex-1 px-4 py-2 text-gray-700 bg-gray-100 hover:bg-gray-200 rounded-lg transition-colors"
+            >
+              Cerrar
+            </button>
+            <button
+              onClick={handleViewSite}
+              className="flex-1 px-4 py-2 bg-green-600 hover:bg-green-700 text-white rounded-lg transition-colors flex items-center justify-center gap-2"
+            >
+              Ver sitio
+              <ExternalLinkIcon size={16} />
+            </button>
+          </div>
+        </div>
+
+        <div className="mt-4 p-3 bg-blue-50 rounded-lg">
+          <p className="text-xs text-blue-800">
+            <strong>Nota:</strong> La configuración DNS puede tardar unos minutos en propagarse. 
+            Si el dominio personalizado no funciona inmediatamente, usa la URL alternativa.
+          </p>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+export default PublishSuccessModal;
