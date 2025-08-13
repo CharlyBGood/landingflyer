@@ -1,9 +1,14 @@
-- **Never apply styles directly via the `style` attribute in JSX/HTML. Always use Tailwind CSS classes if available, or otherwise use the appropriate CSS file.**
+- **NEVER use px units. Always use responsive units (rem, em, %, vw, vh, clamp()) for truly responsive design.**
+- **MAXIMIZE Tailwind CSS usage. Only use custom CSS for complex animations, gradients, or features unavailable in Tailwind.**
+- **NEVER use the `style` attribute in JSX/HTML. Always use Tailwind CSS classes or custom CSS classes from the appropriate CSS file.**
+- **STRICT CSS ORGANIZATION**: All styles must be either Tailwind classes or custom CSS classes in `frontend/src/styles/` directory.
 
 ## ⚠️ CRITICAL GUIDELINES
 
 - **🔒 NEVER MAKE CODE CHANGES WITHOUT EXPLICIT USER AUTHORIZATION**: Always ask for explicit approval before implementing any code modifications. Present the plan first, wait for confirmation, then proceed.
 - **🚫 NEVER START SERVERS FOR TESTING WITHOUT USER REQUEST**: Do not automatically run `npm start`, `npm run dev`, or any server commands unless specifically asked by the user. Testing should only be done when explicitly requested.
+- **📐 RESPONSIVE-FIRST DESIGN**: Always use rem/em/% instead of px. Use clamp() for fluid typography. Prioritize Tailwind CSS over custom CSS.
+- **🚫 NEVER USE `style` ATTRIBUTE**: The `style` attribute is forbidden. Use Tailwind classes or custom CSS classes from `frontend/src/styles/`.
 
 # Copilot Instructions for LandingFlyer
 
@@ -30,11 +35,14 @@ LandingFlyer is a full-stack AI-powered landing page generator. It consists of a
   - **Publishing Cleanup**: HTML is cleaned before publishing to remove `contentEditable` attributes and editing elements via `DOMUtils.cleanAllEditingElements()`.
 
 ## Project Conventions
+- **Responsive-first design**: Use rem, em, %, vw, vh, clamp() - NEVER px. Design must be fluid and responsive.
+- **Tailwind CSS maximization**: Use Tailwind classes whenever possible. Custom CSS only for complex animations or unavailable features.
 - **Mobile-first, modern CSS**: All generated HTML/CSS must be responsive and use semantic HTML5.
 - **No hardcoded color values in frontend logic**: Only reference CSS variables (e.g., `--primary`).
 - **All editability and theming via CSS variables**: The editor must not manipulate inline styles or static color values.
 - **No interference with text editing or background image controls**: Color pickers and other controls must not disrupt contentEditable regions.
 - **AI-generated HTML must include a `:root` block with all theme variables**.
+- **CSS organization**: All custom CSS files go in `frontend/src/styles/` directory.
 
 ## Key Files
 - `backend/server.js`: Express API, prompt orchestration, HTML/CSS injection.
@@ -48,15 +56,16 @@ LandingFlyer is a full-stack AI-powered landing page generator. It consists of a
 - `DEVELOPMENT_GUIDELINES.md`: Windows PowerShell-specific development procedures and server verification.
 
 ## AI Agent Guidance
-- **When generating or editing frontend code**: Always use CSS variables for theming. Never hardcode color values. Ensure all color pickers reference the fixed set of variable names.
+- **When generating or editing frontend code**: Always use Tailwind CSS classes first. Use rem/em/% units, never px. Ensure responsive design with clamp() for fluid typography.
 - **When updating the editor**: Do not introduce stateful color logic or extract color values from style blocks. Update variables directly in the DOM and embedded CSS.
 - **When modifying backend prompt logic**: Ensure the output HTML always includes a `:root` block with all theme variables. Follow the 3-phase prompt structure in `prompt.md`.
-- **When adding new features**: Adhere to the mobile-first, semantic HTML/CSS conventions. Keep backend and frontend logic modular and separated.
+- **When adding new features**: Adhere to the mobile-first, responsive design conventions. Maximize Tailwind usage. Keep backend and frontend logic modular and separated.
 - **When working with deployments**: Use NetlifyZipService for all Netlify deployments. Ensure HTML is validated and cleaned before publishing. The service automatically handles HTML structure validation and content-type fixes.
 - **When using terminal commands**: Use Windows PowerShell syntax (`;` for chaining). Always verify server status before starting to avoid port conflicts.
 - **When implementing HTML cleanup**: Use `DOMUtils.cleanAllEditingElements()` to remove contentEditable attributes and editing UI before publishing. This is mandatory for clean published sites.
 - **When debugging HTML rendering issues**: Check for missing DOCTYPE, incomplete HTML structure, and verify MIME type. The validateAndFixHTML function handles most issues automatically.
 - **When creating company name URLs**: Use the intelligent word processing in generateSiteName that removes common business terms and creates short, memorable URLs.
+- **When writing CSS**: Use Tailwind classes whenever possible. Custom CSS only for animations, gradients, or features not available in Tailwind. Store custom CSS in `frontend/src/styles/`. **NEVER use the `style` attribute in JSX/HTML.**
 - **When writing documentation**: Reference actual file paths and workflows. Avoid generic advice; focus on project-specific details.
 
 ## Example: Adding a New Theme Variable

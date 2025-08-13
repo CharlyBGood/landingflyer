@@ -1,0 +1,104 @@
+/* HeroSection.css - Paleta SinapsiaLab */
+
+/* Colores de texto */
+.text-sinapsia-light {
+  color: #c8b8d8;
+}
+
+.text-sinapsia-accent {
+  color: #7a45a0;
+}
+
+/* Backgrounds */
+.bg-sinapsia-base {
+  background-color: #1a0f20;
+}
+
+.bg-sinapsia-deep {
+  background-color: #0c070f;
+}
+
+.bg-sinapsia-gradient {
+  background: linear-gradient(135deg, #150a1a 0%, #1a0f20 100%);
+}
+
+/* Borders */
+.border-sinapsia-accent {
+  border-color: #3a2540;
+}
+
+/* Botones con paleta SinapsiaLab */
+.btn-sinapsia-primary {
+  background-color: #4a2560;
+}
+
+.btn-sinapsia-primary:hover:not(:disabled) {
+  background-color: #5a3570;
+}
+
+.btn-sinapsia-secondary {
+  background-color: #6a3590;
+}
+
+.btn-sinapsia-secondary:hover:not(:disabled) {
+  background-color: #7a45a0;
+}
+
+.btn-sinapsia-tertiary {
+  background-color: #3a2540;
+}
+
+.btn-sinapsia-tertiary:hover:not(:disabled) {
+  background-color: #4a2560;
+}
+
+/* Link de desarrollo personalizado */
+.link-sinapsia {
+  color: #7a45a0;
+  border: 1px solid #4a2560;
+}
+
+.link-sinapsia:hover {
+  color: #c8b8d8;
+  border-color: #7a45a0;
+}
+
+/* Animaciones */
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes slideInUp {
+  from {
+    opacity: 0;
+    transform: translateY(1.875rem) scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(1.25rem);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.modal-overlay {
+  animation: fadeIn 0.3s ease-out;
+}
+
+.modal-container {
+  animation: slideInUp 0.4s ease-out;
+}
+
+.modal-content {
+  animation: fadeInUp 0.4s ease-out;
+}

@@ -1,77 +1,15 @@
-/* App.css */
-
-/* Variables CSS dinámicas */
 :root {
-  --navbar-height: 4rem; /* 64px → 4rem - Fallback por defecto */
+  --navbar-height: 4rem;
 }
 
-/* Hero Section con padding dinámico - Mobile First */
 .hero-section {
-  /* Mobile: Padding básico + altura del navbar */
   padding-top: calc(var(--navbar-height) + 1rem);
-  padding-left: 1rem;
-  padding-right: 1rem;
-  padding-bottom: 2rem;
-  
-  /* Tablet: Aumentar padding */
-  @media (min-width: 40rem) { /* 640px → 40rem */
+
+  @media (min-width: 40rem) {
     padding-top: calc(var(--navbar-height) + 1.5rem);
-    padding-left: 2rem;
-    padding-right: 2rem;
-    padding-bottom: 3rem;
   }
-  
-  /* Desktop: Máximo padding */
-  @media (min-width: 64rem) { /* 1024px → 64rem */
+
+  @media (min-width: 64rem) {
     padding-top: calc(var(--navbar-height) + 2rem);
-    padding-left: 4rem;
-    padding-right: 4rem;
-    padding-bottom: 4rem;
   }
 }
-
-.hero-container {
-  /* Mobile: Contenedor básico */
-  max-width: 100%;
-  margin: 0 auto;
-  text-align: center;
-  
-  /* Tablet: Contenedor medio */
-  @media (min-width: 40rem) { /* 640px → 40rem */
-    max-width: 48rem; /* 768px → 48rem */
-  }
-  
-  /* Desktop: Contenedor completo */
-  @media (min-width: 64rem) { /* 1024px → 64rem */
-    max-width: 96rem; /* 1536px → 96rem */
-  }
-  
-  /* Ultra wide: Límite máximo */
-  @media (min-width: 96rem) { /* 1536px → 96rem */
-    max-width: 96rem;
-  }
-}
-
-/* Responsive adjustments para navbar dinámico */
-@media (max-width: 39.9375rem) { /* 639px → 39.9375rem */
-  /* Mobile: Navbar más compacto */
-  .hero-section {
-    padding-top: calc(var(--navbar-height) + 0.75rem);
-  }
-}
-
-@media (min-width: 40rem) and (max-width: 63.9375rem) { /* 640px-1023px → 40rem-63.9375rem */
-  /* Tablet: Espaciado intermedio */
-  .hero-section {
-    padding-top: calc(var(--navbar-height) + 1.25rem);
-  }
-}
-
-@media (min-width: 64rem) { /* 1024px → 64rem */
-  /* Desktop: Máximo espaciado */
-  .hero-section {
-    padding-top: calc(var(--navbar-height) + 1.75rem);
-  }
-}
-
-/* Estilos globales de la aplicación */

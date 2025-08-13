@@ -1,16 +1,16 @@
 
 import ManualForm from './ManualForm.jsx';
-import './HeroSection.css';
+import '../styles/HeroSection.css';
 
 export default function HeroSection({
-  isLoading, 
-  handleGeneratePreview, 
-  handleFileChange, 
+  isLoading,
+  handleGeneratePreview,
+  handleFileChange,
   handleManualSubmit,
-  selectedFile, 
+  selectedFile,
   error,
   inputMode,
-  setInputMode 
+  setInputMode
 }) {
   const handleFlyerClick = () => {
     setInputMode('image');
@@ -19,7 +19,7 @@ export default function HeroSection({
   };
 
   const handleCloseModal = () => {
-    setInputMode('image'); // Volver al modo por defecto
+    setInputMode('image');
   };
 
   return (
@@ -28,15 +28,28 @@ export default function HeroSection({
         <h1 className="text-3xl sm:text-4xl lg:text-5xl font-bold mb-2 sm:mb-4 text-white">
           Crea tu Landing Page Profesional
         </h1>
-        <p className="text-base sm:text-lg lg:text-xl text-gray-300 max-w-3xl mx-auto px-4">
-          Elige cómo quieres crear tu página: sube un flyer existente o créala desde cero.
+        <p className="text-base sm:text-lg lg:text-xl max-w-3xl mx-auto px-4 mb-4 text-sinapsia-light">
+          Transforma tu flyer en una página web profesional o créala desde cero.
+          <br className="hidden sm:block" />
+          <span className="text-sinapsia-accent">Una herramienta de SinapsiaLab.</span>
         </p>
+        <div className="flex justify-center">
+          <a
+            href="https://www.sinapsialab.com"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="link-sinapsia inline-flex items-center gap-2 text-sm transition-colors px-3 py-1.5 rounded-full hover:text-sinapsia-light hover:border-sinapsia-accent"
+          >
+            ¿Necesitas desarrollo personalizado?
+            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+            </svg>
+          </a>
+        </div>
       </header>
 
-      <main className="bg-gray-800 p-4 sm:p-8 rounded-lg border border-gray-600 mx-auto max-w-4xl">
+      <main className="bg-sinapsia-base border border-sinapsia-accent p-4 sm:p-8 rounded-lg mx-auto max-w-4xl">
         <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 items-center justify-center">
-          
-          {/* Input file oculto */}
           <input
             type="file"
             id="file-input"
@@ -46,11 +59,10 @@ export default function HeroSection({
             className="sr-only"
           />
 
-          {/* Botón "Tengo un Flyer" */}
           <button
             onClick={handleFlyerClick}
             disabled={isLoading}
-            className="w-full sm:w-auto px-4 py-2.5 bg-emerald-600 hover:bg-emerald-700 disabled:bg-gray-500 text-white font-medium text-sm sm:text-base rounded-lg transition-all duration-200 transform hover:-translate-y-0.5 hover:shadow-lg min-w-0 sm:min-w-44"
+            className="btn-sinapsia-primary w-full sm:w-auto px-4 py-2.5 disabled:bg-gray-500 text-white font-medium text-sm sm:text-base rounded-lg transition-all duration-200 transform hover:-translate-y-0.5 hover:shadow-lg min-w-0 sm:min-w-44"
           >
             📄 {selectedFile ? selectedFile.name.substring(0, 20) + '...' : 'Tengo un Flyer'}
           </button>
@@ -59,16 +71,16 @@ export default function HeroSection({
           <button
             onClick={() => setInputMode('manual')}
             disabled={isLoading}
-            className="w-full sm:w-auto px-4 py-2.5 bg-purple-600 hover:bg-purple-700 disabled:bg-gray-500 text-white font-medium text-sm sm:text-base rounded-lg transition-all duration-200 transform hover:-translate-y-0.5 hover:shadow-lg min-w-0 sm:min-w-44"
+            className="btn-sinapsia-secondary w-full sm:w-auto px-4 py-2.5 disabled:bg-gray-500 text-white font-medium text-sm sm:text-base rounded-lg transition-all duration-200 transform hover:-translate-y-0.5 hover:shadow-lg min-w-0 sm:min-w-44"
           >
             ✏️ Crear desde Cero
           </button>
 
           {/* Botón Generar */}
           <button
-            onClick={inputMode === 'image' ? handleGeneratePreview : () => {}}
+            onClick={inputMode === 'image' ? handleGeneratePreview : () => { }}
             disabled={isLoading || (inputMode === 'image' && !selectedFile)}
-            className="w-full sm:w-auto px-4 py-2.5 bg-blue-600 hover:bg-blue-700 disabled:bg-gray-500 text-white font-medium text-sm sm:text-base rounded-lg transition-all duration-200 transform hover:-translate-y-0.5 hover:shadow-lg disabled:transform-none disabled:shadow-none min-w-0 sm:min-w-44"
+            className="btn-sinapsia-tertiary w-full sm:w-auto px-4 py-2.5 disabled:bg-gray-500 text-white font-medium text-sm sm:text-base rounded-lg transition-all duration-200 transform hover:-translate-y-0.5 hover:shadow-lg disabled:transform-none disabled:shadow-none min-w-0 sm:min-w-44"
           >
             {isLoading ? 'Generando...' : 'Generar Vista Previa'}
           </button>
@@ -79,7 +91,7 @@ export default function HeroSection({
             Analizando diseño y construyendo tu web...
           </p>
         )}
-        
+
         {error && (
           <p className="text-center text-red-400 mt-4 sm:mt-6 text-sm sm:text-base px-4">
             {error}
@@ -89,19 +101,19 @@ export default function HeroSection({
 
       {/* Modal para formulario manual */}
       {inputMode === 'manual' && (
-        <div className="modal-overlay">
-          <div className="modal-container">
-            <div className="modal-header">
-              <h2>✏️ Crear Landing Page Personalizada</h2>
-              <button 
+        <div className="modal-overlay fixed inset-0 bg-black/80 flex items-center justify-center z-[1000] p-4">
+          <div className="modal-container bg-sinapsia-gradient w-full max-w-4xl max-h-[90vh] overflow-hidden rounded-2xl shadow-2xl">
+            <div className="bg-sinapsia-deep flex justify-between items-center p-6 sm:p-8 border-b border-gray-600/30">
+              <h2 className="text-white m-0 text-xl sm:text-2xl font-bold">✏️ Crear Landing Page Personalizada</h2>
+              <button
                 onClick={handleCloseModal}
-                className="modal-close-btn"
+                className="bg-gray-600 hover:bg-gray-500 text-gray-300 hover:text-white border-0 rounded-full w-10 h-10 flex items-center justify-center cursor-pointer text-xl transition-all duration-200 hover:scale-110"
                 aria-label="Cerrar"
               >
                 ✕
               </button>
             </div>
-            <div className="modal-content-form">
+            <div className="modal-content-form p-0 max-h-[calc(90vh-6.25rem)] overflow-y-auto">
               <ManualForm
                 onSubmit={handleManualSubmit}
                 isLoading={isLoading}

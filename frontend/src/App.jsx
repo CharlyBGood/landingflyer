@@ -12,10 +12,9 @@ function App() {
   const [generatedHtml, setGeneratedHtml] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState('');
-  const [inputMode, setInputMode] = useState('image'); // Siempre comienza en modo imagen
+  const [inputMode, setInputMode] = useState('image');
   const iframeRef = useRef(null);
 
-  // Hook para manejar altura dinámica del navbar
   useNavbarHeight();
 
   const handleGeneratePreview = async () => {
@@ -31,8 +30,7 @@ function App() {
       const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:8080';
       const response = await axios.post(`${apiUrl}/api/generate-preview`, formData);
       setGeneratedHtml(response.data.generatedHtml);
-      
-      // 🔒 NUEVO TEMPLATE: Guardar tanto contenido de trabajo como template original inmutable
+
       localStorage.setItem('editableHtml', response.data.generatedHtml);
       localStorage.setItem('originalTemplate', response.data.generatedHtml);
     } catch (err) {
@@ -54,8 +52,7 @@ function App() {
       const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:8080';
       const response = await axios.post(`${apiUrl}/api/generate-preview`, formData);
       setGeneratedHtml(response.data.generatedHtml);
-      
-      // 🔒 NUEVO TEMPLATE: Guardar tanto contenido de trabajo como template original inmutable
+
       localStorage.setItem('editableHtml', response.data.generatedHtml);
       localStorage.setItem('originalTemplate', response.data.generatedHtml);
     } catch (err) {
@@ -91,9 +88,9 @@ function App() {
   return (
     <div className="min-h-screen">
       <Navbar />
-      <section className="hero-section">
-        <div className="hero-container">
-          
+      <section className="hero-section px-4 sm:px-8 lg:px-16 pb-8 sm:pb-12 lg:pb-16">
+        <div className="max-w-7xl mx-auto text-center">
+
           <HeroSection
             isLoading={isLoading}
             handleGeneratePreview={handleGeneratePreview}

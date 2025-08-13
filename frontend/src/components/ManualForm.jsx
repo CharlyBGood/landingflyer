@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import './ManualForm.css';
+import '../styles/ManualForm.css';
 
 const ManualForm = ({ onSubmit, isLoading, onClose }) => {
   const [formData, setFormData] = useState({
