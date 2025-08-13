@@ -1,19 +1,34 @@
 import React from 'react'
+import './Navbar.css'
 
 export default function Navbar() {
   return (
-    <nav className="bg-gray-800 text-white p-4 fixed w-full flex justify-between px-6 items-center z-50">
+    <nav className="navbar">
       <a
         href="https://sinapsialab.com"
         target='_blank'
         title='SinapsiaLab Web'
+        className="navbar-logo"
       >
-        <img src="https://res.cloudinary.com/dr8pwzxzn/image/upload/v1753991068/creativesinapsistesterReal_qbe1zr.png" alt="SinapsiaLab brain" className='w-15 h-auto' />
+        <img
+          src="https://res.cloudinary.com/dr8pwzxzn/image/upload/v1753991068/creativesinapsistesterReal_qbe1zr.png"
+          alt="SinapsiaLab brain"
+          className="navbar-brain-icon"
+        />
       </a>
-      <a href="https://sinapsialab.com" target='_blank' title='SinapsiaLab web'>
-        <img src="https://res.cloudinary.com/dr8pwzxzn/image/upload/v1751256447/SinapsiaLabThinn8_lehxp5.png" alt="SinapsiaLab svg" className='w-35 h-auto' />
+      <a
+        href="https://sinapsialab.com"
+        target='_blank'
+        title='SinapsiaLab web'
+        className="navbar-brand"
+      >
+        <img
+          src="https://res.cloudinary.com/dr8pwzxzn/image/upload/v1751256447/SinapsiaLabThinn8_lehxp5.png"
+          alt="SinapsiaLab svg"
+          className="navbar-brand-img"
+        />
       </a>
-      <p className='gradient-link select-none'>Landing Flyer</p>
+      <p className="gradient-link navbar-title">Landing Flyer</p>
     </nav>
   )
 }

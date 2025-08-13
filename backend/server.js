@@ -28,21 +28,58 @@ if (process.env.GOOGLE_APPLICATION_CREDENTIALS) {
     }
 }
 
-// --- ÚNICO ENDPOINT: Generar la Vista Previa ---
+// --- ENDPOINT DUAL: Generar Vista Previa (Imagen O Formulario) ---
 app.post('/api/generate-preview', upload.single('flyerImage'), async (req, res) => {
-    if (!req.file) {
-        return res.status(400).json({ error: 'No se subió ninguna imagen.' });
-    }
-
     try {
-        const imageBuffer = req.file.buffer;
-
         const promptTemplate = await fs.readFile(path.join(__dirname, 'prompt.md'), 'utf8');
+        let requestParts = [{ text: promptTemplate }];
 
-        const requestParts = [
-            { text: promptTemplate },
-            { inlineData: { mimeType: req.file.mimetype, data: imageBuffer.toString('base64') } },
-        ];
+        // 🔄 DETECCIÓN DE MODALIDAD
+        if (req.file) {
+            // 📷 MODO IMAGEN: Procesamiento tradicional con imagen
+            const imageBuffer = req.file.buffer;
+            requestParts.push({
+                inlineData: { 
+                    mimeType: req.file.mimetype, 
+                    data: imageBuffer.toString('base64') 
+                }
+            });
+        } else if (req.body.businessData) {
+            // 📋 MODO FORMULARIO: Procesamiento con datos estructurados
+            const businessData = JSON.parse(req.body.businessData);
+            
+            const structuredPrompt = `
+**DATOS COMERCIALES ESTRUCTURADOS:**
+
+**Información Básica:**
+- Nombre del Negocio: ${businessData.businessName}
+- Tipo de Negocio: ${businessData.businessType}
+- Descripción: ${businessData.description}
+- Estilo Preferido: ${businessData.style || 'moderno'}
+
+**Colores Definidos:**
+- Color Principal: ${businessData.primaryColor}
+- Color Secundario: ${businessData.secondaryColor || businessData.primaryColor}
+
+**Información de Contacto:**
+- Teléfono: ${businessData.contact.phone || 'No especificado'}
+- Email: ${businessData.contact.email || 'No especificado'}
+- Dirección: ${businessData.contact.address || 'No especificado'}
+- Website: ${businessData.contact.website || 'No especificado'}
+
+**Productos/Servicios:**
+${businessData.services.map((service, index) => `- ${service.name}: ${service.description} ${service.price ? '($' + service.price + ')' : ''}`).join('\n')}
+
+**INSTRUCCIONES ESPECIALES:**
+Usa EXACTAMENTE estos colores como base de la paleta. Convierte automáticamente el teléfono a WhatsApp y la dirección a Google Maps si están especificados.
+`;
+            
+            requestParts.push({ text: structuredPrompt });
+        } else {
+            return res.status(400).json({ 
+                error: 'Debes subir una imagen O proporcionar datos del negocio.' 
+            });
+        }
 
         const result = await textModel.generateContent({ contents: [{ role: 'user', parts: requestParts }] });
         const response = result.response;

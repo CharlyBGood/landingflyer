@@ -1,0 +1,174 @@
+/* Navbar.css - Mobile First Design */
+
+.navbar {
+  background: #1f2937;
+  color: white;
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  width: 100%;
+  z-index: 50;
+  
+  /* Mobile: Diseño con logo centrado */
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
+  align-items: center;
+  padding: 0.75rem 1rem;
+  min-height: 3.5rem; /* 56px → 3.5rem */
+  
+  /* Tablet: Más espaciado */
+  @media (min-width: 40rem) { /* 640px → 40rem */
+    padding: 1rem 1.5rem;
+    min-height: 4rem; /* 64px → 4rem */
+  }
+  
+  /* Desktop: Espaciado completo */
+  @media (min-width: 64rem) { /* 1024px → 64rem */
+    padding: 1rem 2rem;
+    min-height: 4.5rem; /* 72px → 4.5rem */
+  }
+}
+
+.navbar-logo {
+  display: flex;
+  align-items: center;
+  transition: transform 0.2s ease;
+  justify-self: start; /* Posiciona en el lado izquierdo */
+}
+
+.navbar-logo:hover {
+  transform: scale(1.05);
+}
+
+.navbar-brain-icon {
+  /* Mobile: Icono pequeño usando viewport width */
+  width: 8vw;
+  max-width: 2rem; /* Límite máximo */
+  min-width: 1.75rem; /* Límite mínimo */
+  height: auto;
+  
+  /* Tablet: Icono medio */
+  @media (min-width: 40rem) { /* 640px → 40rem */
+    width: 2.5rem; /* 40px → 2.5rem */
+    max-width: none;
+    min-width: auto;
+  }
+  
+  /* Desktop: Icono grande */
+  @media (min-width: 64rem) { /* 1024px → 64rem */
+    width: 3rem; /* 48px → 3rem */
+  }
+}
+
+.navbar-brand {
+  display: flex;
+  align-items: center;
+  transition: transform 0.2s ease;
+  justify-self: center; /* Centra perfectamente el logo */
+}
+
+.navbar-brand:hover {
+  transform: scale(1.02);
+}
+
+.navbar-brand-img {
+  /* Mobile: Logo compacto usando viewport width */
+  width: 25vw;
+  max-width: 7.5rem; /* Límite máximo */
+  min-width: 6rem; /* Límite mínimo */
+  height: auto;
+  
+  /* Tablet: Logo medio */
+  @media (min-width: 40rem) { /* 640px → 40rem */
+    width: 8.75rem; /* 140px → 8.75rem */
+    max-width: none;
+    min-width: auto;
+  }
+  
+  /* Desktop: Logo completo */
+  @media (min-width: 64rem) { /* 1024px → 64rem */
+    width: 10rem; /* 160px → 10rem */
+  }
+}
+
+.navbar-title {
+  /* Mobile: Texto pequeño */
+  font-size: 0.875rem;
+  font-weight: 600;
+  background: linear-gradient(135deg, #3b82f6 0%, #8b5cf6 100%);
+  background-clip: text;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  margin: 0;
+  user-select: none;
+  justify-self: end; /* Posiciona en el lado derecho */
+  
+  /* Tablet: Texto medio */
+  @media (min-width: 40rem) { /* 640px → 40rem */
+    font-size: 1rem;
+  }
+  
+  /* Desktop: Texto grande */
+  @media (min-width: 64rem) { /* 1024px → 64rem */
+    font-size: 1.125rem;
+  }
+}
+
+/* Fallback para navegadores que no soportan background-clip */
+@supports not (background-clip: text) {
+  .navbar-title {
+    color: #60a5fa;
+  }
+}
+
+/* Animación sutil para navbar */
+.navbar {
+  animation: slideDown 0.3s ease-out;
+}
+
+@keyframes slideDown {
+  from {
+    transform: translateY(-100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+/* Responsive para pantallas muy pequeñas */
+@media (max-width: 30rem) { /* 480px → 30rem */
+  .navbar {
+    padding: 0.5rem 0.75rem;
+    min-height: 3.25rem; /* 52px → 3.25rem */
+  }
+  
+  .navbar-brain-icon {
+    width: 10vw;
+    max-width: 1.75rem; /* 28px → 1.75rem */
+    min-width: 1.5rem;
+  }
+  
+  .navbar-brand-img {
+    width: 22vw;
+    max-width: 6.25rem; /* 100px → 6.25rem */
+    min-width: 5rem;
+  }
+  
+  .navbar-title {
+    font-size: 0.75rem;
+  }
+}
+
+/* Hover effects mejorados */
+@media (hover: hover) {
+  .navbar-logo:hover .navbar-brain-icon {
+    filter: brightness(1.1);
+  }
+  
+  .navbar-brand:hover .navbar-brand-img {
+    filter: brightness(1.05);
+  }
+}

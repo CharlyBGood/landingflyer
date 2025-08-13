@@ -5,13 +5,18 @@ import HeroSection from './components/HeroSection.jsx';
 import LandingPreview from './components/LandingPreview.jsx';
 import Navbar from './components/Navbar.jsx';
 import Footer from './components/Footer.jsx';
+import { useNavbarHeight } from './hooks/useNavbarHeight.js';
 
 function App() {
   const [selectedFile, setSelectedFile] = useState(null);
   const [generatedHtml, setGeneratedHtml] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState('');
+  const [inputMode, setInputMode] = useState('image'); // Siempre comienza en modo imagen
   const iframeRef = useRef(null);
+
+  // Hook para manejar altura dinámica del navbar
+  useNavbarHeight();
 
   const handleGeneratePreview = async () => {
     if (!selectedFile) return;
@@ -21,6 +26,29 @@ function App() {
 
     const formData = new FormData();
     formData.append('flyerImage', selectedFile);
+
+    try {
+      const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:8080';
+      const response = await axios.post(`${apiUrl}/api/generate-preview`, formData);
+      setGeneratedHtml(response.data.generatedHtml);
+      
+      // 🔒 NUEVO TEMPLATE: Guardar tanto contenido de trabajo como template original inmutable
+      localStorage.setItem('editableHtml', response.data.generatedHtml);
+      localStorage.setItem('originalTemplate', response.data.generatedHtml);
+    } catch (err) {
+      setError('Hubo un error al generar la página.', err);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const handleManualSubmit = async (businessData) => {
+    setIsLoading(true);
+    setError('');
+    setGeneratedHtml(null);
+
+    const formData = new FormData();
+    formData.append('businessData', JSON.stringify(businessData));
 
     try {
       const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:8080';
@@ -63,15 +91,20 @@ function App() {
   return (
     <div className="min-h-screen">
       <Navbar />
-      <section className="px-4 py-8 sm:px-8 sm:py-12 lg:px-16 lg:py-16 pt-20 sm:pt-24">
-        <div className="max-w-6xl mx-auto text-center">
+      <section className="hero-section">
+        <div className="hero-container">
+          
           <HeroSection
             isLoading={isLoading}
             handleGeneratePreview={handleGeneratePreview}
             handleFileChange={handleFileChange}
+            handleManualSubmit={handleManualSubmit}
             selectedFile={selectedFile}
             error={error}
+            inputMode={inputMode}
+            setInputMode={setInputMode}
           />
+
           {generatedHtml && (
             <LandingPreview generatedHtml={generatedHtml} iframeRef={iframeRef} />
           )}
