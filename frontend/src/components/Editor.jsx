@@ -21,28 +21,22 @@ function Editor() {
 
   const [cssVars, setCssVars] = useState([]);
 
-  // Agregar un estado para el contenido original
   const [originalContent, setOriginalContent] = useState('');
-
-  // 🔒 SNAPSHOT INMUTABLE: Separación completa de storages
   useEffect(() => {
     const workingContent = localStorage.getItem('editableHtml') || '<h1>No hay contenido...</h1>';
     const originalTemplate = localStorage.getItem('originalTemplate');
-    
+
     setHtmlContent(workingContent);
-    
+
     if (originalTemplate) {
-      // ✅ Usar template original guardado (VERDADERAMENTE inmutable)
       setOriginalContent(originalTemplate);
     } else {
-      // 🆕 Primera vez: guardar template original inmutable
       setOriginalContent(workingContent);
       localStorage.setItem('originalTemplate', workingContent);
     }
   }, []);
 
   const handleReset = () => {
-    // 🔄 Restaurar al template original inmutable (NUNCA contaminado)
     setHtmlContent(originalContent);
     localStorage.setItem('editableHtml', originalContent);
     setIsEditMode(false);
@@ -77,7 +71,6 @@ function Editor() {
       .map(m => ({ name: m[1], value: m[2].trim() }));
   };
   const updateCSSVariable = (variableName, newValue) => {
-    // 🎨 Actualizar variable CSS en tiempo real (solo estado de trabajo, no original)
     document.documentElement.style.setProperty(variableName, newValue);
 
     if (contentRef.current) {
@@ -95,8 +88,6 @@ function Editor() {
           }
         );
         styleElement.textContent = cssText;
-
-        // ✅ Actualizar estado de trabajo (NO contamina originalContent)
         setHtmlContent(contentRef.current.innerHTML);
       }
       setCssVars(extractRootCSSVariables());
@@ -146,11 +137,8 @@ function Editor() {
     };
   }, [isEditMode]);
 
-  // 🔄 CSS Variables Effect - Extrae y aplica variables CSS del contenido
-
   useEffect(() => {
     const variables = extractRootCSSVariables();
-
     variables.forEach(({ name, value }) => {
       document.documentElement.style.setProperty(name, value);
     });
@@ -172,8 +160,6 @@ function Editor() {
     if (!contentRef.current) return;
     const savedContent = saveCleanContent(contentRef.current);
     setHtmlContent(savedContent);
-    // 🔒 NO actualizar originalContent - mantener snapshot inmutable
-    // setOriginalContent NO se llama aquí para preservar el estado original
     setIsEditMode(false);
     showSuccessMessage('Cambios guardados exitosamente');
   };
@@ -194,7 +180,8 @@ function Editor() {
       const controller = new AbortController();
       const timeoutId = setTimeout(() => controller.abort(), 120000);
 
-      const response = await fetch('/api/publish', {
+      const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:8080';
+      const response = await fetch(`${apiUrl}/api/publish`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
