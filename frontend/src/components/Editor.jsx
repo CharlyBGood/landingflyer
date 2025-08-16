@@ -5,6 +5,7 @@ import { DOMUtils } from '../utilities/domUtils';
 import { getInputColor } from '../utilities';
 import PublishModal from './editor/PublishModal.jsx';
 import PublishSuccessModal from './editor/PublishSuccessModal.jsx';
+import CartModal from './cart/CartModal.jsx';
 import '../styles/Editor.css';
 
 
@@ -12,6 +13,7 @@ function Editor() {
   const [htmlContent, setHtmlContent] = useState('');
   const [isEditMode, setIsEditMode] = useState(false);
   const [saveMessage, setSaveMessage] = useState('');
+  const [showCartModal, setShowCartModal] = useState(false);
   const [showPublishModal, setShowPublishModal] = useState(false);
   const [showSuccessModal, setShowSuccessModal] = useState(false);
   const [isPublishing, setIsPublishing] = useState(false);
@@ -165,6 +167,11 @@ function Editor() {
   };
 
   const handlePublish = () => {
+    setShowCartModal(true);
+  };
+
+  const handleCartConfirm = () => {
+    setShowCartModal(false);
     setShowPublishModal(true);
   };
 
@@ -220,6 +227,7 @@ function Editor() {
   };
 
   const handleCloseModals = () => {
+    setShowCartModal(false);
     setShowPublishModal(false);
     setShowSuccessModal(false);
     setPublishResult(null);
@@ -318,6 +326,12 @@ function Editor() {
         className="content-area"
         data-edit-mode={isEditMode}
         dangerouslySetInnerHTML={{ __html: processedHtml }}
+      />
+
+      <CartModal
+        isOpen={showCartModal}
+        onClose={handleCloseModals}
+        onConfirm={handleCartConfirm}
       />
 
       <PublishModal
