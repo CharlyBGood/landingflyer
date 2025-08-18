@@ -1,4 +1,3 @@
-import React from 'react';
 
 const extras = [
   { label: 'Analytics Avanzado', value: 'analytics', price: 15, desc: 'Google Analytics + reportes mensuales' },

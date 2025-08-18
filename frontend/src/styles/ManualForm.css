@@ -1,11 +1,11 @@
 /* ManualForm.css - Dark Theme */
 .manual-form-container {
-  max-width: 800px;
+  max-width: 50rem;
   margin: 0 auto;
   padding: 2rem;
   background: #1f2937;
-  border-radius: 16px;
-  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+  border-radius: 1rem;
+  box-shadow: 0 0.5rem 2rem rgba(0, 0, 0, 0.3);
   color: #f9fafb;
 }
 
@@ -35,7 +35,7 @@
 .form-section {
   background: #374151;
   padding: 1.5rem;
-  border-radius: 12px;
+  border-radius: 0.75rem;
   border: 1px solid #4b5563;
 }
 
@@ -66,8 +66,8 @@
 .form-group textarea {
   width: 100%;
   padding: 0.75rem;
-  border: 2px solid #4b5563;
-  border-radius: 8px;
+  border: 0.125rem solid #4b5563;
+  border-radius: 0.5rem;
   font-size: 1rem;
   transition: all 0.2s ease;
   background: #111827;
@@ -79,7 +79,7 @@
 .form-group textarea:focus {
   outline: none;
   border-color: #3b82f6;
-  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+  box-shadow: 0 0 0 0.1875rem rgba(59, 130, 246, 0.1);
 }
 
 .form-group input::placeholder,
@@ -89,7 +89,7 @@
 
 .form-group textarea {
   resize: vertical;
-  min-height: 100px;
+  min-height: 6.25rem;
 }
 
 .form-group small {
@@ -118,10 +118,10 @@
 }
 
 .color-input-group input[type="color"] {
-  width: 60px;
-  height: 45px;
-  border: 2px solid #4b5563;
-  border-radius: 8px;
+  width: 3.75rem;
+  height: 2.8125rem;
+  border: 0.125rem solid #4b5563;
+  border-radius: 0.5rem;
   cursor: pointer;
   background: #111827;
 }
@@ -133,7 +133,7 @@
 .service-item {
   background: #111827;
   padding: 1.5rem;
-  border-radius: 8px;
+  border-radius: 0.5rem;
   border: 1px solid #374151;
   margin-bottom: 1rem;
 }
@@ -157,8 +157,8 @@
   color: white;
   border: none;
   border-radius: 50%;
-  width: 30px;
-  height: 30px;
+  width: 1.875rem;
+  height: 1.875rem;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -175,8 +175,8 @@
 .add-service-btn {
   background: #374151;
   color: #e5e7eb;
-  border: 2px dashed #6b7280;
-  border-radius: 8px;
+  border: 0.125rem dashed #6b7280;
+  border-radius: 0.5rem;
   padding: 1rem;
   width: 100%;
   cursor: pointer;

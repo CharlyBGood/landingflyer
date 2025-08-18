@@ -1,5 +1,6 @@
-import { useState } from 'react';
+
 import StepIndicator from './StepIndicator';
+import CartNavButton from './CartNavButton';
 import PublicationTypeSelection from './PublicationTypeSelection';
 import ServiceConfiguration from './ServiceConfiguration';
 import OrderSummary from './OrderSummary';
@@ -47,12 +48,7 @@ export default function CartModal({ isOpen, onClose, onConfirm }) {
               value={formData.publicationType}
               onChange={val => setFormData(f => ({ ...f, publicationType: val }))}
             />
-            <div className="flex justify-end mt-4">
-              <button
-                className="bg-sinapsia-accent text-white rounded-lg px-6 py-2 font-semibold hover:bg-sinapsia-gradient transition"
-                onClick={handleNext}
-              >Siguiente</button>
-            </div>
+            <CartNavButton onClick={handleNext} align="end">Siguiente</CartNavButton>
           </div>
         )}
         {step === 2 && (
@@ -62,14 +58,8 @@ export default function CartModal({ isOpen, onClose, onConfirm }) {
               onChange={setFormData}
             />
             <div className="flex justify-between mt-4">
-              <button
-                className="bg-sinapsia-base border border-sinapsia-accent text-sinapsia-light rounded-lg px-6 py-2 font-semibold hover:bg-sinapsia-accent hover:text-white transition"
-                onClick={handleBack}
-              >Atrás</button>
-              <button
-                className="bg-sinapsia-accent text-white rounded-lg px-6 py-2 font-semibold hover:bg-sinapsia-gradient transition"
-                onClick={handleNext}
-              >Siguiente</button>
+              <CartNavButton onClick={handleBack} variant="secondary" align="start">Atrás</CartNavButton>
+              <CartNavButton onClick={handleNext} align="end">Siguiente</CartNavButton>
             </div>
           </div>
         )}
@@ -84,3 +74,4 @@ export default function CartModal({ isOpen, onClose, onConfirm }) {
     </div>
   );
 }
+import React, { useState } from 'react';

@@ -1,5 +1,3 @@
-import React from 'react';
-
 const modifications = [
   { label: 'E-commerce Básico', value: 'ecommerce', price: 15 },
   { label: 'Sección de Blog', value: 'blog', price: 12 },

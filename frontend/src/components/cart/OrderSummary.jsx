@@ -1,4 +1,3 @@
-import React from 'react';
 import calculatePrice from '../../utilities/calculatePrice';
 
 export default function OrderSummary({ formData, onBack, onPublish }) {

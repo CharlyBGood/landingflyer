@@ -1,4 +1,3 @@
-import React from 'react';
 import { CheckIcon, ExternalLinkIcon, XMarkIcon } from '../../utilities';
 
 const PublishSuccessModal = ({ isOpen, onClose, publishResult }) => {

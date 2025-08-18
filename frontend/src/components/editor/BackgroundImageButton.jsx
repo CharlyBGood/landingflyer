@@ -62,7 +62,8 @@ const BackgroundImageButton = ({
     <button
       className={getButtonClasses()}
       onClick={handleImageUpload}
-      style={style} // Solo para overrides específicos si es necesario
+  // style={style} // Justificado solo para casos donde Tailwind/custom CSS no es suficiente (animaciones dinámicas, gradientes avanzados, etc.)
+  style={style}
       title="Cambiar imagen de fondo"
     >
       <ImageIcon size={14} />
