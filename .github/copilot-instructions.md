@@ -1,3 +1,6 @@
+## 🚨 Express.js Endpoint Rule
+
+**NUNCA declares endpoints (app.get, app.post, etc.) ni uses app.METHOD antes de instanciar `app` en el backend. Siempre debes definir `const app = express();` antes de cualquier endpoint. Esto es un error grave y debe evitarse en toda generación o edición de código backend.**
 - **NEVER use px units. Always use responsive units (rem, em, %, vw, vh, clamp()) for truly responsive design.**
 - **MAXIMIZE Tailwind CSS usage. Only use custom CSS for complex animations, gradients, or features unavailable in Tailwind.**
 - **NEVER use the `style` attribute in JSX/HTML. Always use Tailwind CSS classes or custom CSS classes from the appropriate CSS file.**

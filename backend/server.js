@@ -1,4 +1,7 @@
-// backend/server.js (versión enfocada únicamente en la generación de la vista previa)
+// DEBUG: Verificar si la variable de entorno está disponible
+console.log('DEBUG UNSPLASH_ACCESS_KEY:', process.env.UNSPLASH_ACCESS_KEY);
+// --- ENDPOINT: Obtener imagen de Unsplash ---
+import { getUnsplashImageUrl } from './services/UnsplashService.js';
 import 'dotenv/config';
 import express from 'express';
 import cors from 'cors';
@@ -27,6 +30,25 @@ if (process.env.GOOGLE_APPLICATION_CREDENTIALS) {
         console.error('No se pudo acceder al archivo de credenciales:', err);
     }
 }
+
+import axios from 'axios';
+
+app.get('/api/image/unsplash', async (req, res) => {
+    const term = req.query.term;
+    if (!term) {
+        return res.status(400).json({ error: 'Falta el parámetro term' });
+    }
+    try {
+        const imageUrl = await getUnsplashImageUrl(term);
+        // Proxy: descarga la imagen y la reenvía con el content-type correcto
+        const response = await axios.get(imageUrl, { responseType: 'stream' });
+        res.setHeader('Content-Type', response.headers['content-type'] || 'image/jpeg');
+        response.data.pipe(res);
+    } catch (error) {
+        console.error('Error obteniendo imagen de Unsplash:', error);
+        res.status(500).json({ error: 'No se pudo obtener imagen de Unsplash', details: error.message });
+    }
+});
 
 // --- ENDPOINT DUAL: Generar Vista Previa (Imagen O Formulario) ---
 app.post('/api/generate-preview', upload.single('flyerImage'), async (req, res) => {
