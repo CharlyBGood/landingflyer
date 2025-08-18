@@ -5,12 +5,13 @@
   right: 0;
   z-index: 1000;
   padding: 0.75rem 1rem;
-  background: rgba(255, 255, 255, 0.95);
-  backdrop-filter: blur(12px);
-  border-bottom: 1px solid rgba(0, 0, 0, 0.06);
+  background: var(--sinapsia-base, #181c24);
+  color: var(--sinapsia-light, #f3f4f6);
+  border-bottom: 1.5px solid var(--sinapsia-accent, #7c3aed);
   box-shadow:
-    0 1px 3px rgba(0, 0, 0, 0.1),
-    0 4px 20px rgba(0, 0, 0, 0.05);
+    0 1px 3px rgba(124, 58, 237, 0.08),
+    0 4px 20px rgba(24, 28, 36, 0.10);
+  backdrop-filter: blur(12px);
   display: flex;
   flex-direction: column;
   gap: 0.5rem;

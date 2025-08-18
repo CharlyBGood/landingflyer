@@ -1,8 +1,7 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import StepIndicator from './StepIndicator';
 import PublicationTypeSelection from './PublicationTypeSelection';
 import ServiceConfiguration from './ServiceConfiguration';
-import ExtrasAndAddons from './ExtrasAndAddons';
 import OrderSummary from './OrderSummary';
 
 const steps = [
@@ -34,10 +33,10 @@ export default function CartModal({ isOpen, onClose, onConfirm }) {
   };
 
   return (
-    <div className="fixed inset-0 bg-black/60 flex items-center justify-center z-50 p-4">
-      <div className="bg-white rounded-2xl shadow-xl w-full max-w-lg p-6 relative">
+    <div className="fixed inset-0 bg-black/80 flex items-center justify-center z-50 p-4">
+      <div className="bg-sinapsia-base text-sinapsia-light rounded-2xl shadow-xl w-full max-w-lg p-6 relative border border-sinapsia-accent">
         <button
-          className="absolute top-4 right-4 text-gray-400 hover:text-gray-700 text-xl font-bold"
+          className="absolute top-4 right-4 text-sinapsia-light hover:text-sinapsia-accent text-xl font-bold"
           onClick={onClose}
           aria-label="Cerrar"
         >×</button>
@@ -64,7 +63,7 @@ export default function CartModal({ isOpen, onClose, onConfirm }) {
             />
             <div className="flex justify-between mt-4">
               <button
-                className="bg-gray-200 text-gray-700 rounded-lg px-6 py-2 font-semibold hover:bg-gray-300 transition"
+                className="bg-sinapsia-base border border-sinapsia-accent text-sinapsia-light rounded-lg px-6 py-2 font-semibold hover:bg-sinapsia-accent hover:text-white transition"
                 onClick={handleBack}
               >Atrás</button>
               <button

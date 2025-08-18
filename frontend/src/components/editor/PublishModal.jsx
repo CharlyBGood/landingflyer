@@ -41,16 +41,16 @@ const PublishModal = ({ isOpen, onClose, onPublish, isPublishing }) => {
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 bg-black/50 flex items-center justify-center p-4 z-50">
-      <div className="bg-white rounded-2xl p-6 w-full max-w-md mx-auto">
+    <div className="fixed inset-0 bg-black/80 flex items-center justify-center p-4 z-50">
+      <div className="bg-sinapsia-base text-sinapsia-light rounded-2xl p-6 w-full max-w-md mx-auto border border-sinapsia-accent">
         <div className="flex items-center justify-between mb-4">
-          <h2 className="text-xl font-bold text-gray-900">
+          <h2 className="text-xl font-bold text-sinapsia-accent">
             Publicar Landing Page
           </h2>
           {!isPublishing && (
             <button
               onClick={handleClose}
-              className="p-1 hover:bg-gray-100 rounded-lg transition-colors"
+              className="p-1 hover:bg-sinapsia-accent/20 rounded-lg transition-colors"
             >
               <XMarkIcon size={24} />
             </button>
@@ -59,7 +59,7 @@ const PublishModal = ({ isOpen, onClose, onPublish, isPublishing }) => {
 
         <form onSubmit={handleSubmit}>
           <div className="mb-4">
-            <label htmlFor="siteName" className="block text-sm font-medium text-gray-700 mb-2">
+            <label htmlFor="siteName" className="block text-sm font-medium text-sinapsia-light mb-2">
               Nombre de tu empresa o marca
             </label>
             <div className="space-y-2">
@@ -70,15 +70,15 @@ const PublishModal = ({ isOpen, onClose, onPublish, isPublishing }) => {
                 onChange={(e) => setSiteName(e.target.value)}
                 placeholder="Ej: Panadería San José, Tech Solutions, Belleza Total"
                 disabled={isPublishing}
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent disabled:bg-gray-100"
+                className="w-full px-3 py-2 border border-sinapsia-accent rounded-lg focus:ring-2 focus:ring-sinapsia-accent focus:border-transparent bg-sinapsia-base text-sinapsia-light disabled:bg-sinapsia-base/70"
                 autoFocus
               />
-              <p className="text-xs text-gray-500">
+              <p className="text-xs text-sinapsia-light/70">
                 Se creará una URL corta y fácil de recordar basada en este nombre
               </p>
             </div>
             {error && (
-              <p className="text-red-600 text-sm mt-1">{error}</p>
+              <p className="text-red-400 text-sm mt-1">{error}</p>
             )}
           </div>
 
@@ -87,14 +87,14 @@ const PublishModal = ({ isOpen, onClose, onPublish, isPublishing }) => {
               type="button"
               onClick={handleClose}
               disabled={isPublishing}
-              className="flex-1 px-4 py-2 text-gray-700 bg-gray-100 hover:bg-gray-200 rounded-lg transition-colors disabled:opacity-50"
+              className="flex-1 px-4 py-2 text-sinapsia-light bg-sinapsia-base border border-sinapsia-accent hover:bg-sinapsia-accent/20 rounded-lg transition-colors disabled:opacity-50"
             >
               Cancelar
             </button>
             <button
               type="submit"
               disabled={isPublishing || !siteName.trim()}
-              className="flex-1 px-4 py-2 bg-purple-600 hover:bg-purple-700 text-white rounded-lg transition-colors disabled:opacity-50 flex items-center justify-center gap-2"
+              className="flex-1 px-4 py-2 bg-sinapsia-accent hover:bg-sinapsia-gradient text-white rounded-lg transition-colors disabled:opacity-50 flex items-center justify-center gap-2"
             >
               {isPublishing ? (
                 <>
@@ -108,18 +108,18 @@ const PublishModal = ({ isOpen, onClose, onPublish, isPublishing }) => {
           </div>
         </form>
 
-        <div className="mt-4 p-3 bg-blue-50 rounded-lg">
-          <p className="text-sm text-blue-800">
+        <div className="mt-4 p-3 bg-sinapsia-base border border-sinapsia-accent rounded-lg">
+          <p className="text-sm text-sinapsia-accent">
             <strong>💡 URL inteligente:</strong> Crearemos una URL corta y memorable usando el nombre de tu empresa
           </p>
-          <p className="text-xs text-blue-600 mt-1">
+          <p className="text-xs text-sinapsia-light mt-1">
             Ejemplo: "Panadería San José" → panaderiasr12345.netlify.app
           </p>
         </div>
 
         {isPublishing && (
-          <div className="mt-4 p-3 bg-yellow-50 border border-yellow-200 rounded-lg">
-            <p className="text-sm text-yellow-800">
+          <div className="mt-4 p-3 bg-sinapsia-base border border-yellow-400 rounded-lg">
+            <p className="text-sm text-yellow-400">
               <strong>🚀 Publicando con ZIP Method...</strong> Deploy atómico directo a Netlify. 
               Completado típicamente en menos de 30 segundos.
             </p>
