@@ -86,11 +86,10 @@ function App() {
   }, [generatedHtml]);
 
   return (
-    <div className="min-h-screen">
+    <div className="min-h-screen bg-sinapsia-bg">
       <Navbar />
       <section className="hero-section px-4 sm:px-8 lg:px-16 pb-8 sm:pb-12 lg:pb-16">
         <div className="max-w-7xl mx-auto text-center">
-
           <HeroSection
             isLoading={isLoading}
             handleGeneratePreview={handleGeneratePreview}
