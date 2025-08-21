@@ -1,7 +1,9 @@
 
+import React from 'react';
 import ManualForm from './ManualForm.jsx';
 import '../styles/HeroSection.css';
 import HeroCardContainer from './HeroCardContainer.jsx';
+import ExtrasPreviewModal from './ExtrasPreviewModal.jsx';
 
 
 export default function HeroSection({
@@ -14,10 +16,28 @@ export default function HeroSection({
   inputMode,
   setInputMode
 }) {
+
   const handleFlyerClick = () => {
     setInputMode('image');
     // Trigger file input click
     document.getElementById('file-input').click();
+  };
+
+  // Scroll to form section
+  const handleScrollToForm = () => {
+    const formSection = document.getElementById('form-section');
+    if (formSection) {
+      formSection.scrollIntoView({ behavior: 'smooth' });
+    }
+  };
+
+  // Modal for premium extras (simple preview)
+  const [showExtrasModal, setShowExtrasModal] = React.useState(false);
+  const handlePremiumClick = () => setShowExtrasModal(true);
+  const handleCloseExtrasModal = () => setShowExtrasModal(false);
+  const handleExtrasContinue = () => {
+    setShowExtrasModal(false);
+    handleScrollToForm();
   };
 
   const handleCloseModal = () => {
@@ -42,10 +62,21 @@ export default function HeroSection({
             SinapsiaLab
           </a></span>
         </p>
-        <HeroCardContainer />
+        <HeroCardContainer
+          onBasicClick={handleScrollToForm}
+          onPremiumClick={handlePremiumClick}
+        />
+      {/* Modal para extras premium (solo preview) */}
+      {showExtrasModal && (
+        <ExtrasPreviewModal
+          isOpen={showExtrasModal}
+          onClose={handleCloseExtrasModal}
+          onContinue={handleExtrasContinue}
+        />
+      )}
       </header>
 
-      <main className="bg-sinapsia-base border border-sinapsia-accent p-4 sm:p-8 rounded-lg mx-auto max-w-4xl mb-4">
+  <main id="form-section" className="bg-sinapsia-base border border-sinapsia-accent p-4 sm:p-8 rounded-lg mx-auto max-w-4xl mb-4">
         <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 items-center justify-center">
           <input
             type="file"

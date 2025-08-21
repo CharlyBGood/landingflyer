@@ -1,6 +1,6 @@
 import HeroCard from './HeroCard.jsx';
 
-export default function HeroCardContainer() {
+export default function HeroCardContainer({ onBasicClick, onPremiumClick }) {
   return (
     <>
       <div className="flex flex-col sm:flex-row gap-6 justify-center items-stretch max-w-3xl mx-auto mb-4">
@@ -9,7 +9,8 @@ export default function HeroCardContainer() {
           paragraph="Página lista para publicar + hosting 1 año + dominio genérico al instante."
           priceUSD={300}
           priceARS={390000}
-          btnText="Ver detalles"
+          btnText="Comenzar"
+          onClick={onBasicClick}
         />
         <HeroCard
           header="Premium a medida"
@@ -19,6 +20,7 @@ export default function HeroCardContainer() {
           btnText="Ver personalización"
           fromLabel
           recommended
+          onClick={onPremiumClick}
         />
       </div>
       <span className="block text-xs text-gray-400 text-center leading-tight mb-2 mt-[-0.5rem]">Conseguí dominio personalizado al realizar la compra.</span>

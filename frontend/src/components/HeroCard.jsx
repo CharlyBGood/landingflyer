@@ -1,7 +1,7 @@
 
 import { ArgentinaFlag, USAFlag } from '../utilities/FlagIcons.jsx';
 
-export default function HeroCard({ header, paragraph, priceUSD, priceARS, btnText, fromLabel, recommended }) {
+export default function HeroCard({ header, paragraph, priceUSD, priceARS, btnText, fromLabel, recommended, onClick }) {
   return (
     <div className="flex-1 bg-sinapsia-base border border-sinapsia-accent rounded-xl p-4 flex flex-col items-center shadow-md relative">
       {recommended && (
@@ -26,7 +26,7 @@ export default function HeroCard({ header, paragraph, priceUSD, priceARS, btnTex
           <span>USD {priceUSD}</span>
         </div>
       </div>
-      <button className="btn-sinapsia-primary w-full sm:w-auto px-4 py-2.5 text-white font-medium text-base rounded-lg transition-all duration-200 transform hover:-translate-y-0.5 hover:shadow-lg mb-2">{btnText}</button>
+      <button className="btn-sinapsia-primary w-full sm:w-auto px-4 py-2.5 text-white font-medium text-base rounded-lg transition-all duration-200 transform hover:-translate-y-0.5 hover:shadow-lg mb-2" onClick={onClick}>{btnText}</button>
     </div>
   )
 }
