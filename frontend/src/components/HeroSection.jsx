@@ -33,7 +33,14 @@ export default function HeroSection({
         </h1>
         <p className="text-base sm:text-lg lg:text-xl max-w-3xl mx-auto px-4 mb-6 text-sinapsia-light">
           Elige tu camino y publica tu web profesional de forma automática.<br />
-          <span className="text-sinapsia-accent font-semibold">Una solución de <a href="https://www.sinapsialab.com" target="_blank" rel="noopener noreferrer" className="underline hover:text-sinapsia-light transition-colors">SinapsiaLab</a></span>
+          <span className="text-sinapsia-accent font-semibold">Una solución de <a
+            href="https://www.sinapsialab.com"
+            className="gradient-link"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            SinapsiaLab
+          </a></span>
         </p>
         <HeroCardContainer />
       </header>

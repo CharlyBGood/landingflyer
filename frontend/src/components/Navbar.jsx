@@ -8,7 +8,7 @@ export default function Navbar() {
         href="https://sinapsialab.com"
         target='_blank'
         title='SinapsiaLab web'
-        className="flex items-center transition-transform duration-200 hover:scale-102 justify-self-center"
+        className="flex items-center transition-transform duration-200 hover:scale-102 justify-self-center cursor-pointer"
       >
         <img
           src="https://res.cloudinary.com/dr8pwzxzn/image/upload/v1751256447/SinapsiaLabThinn8_lehxp5.png"
