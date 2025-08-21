@@ -1,5 +1,6 @@
 :root {
   --navbar-height: 4rem;
+  background: linear-gradient(135deg, #0c070f 0%, #150a1a 25%, #1a0f20 50%, #2a1530 100%);
 }
 
 .hero-section {

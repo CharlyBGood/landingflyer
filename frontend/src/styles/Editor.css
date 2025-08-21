@@ -216,9 +216,7 @@ input[type="color"] {
   margin-top: 0;
   padding-top: var(--toolbar-height, 4rem);
   min-height: calc(100vh - var(--toolbar-height, 4rem));
-  padding-bottom: 1rem;
   transition: padding-top 0.3s ease;
-  background-color: #fff;
 }
 
 

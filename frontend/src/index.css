@@ -15,11 +15,9 @@
 
 body {
   margin: 0;
-  background: linear-gradient(135deg, #0c070f 0%, #150a1a 25%, #1a0f20 50%, #2a1530 100%);
   min-height: 100vh;
 }
 
-/* Global button cursor style */
 button {
   cursor: pointer;
 }
