@@ -50,6 +50,8 @@ export const DOMUtils = {
     if (!container) return;
     this.removeBackgroundContainers(container);
     this.removeBackgroundClasses(container);
+    // Eliminar overlays de edición de imagen
+    container.querySelectorAll('.img-replace-btn').forEach(btn => btn.remove());
     // IMPORTANTE: Remover contentEditable para publicación
     this.removeContentEditableAttributes(container);
   },

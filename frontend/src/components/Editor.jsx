@@ -10,6 +10,7 @@ import '../styles/Editor.css';
 
 
 function Editor() {
+    
   const [htmlContent, setHtmlContent] = useState('');
   const [isEditMode, setIsEditMode] = useState(false);
   const [saveMessage, setSaveMessage] = useState('');
@@ -24,6 +25,9 @@ function Editor() {
   const [cssVars, setCssVars] = useState([]);
 
   const [originalContent, setOriginalContent] = useState('');
+
+  useEditableImageReplace(contentRef, isEditMode, setHtmlContent);
+
   useEffect(() => {
     const workingContent = localStorage.getItem('editableHtml') || '<h1>No hay contenido...</h1>';
     const originalTemplate = localStorage.getItem('originalTemplate');
@@ -45,6 +49,63 @@ function Editor() {
     showSuccessMessage('Página restaurada al estado original');
   };
 
+    function useEditableImageReplace(contentRef, isEditMode, setHtmlContent) {
+      useEffect(() => {
+        if (!isEditMode || !contentRef.current) return;
+
+        const container = contentRef.current;
+        let currentInput = null;
+
+
+        function handleMouseOver(e) {
+          const img = e.target.closest('img[data-editable-image]');
+          if (img && !img.parentNode.querySelector('.img-replace-btn')) {
+            // Crear botón flotante
+            const btn = document.createElement('button');
+            btn.type = 'button';
+            btn.textContent = 'Reemplazar imagen';
+            btn.className = 'img-replace-btn fixed z-50 px-2 py-1 rounded bg-purple-600 text-white text-xs shadow hover:bg-purple-700 focus:outline-none';
+            btn.style.position = 'absolute';
+            btn.style.top = (img.offsetTop + 8) + 'px';
+            btn.style.left = (img.offsetLeft + 8) + 'px';
+            btn.style.transform = 'translateY(-100%)';
+            btn.tabIndex = 0;
+
+            btn.onclick = () => {
+              if (currentInput) currentInput.remove();
+              const input = document.createElement('input');
+              input.type = 'file';
+              input.accept = 'image/*';
+              input.style.display = 'none';
+              input.onchange = ev => {
+                const file = ev.target.files && ev.target.files[0];
+                if (file) {
+                  const url = URL.createObjectURL(file);
+                  img.src = url;
+                  img.setAttribute('data-user-image', 'true');
+                  setHtmlContent(container.innerHTML);
+                }
+                input.remove();
+                currentInput = null;
+              };
+              document.body.appendChild(input);
+              input.click();
+              currentInput = input;
+            };
+
+            img.parentNode.style.position = 'relative';
+            img.parentNode.appendChild(btn);
+            // Eliminar el botón solo cuando el mouse sale del botón, no de la imagen
+            btn.addEventListener('mouseleave', () => btn.remove(), { once: true });
+          }
+        }
+
+        container.addEventListener('mouseover', handleMouseOver);
+        return () => {
+          container.removeEventListener('mouseover', handleMouseOver);
+        };
+      }, [isEditMode, contentRef, setHtmlContent]);
+    }
   const getEditableHtml = (originalHtml, editMode) => {
     if (!originalHtml) return originalHtml;
 
