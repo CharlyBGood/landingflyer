@@ -25,7 +25,7 @@ export default function HeroCardContainer() {
       <div className="max-w-2xl mx-auto mt-2">
         <ul className="text-sinapsia-light text-sm sm:text-base text-left list-disc pl-6">
           <li><span className="font-semibold">Opción Exprés:</span> Generación automática, editor visual y SEO básico.</li>
-          <li><span className="font-semibold">Opción Premium:</span> Todo lo anterior + extras como CMS básico, formularios, e-commerce y SEO avanzado.</li>
+          <li><span className="font-semibold">Opción Premium:</span> Todo lo anterior + extras como CMS básico, formularios, <span className="whitespace-nowrap">e-commerce</span> y SEO avanzado.</li>
         </ul>
       </div>
     </>
