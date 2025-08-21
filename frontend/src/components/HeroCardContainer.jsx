@@ -17,13 +17,15 @@ export default function HeroCardContainer() {
           priceUSD={500}
           priceARS={650000}
           btnText="Ver personalización"
+          fromLabel
+          recommended
         />
       </div>
+      <span className="block text-xs text-gray-400 text-center leading-tight mb-2 mt-[-0.5rem]">Conseguí dominio personalizado al realizar la compra.</span>
       <div className="max-w-2xl mx-auto mt-2">
         <ul className="text-sinapsia-light text-sm sm:text-base text-left list-disc pl-6">
           <li><span className="font-semibold">Opción Exprés:</span> Generación automática, editor visual y SEO básico.</li>
           <li><span className="font-semibold">Opción Premium:</span> Todo lo anterior + extras como CMS básico, formularios, e-commerce y SEO avanzado.</li>
-          <li>Buscá y comprá tu <span className="font-semibold">dominio personalizado</span> al realizar la compra.</li>
         </ul>
       </div>
     </>
