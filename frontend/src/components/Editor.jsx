@@ -64,11 +64,11 @@ function Editor() {
             const btn = document.createElement('button');
             btn.type = 'button';
             btn.textContent = 'Reemplazar imagen';
-            btn.className = 'img-replace-btn fixed z-50 px-2 py-1 rounded bg-purple-600 text-white text-xs shadow hover:bg-purple-700 focus:outline-none';
+            btn.className = 'img-replace-btn absolute z-50 px-2 py-1 rounded bg-purple-600 text-white text-xs shadow hover:bg-purple-700 focus:outline-none';
             btn.style.position = 'absolute';
-            btn.style.top = (img.offsetTop + 8) + 'px';
-            btn.style.left = (img.offsetLeft + 8) + 'px';
-            btn.style.transform = 'translateY(-100%)';
+            btn.style.top = '8px';
+            btn.style.left = '8px';
+            btn.style.transform = '';
             btn.tabIndex = 0;
 
             btn.onclick = () => {
@@ -93,7 +93,9 @@ function Editor() {
               currentInput = input;
             };
 
-            img.parentNode.style.position = 'relative';
+            if (getComputedStyle(img.parentNode).position === 'static') {
+              img.parentNode.style.position = 'relative';
+            }
             img.parentNode.appendChild(btn);
             // Eliminar el botón solo cuando el mouse sale del botón, no de la imagen
             btn.addEventListener('mouseleave', () => btn.remove(), { once: true });
