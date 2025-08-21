@@ -7,13 +7,15 @@ export default function HeroCardContainer() {
         <HeroCard
           header="Publicación Exprés"
           paragraph="Página lista para publicar + hosting 1 año + dominio genérico al instante."
-          price="USD 350"
+          priceUSD={300}
+          priceARS={390000}
           btnText="Ver detalles"
         />
         <HeroCard
           header="Premium a medida"
           paragraph="Todo lo del plan básico + Personalizaciones extras + pago flexible contra entrega."
-          price="Desde USD 500"
+          priceUSD={500}
+          priceARS={650000}
           btnText="Ver personalización"
         />
       </div>
