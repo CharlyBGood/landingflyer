@@ -8,7 +8,12 @@ export default function OrderSummary({ formData, onBack, onPublish }) {
       <div className="bg-sinapsia-base border border-sinapsia-accent rounded-lg p-4 flex flex-col gap-2">
         <div className="flex justify-between text-sinapsia-light text-sm">
           <span>Tipo de Publicación:</span>
-          <span className="font-semibold">{formData.publicationType === 'basic' ? 'Publicación Básica' : 'Publicación Premium'}</span>
+          <span className="font-semibold flex items-center gap-2">
+            {formData.publicationType === 'basic' ? 'Publicación Exprés' : 'Premium a medida'}
+            {formData.publicationType === 'premium' && (
+              <span className="bg-sinapsia-accent text-white text-xs font-bold px-2 py-0.5 rounded-full ml-1">Recomendado</span>
+            )}
+          </span>
         </div>
         <div className="flex justify-between text-sinapsia-light text-sm">
           <span>Entrega:</span>
@@ -17,7 +22,7 @@ export default function OrderSummary({ formData, onBack, onPublish }) {
         <div className="flex flex-col gap-1">
           <div className="font-semibold text-sinapsia-light">Modificaciones Incluidas</div>
           <ul className="list-disc pl-5 text-xs">
-            {formData.modifications.map(m => <li key={m}>{m.replace(/^[a-z]/, c => c.toUpperCase()).replace('-', ' ')}</li>)}
+            {formData.modifications.length === 0 ? <li>Ninguna</li> : formData.modifications.map(m => <li key={m}>{m.replace(/^[a-z]/, c => c.toUpperCase()).replace('-', ' ')}</li>)}
           </ul>
         </div>
         {formData.extras.length > 0 && (
@@ -32,11 +37,11 @@ export default function OrderSummary({ formData, onBack, onPublish }) {
       <div className="bg-sinapsia-base border border-sinapsia-accent rounded-lg p-4">
         <div className="flex justify-between text-sinapsia-light text-sm">
           <span>Costo base:</span>
-          <span>${formData.publicationType === 'basic' ? 15 : 35}</span>
+          <span>${formData.publicationType === 'basic' ? 350 : 650}</span>
         </div>
         <div className="flex justify-between text-sinapsia-light text-sm">
           <span>Extras únicos:</span>
-          <span>+${total - (formData.publicationType === 'basic' ? 15 : 35) - (monthly * 1)}</span>
+          <span>+${total - (formData.publicationType === 'basic' ? 350 : 650) - (monthly * 1)}</span>
         </div>
         <div className="flex justify-between text-sinapsia-light text-sm">
           <span>Servicios mensuales:</span>

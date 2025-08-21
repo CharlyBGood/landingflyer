@@ -1,28 +1,31 @@
 
+
 const options = [
   {
     value: 'basic',
-    title: 'Publicación Estándar',
-    price: 15,
-    description: 'Solución accesible con hosting profesional por 1 año',
+    title: 'Publicación Exprés',
+    price: 350,
+    description: 'Página lista + hosting incluido por 1 año + dominio genérico. Generación automática y editor visual.',
     features: [
-      'Landing page completa',
-      'URL personalizada de SinapsiaLab',
-      'Hosting profesional por 1 año',
-      '+2 más...'
+      'Landing page profesional en minutos',
+      'Hosting incluido 1 año',
+      'Dominio genérico .site',
+      'Editor visual y SEO básico',
     ]
   },
   {
     value: 'premium',
-    title: 'Publicación Premium',
-    price: 35,
-    description: 'Dominio personalizado y funcionalidades avanzadas',
+    title: 'Premium a medida',
+    price: 650,
+    description: 'Personalizaciones extras, edición avanzada y pago flexible. Incluye CMS básico, formularios, e-commerce básico y SEO avanzado.',
     features: [
-      'Todo lo de la versión estándar',
-      'Dominio personalizado (.com, .net, etc)',
-      'Hosting premium por 1 año',
-      '+3 más...'
-    ]
+      'Todo lo de la opción Exprés',
+      'Personalizaciones y edición avanzada',
+      'CMS básico, formularios, e-commerce básico',
+      'SEO avanzado',
+      'Pago flexible (adelanto y saldo al terminar)'
+    ],
+    recommended: true
   }
 ];
 
@@ -33,13 +36,16 @@ export default function PublicationTypeSelection({ value, onChange }) {
         <button
           key={opt.value}
           type="button"
-          className={`flex-1 border rounded-xl p-5 text-left transition-all duration-200 focus:outline-none 
+          className={`relative flex-1 border rounded-xl p-5 text-left transition-all duration-200 focus:outline-none 
             ${value === opt.value ? 'border-sinapsia-accent bg-sinapsia-base shadow-lg' : 'border-gray-700 bg-transparent'}`}
           onClick={() => onChange(opt.value)}
         >
+          {opt.recommended && (
+            <span className="absolute -top-4 left-1/2 -translate-x-1/2 bg-sinapsia-accent text-white text-xs font-bold px-3 py-1 rounded-full shadow-md">Recomendado</span>
+          )}
           <div className="flex items-center justify-between mb-2">
             <span className="font-bold text-lg text-sinapsia-light">{opt.title}</span>
-            <span className="font-semibold text-sinapsia-accent">Desde ${opt.price}</span>
+            <span className="font-semibold text-sinapsia-accent">{opt.value === 'premium' ? 'Desde ' : ''}${opt.price}</span>
           </div>
           <div className="text-sinapsia-light text-sm mb-2">{opt.description}</div>
           <ul className="text-xs text-sinapsia-light pl-4 list-disc">
