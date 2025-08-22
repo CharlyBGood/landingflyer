@@ -136,16 +136,21 @@ app.post('/api/publish', async (req, res) => {
             });
         }
 
-        // Importar dinámicamente el servicio
+
+        // Procesar imágenes y reemplazar src por URLs Cloudinary
+        const { processImagesAndReplaceSrc } = await import('./services/processImagesAndReplaceSrc.js');
+        const htmlWithCloudinary = await processImagesAndReplaceSrc(htmlContent, siteName);
+
+        // Importar NetlifyZipService y publicar
         const { NetlifyZipService } = await import('./services/NetlifyZipService.js');
         const netlifyService = new NetlifyZipService();
 
-        const htmlTitle = netlifyService.extractTitleFromHTML(htmlContent);
+        const htmlTitle = netlifyService.extractTitleFromHTML(htmlWithCloudinary);
         const titleForURL = htmlTitle || siteName;
 
         const validSiteName = netlifyService.generateSiteName(titleForURL);
 
-        const result = await netlifyService.createSite(validSiteName, htmlContent);
+        const result = await netlifyService.createSite(validSiteName, htmlWithCloudinary);
 
         res.json({
             success: true,
