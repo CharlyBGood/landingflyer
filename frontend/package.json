@@ -11,11 +11,16 @@
   },
   "dependencies": {
     "@tailwindcss/vite": "^4.1.11",
+    "@tinymce/tinymce-react": "^6.3.0",
     "axios": "^1.11.0",
+    "grapesjs": "^0.22.12",
+    "grapesjs-plugin-toolbox": "^1.0.15",
+    "grapesjs-preset-webpage": "^1.0.3",
     "react": "^19.1.0",
     "react-dom": "^19.1.0",
     "react-router-dom": "^7.7.1",
-    "tailwindcss": "^4.1.11"
+    "tailwindcss": "^4.1.11",
+    "tinymce": "^8.0.2"
   },
   "devDependencies": {
     "@eslint/js": "^9.30.1",
