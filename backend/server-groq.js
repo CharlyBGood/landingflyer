@@ -1,13 +1,13 @@
-import { getUnsplashImageUrl } from './services/UnsplashService.js';
 import 'dotenv/config';
 import express from 'express';
 import cors from 'cors';
 import multer from 'multer';
-import { VertexAI } from '@google-cloud/vertexai';
+import { Groq } from 'groq-sdk';
 import fs from 'fs/promises';
 import path from 'path';
 import { fileURLToPath } from 'url';
 import axios from 'axios';
+import { getUnsplashImageUrl } from './services/UnsplashService.js';
 
 const app = express();
 app.use(cors());
@@ -17,17 +17,10 @@ const upload = multer({ storage: multer.memoryStorage() });
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-const vertex_ai = new VertexAI({ project: process.env.GCLOUD_PROJECT, location: 'us-central1' });
-const textModel = vertex_ai.getGenerativeModel({ model: 'gemini-2.0-flash' });
-
-import fsSync from 'fs';
-if (process.env.GOOGLE_APPLICATION_CREDENTIALS) {
-    try {
-        fsSync.accessSync(process.env.GOOGLE_APPLICATION_CREDENTIALS, fsSync.constants.R_OK);
-    } catch (err) {
-        console.error('No se pudo acceder al archivo de credenciales:', err);
-    }
-}
+// Inicializar cliente de Groq
+const groq = new Groq({
+    apiKey: process.env.GROQ_API_KEY,
+});
 
 app.get('/api/image/unsplash', async (req, res) => {
     const term = req.query.term;
@@ -36,7 +29,6 @@ app.get('/api/image/unsplash', async (req, res) => {
     }
     try {
         const imageUrl = await getUnsplashImageUrl(term);
-        // Proxy: descarga la imagen y la reenvía con el content-type correcto
         const response = await axios.get(imageUrl, { responseType: 'stream' });
         res.setHeader('Content-Type', response.headers['content-type'] || 'image/jpeg');
         response.data.pipe(res);
@@ -50,17 +42,26 @@ app.get('/api/image/unsplash', async (req, res) => {
 app.post('/api/generate-preview', upload.single('flyerImage'), async (req, res) => {
     try {
         const promptTemplate = await fs.readFile(path.join(__dirname, 'prompt.md'), 'utf8');
-        let requestParts = [{ text: promptTemplate }];
+        const messages = [];
 
         // 🔄 DETECCIÓN DE MODALIDAD
         if (req.file) {
-            // 📷 MODO IMAGEN: Procesamiento tradicional con imagen
+            // 📷 MODO IMAGEN: Procesamiento con imagen
             const imageBuffer = req.file.buffer;
-            requestParts.push({
-                inlineData: { 
-                    mimeType: req.file.mimetype, 
-                    data: imageBuffer.toString('base64') 
-                }
+            const base64Image = imageBuffer.toString('base64');
+            const mimeType = req.file.mimetype;
+
+            messages.push({
+                role: "user",
+                content: [
+                    { type: "text", text: promptTemplate },
+                    {
+                        type: "image_url",
+                        image_url: {
+                            url: `data:${mimeType};base64,${base64Image}`,
+                        },
+                    },
+                ],
             });
         } else if (req.body.businessData) {
             // 📋 MODO FORMULARIO: Procesamiento con datos estructurados
@@ -92,31 +93,34 @@ ${businessData.services.map((service, index) => `- ${service.name}: ${service.de
 Usa EXACTAMENTE estos colores como base de la paleta. Convierte automáticamente el teléfono a WhatsApp y la dirección a Google Maps si están especificados.
 `;
             
-            requestParts.push({ text: structuredPrompt });
+            const finalPrompt = promptTemplate + '\n' + structuredPrompt;
+            messages.push({
+                role: "user",
+                content: finalPrompt,
+            });
         } else {
             return res.status(400).json({ 
                 error: 'Debes subir una imagen O proporcionar datos del negocio.' 
             });
         }
 
-        const result = await textModel.generateContent({ contents: [{ role: 'user', parts: requestParts }] });
-        const response = result.response;
+        const chatCompletion = await groq.chat.completions.create({
+            messages: messages,
+            model: process.env.GROQ_MODEL || "meta-llama/llama-4-scout-17b-16e-instruct",
+        });
 
-        if (!response.candidates || response.candidates.length === 0) {
+        const generatedText = chatCompletion.choices[0]?.message?.content;
+
+        if (!generatedText) {
             throw new Error('La respuesta de la IA estaba vacía.');
         }
 
-        const generatedHtml = response.candidates[0].content.parts[0].text.replace(/^```html\n?/, '').replace(/```$/, '');
+        const generatedHtml = generatedText.replace(/^```html\n?/, '').replace(/```$/, '');
 
         res.json({ generatedHtml });
 
     } catch (error) {
-        console.error('Error en el proceso de IA:', error);
-        console.error('Stacktrace:', error.stack);
-        console.error('Variables de entorno al fallar:', {
-            GCLOUD_PROJECT: process.env.GCLOUD_PROJECT,
-            GOOGLE_APPLICATION_CREDENTIALS: process.env.GOOGLE_APPLICATION_CREDENTIALS
-        });
+        console.error('Error en el proceso de IA con Groq:', error);
         res.status(500).json({ error: 'Error al generar la vista previa con IA.', details: error.message });
     }
 });
@@ -132,12 +136,9 @@ app.post('/api/publish', async (req, res) => {
             });
         }
 
-
-        // Procesar imágenes y reemplazar src por URLs Cloudinary
         const { processImagesAndReplaceSrc } = await import('./services/processImagesAndReplaceSrc.js');
         const htmlWithCloudinary = await processImagesAndReplaceSrc(htmlContent, siteName);
 
-        // Importar NetlifyZipService y publicar
         const { NetlifyZipService } = await import('./services/NetlifyZipService.js');
         const netlifyService = new NetlifyZipService();
 
@@ -166,13 +167,11 @@ app.post('/api/publish', async (req, res) => {
 
 app.get('/api/deploy-status/:siteId/:deployId', async (req, res) => {
     try {
-
         res.json({
             state: 'ready',
             ready: true,
             message: 'Deploy completado con ZIP Method atómico'
         });
-
     } catch (error) {
         console.error('Error verificando estado:', error);
         res.status(500).json({
@@ -182,7 +181,8 @@ app.get('/api/deploy-status/:siteId/:deployId', async (req, res) => {
     }
 });
 
-const PORT = process.env.PORT || 8080;
+const PORT = process.env.PORT_GROQ || 8080; // Usar un puerto diferente para evitar conflictos
 app.listen(PORT, () => {
-    console.log(`Servidor escuchando en el puerto ${PORT}`);
+    console.log(`Servidor Groq escuchando en el puerto ${PORT}`);
+    console.log(`Usando modelo Groq: ${process.env.GROQ_MODEL || 'meta-llama/llama-4-scout-17b-16e-instruct'}`);
 });

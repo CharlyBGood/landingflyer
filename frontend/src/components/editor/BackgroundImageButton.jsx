@@ -37,7 +37,7 @@ const BackgroundImageButton = ({
   return (
     <button
       type="button"
-      className="flex items-center gap-1 rounded-md bg-primary-600 text-white hover:bg-primary-700 transition-colors p-2 text-xs font-medium shadow-md focus:outline-none focus:ring-2 focus:ring-primary-400"
+      className="flex items-center gap-1 rounded-md bg-primary-600 text-black hover:bg-primary-700 transition-colors p-2 text-xs font-medium shadow-md focus:outline-none focus:ring-2 focus:ring-primary-400"
       onClick={handleImageUpload}
       title="Cambiar imagen de fondo"
       style={style} // Justificado: background-image dinámico solo se puede aplicar así
