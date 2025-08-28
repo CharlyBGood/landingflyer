@@ -2,7 +2,7 @@ import React, { useEffect, useRef, useState } from 'react';
 import 'grapesjs/dist/css/grapes.min.css';
 import grapesjs from 'grapesjs';
 import es from 'grapesjs/locale/es';
-import 'grapesjs-preset-webpage';
+import gjsPresetWebpage from 'grapesjs-preset-webpage';
 import tinymce from 'tinymce';
 import 'tinymce/themes/silver';
 import 'tinymce/plugins/link';
@@ -10,7 +10,6 @@ import 'tinymce/plugins/image';
 import 'tinymce/plugins/lists';
 import 'tinymce/plugins/code';
 import 'tinymce/skins/ui/oxide/skin.min.css';
-import 'grapesjs-plugin-toolbox';
 import grapesjs_plugin_toolbox from 'grapesjs-plugin-toolbox';
 import PublishModal from './editor/PublishModal.jsx';
 import PublishSuccessModal from './editor/PublishSuccessModal.jsx';
@@ -103,7 +102,7 @@ const GrapesJsEditor = () => {
       height: '100vh',
       width: 'auto',
       storageManager: false, // Desactivamos el autoguardado para usar un botón manual
-      plugins: ['gjs-preset-webpage', grapesjs_plugin_toolbox],
+      plugins: [gjsPresetWebpage, grapesjs_plugin_toolbox],
       pluginsOpts: {
         'gjs-preset-webpage': {
           // options

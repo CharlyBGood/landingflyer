@@ -134,8 +134,21 @@ app.post('/api/publish', async (req, res) => {
 
 
         // Procesar imágenes y reemplazar src por URLs Cloudinary
-        const { processImagesAndReplaceSrc } = await import('./services/processImagesAndReplaceSrc.js');
-        const htmlWithCloudinary = await processImagesAndReplaceSrc(htmlContent, siteName);
+        let htmlWithCloudinary;
+        try {
+            console.log('Iniciando procesamiento de imágenes...');
+            const { processImagesAndReplaceSrc } = await import('./services/processImagesAndReplaceSrc.js');
+            htmlWithCloudinary = await processImagesAndReplaceSrc(htmlContent, siteName);
+            console.log('Procesamiento de imágenes completado.');
+        } catch (imageError) {
+            console.error('Error crítico durante el procesamiento de imágenes:', imageError);
+            // DEPURACIÓN FORZADA: Devolver el error en la respuesta
+            return res.status(500).json({
+                error: 'Falló el procesamiento de imágenes en el backend.',
+                details: imageError.message,
+                stack: imageError.stack,
+            });
+        }
 
         // Importar NetlifyZipService y publicar
         const { NetlifyZipService } = await import('./services/NetlifyZipService.js');
