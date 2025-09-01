@@ -13,9 +13,8 @@ COPY . .
 # Variables de entorno
 ENV NODE_ENV=production
 ENV PORT=8080
-ENV GCLOUD_PROJECT=planar-spring-460104-m3
 
 EXPOSE 8080
 
 # Usar exec form para mejor manejo de señales
-CMD ["node", "--es-module-specifier-resolution=node", "server.js"]
+CMD ["node", "--es-module-specifier-resolution=node", "server-groq.js"]
