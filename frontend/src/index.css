@@ -11,7 +11,19 @@
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+}
 
+@theme {
+  --color-portfolio-deep: #0c070f;
+  --color-portfolio-dark: #150a1a;
+  --color-portfolio-base: #1a0f20;
+  --color-portfolio-medium: #2a1530;
+  --color-portfolio-accent: #3a2540;
+  --color-portfolio-gradient-1: #4a2560;
+  --color-portfolio-gradient-2: #5a3570;
+  --color-portfolio-gradient-3: #6a3590;
+  --color-portfolio-gradient-4: #7a45a0;
+  --color-portfolio-text: #c8b8d8;
 }
 
 body {
