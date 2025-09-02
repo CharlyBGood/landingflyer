@@ -8,6 +8,7 @@ import path from 'path';
 import { fileURLToPath } from 'url';
 import axios from 'axios';
 import { getUnsplashImageUrl } from './services/UnsplashService.js';
+import { getPexelsImageUrl } from './services/PexelsService.js';
 
 const app = express();
 app.use(cors());
@@ -28,17 +29,29 @@ app.get('/api/image/unsplash', async (req, res) => {
         return res.status(400).json({ error: 'Falta el parámetro term' });
     }
     try {
-        const imageUrl = await getUnsplashImageUrl(term);
+        let imageUrl;
+        try {
+            imageUrl = await getUnsplashImageUrl(term);
+        } catch (unsplashError) {
+            console.error('Error obteniendo imagen de Unsplash:', unsplashError);
+            try {
+                imageUrl = await getPexelsImageUrl(term);
+                console.log('Imagen obtenida de Pexels:', imageUrl);
+            } catch (pexelsError) {
+                console.error('Error obteniendo imagen de Pexels:', pexelsError);
+                let details = unsplashError.message;
+                if (unsplashError.response && unsplashError.response.status) {
+                    details += ` (Status: ${unsplashError.response.status})`;
+                }
+                return res.status(500).json({ error: 'No se pudo obtener imagen ni de Unsplash ni de Pexels', details: details });
+            }
+        }
         const response = await axios.get(imageUrl, { responseType: 'stream' });
         res.setHeader('Content-Type', response.headers['content-type'] || 'image/jpeg');
         response.data.pipe(res);
     } catch (error) {
-        console.error('Error obteniendo imagen de Unsplash:', error);
-        let details = error.message;
-        if (error.response && error.response.status) {
-            details += ` (Status: ${error.response.status})`;
-        }
-        res.status(500).json({ error: 'No se pudo obtener imagen de Unsplash', details: details });
+        console.error('Error general al obtener la imagen:', error);
+        res.status(500).json({ error: 'Error al obtener la imagen', details: error.message });
     }
 });
 
