@@ -34,7 +34,11 @@ app.get('/api/image/unsplash', async (req, res) => {
         response.data.pipe(res);
     } catch (error) {
         console.error('Error obteniendo imagen de Unsplash:', error);
-        res.status(500).json({ error: 'No se pudo obtener imagen de Unsplash', details: error.message });
+        let details = error.message;
+        if (error.response && error.response.status) {
+            details += ` (Status: ${error.response.status})`;
+        }
+        res.status(500).json({ error: 'No se pudo obtener imagen de Unsplash', details: details });
     }
 });
 
