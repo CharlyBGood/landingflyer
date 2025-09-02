@@ -64,7 +64,7 @@ function Editor() {
             const btn = document.createElement('button');
             btn.type = 'button';
             btn.textContent = 'Reemplazar imagen';
-            btn.className = 'img-replace-btn absolute z-50 px-2 py-1 rounded bg-purple-600 text-white text-xs shadow hover:bg-purple-700 focus:outline-none';
+            btn.className = 'img-replace-btn absolute z-50 px-2 py-1 rounded bg-purple-600 text-sinapsia-light text-xs shadow hover:bg-purple-700 focus:outline-none';
             btn.style.position = 'absolute';
             btn.style.top = '8px';
             btn.style.left = '8px';
@@ -355,7 +355,7 @@ function Editor() {
         </div>
         <button
           onClick={handlePublish}
-          className="edit-mode-btn publish-btn-custom flex items-center gap-2 px-3 py-2 sm:px-4 sm:py-3 text-sm sm:text-base font-semibold text-white bg-gradient-to-r from-purple-500 to-purple-600 hover:from-purple-600 hover:to-purple-700 rounded-xl sm:rounded-2xl transition-all duration-200 transform hover:-translate-y-0.5 hover:shadow-lg focus:outline-none focus:ring-2 focus:ring-purple-500 focus:ring-offset-2"
+          className="edit-mode-btn publish-btn-custom flex items-center gap-2 px-3 py-2 sm:px-4 sm:py-3 text-sm sm:text-base font-semibold text-sinapsia-light bg-gradient-to-r from-purple-500 to-purple-600 hover:from-purple-600 hover:to-purple-700 rounded-xl sm:rounded-2xl transition-all duration-200 transform hover:-translate-y-0.5 hover:shadow-lg focus:outline-none focus:ring-2 focus:ring-purple-500 focus:ring-offset-2"
           aria-label="Publicar página"
         >
           <GlobeIcon size={18} className="flex-shrink-0" />

@@ -6,9 +6,9 @@ export default function HeroCardContainer({ onBasicClick, onPremiumClick }) {
       <div className="flex flex-col sm:flex-row gap-6 justify-center items-stretch max-w-3xl mx-auto mb-4">
         <HeroCard
           header="Publicación Exprés"
-          paragraph="Página lista para publicar + hosting 1 año + dominio genérico al instante."
-          priceUSD={300}
-          priceARS={390000}
+          paragraph="Página lista para publicar + hosting 1 año + encargo de modificaciones extra."
+          priceUSD={199}
+          priceARS={260000}
           btnText="Comenzar"
           onClick={onBasicClick}
         />
@@ -16,8 +16,8 @@ export default function HeroCardContainer({ onBasicClick, onPremiumClick }) {
           header="Premium a medida"
           paragraph="Todo lo del plan básico + Personalizaciones extras + pago flexible contra entrega."
           priceUSD={500}
-          priceARS={650000}
-          btnText="Ver personalización"
+          priceARS={670000}
+          btnText="Ver opciones"
           fromLabel
           recommended
           onClick={onPremiumClick}

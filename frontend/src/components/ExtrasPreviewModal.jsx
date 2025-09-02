@@ -1,11 +1,9 @@
-import React from 'react';
 
 const extras = [
-  { label: 'E-commerce Básico', price: 15 },
-  { label: 'Formularios Avanzados', price: 8 },
-  { label: 'Sección de Blog', price: 12 },
-  { label: 'Galería de Imágenes', price: 6 },
-  { label: 'Sección de Testimonios', price: 5 },
+  { label: 'E-commerce' },
+  { label: 'Formularios Avanzados' },
+  { label: 'Blog' },
+  { label: 'Funel de ventas' },
 ];
 
 export default function ExtrasPreviewModal({ isOpen, onClose, onContinue }) {
@@ -18,18 +16,16 @@ export default function ExtrasPreviewModal({ isOpen, onClose, onContinue }) {
           onClick={onClose}
           aria-label="Cerrar"
         >×</button>
-        <h2 className="text-center text-lg sm:text-xl font-bold text-sinapsia-light mb-6">Modificaciones Adicionales</h2>
+        <h2 className="text-center text-lg sm:text-xl font-bold gradient-link mb-6 select-none">Elegí lo que estás buscando</h2>
         <div className="grid grid-cols-2 gap-x-6 gap-y-4 mb-6">
           {extras.map((extra) => (
             <label key={extra.label} className="flex flex-col items-center text-center text-sinapsia-light text-sm font-medium">
-
               <span>{extra.label}</span>
-              <span className="text-sinapsia-accent font-semibold text-xs mt-1">+${extra.price}</span>
             </label>
           ))}
         </div>
         <button
-          className="w-full py-2.5 rounded-lg bg-sinapsia-accent text-white font-semibold hover:bg-sinapsia-gradient transition text-base mt-2"
+          className="w-full py-2.5 rounded-lg bg-sinapsia-accent text-sinapsia-base font-semibold hover:bg-sinapsia-gradient transition text-base mt-2"
           onClick={onContinue}
         >
           Continuar
