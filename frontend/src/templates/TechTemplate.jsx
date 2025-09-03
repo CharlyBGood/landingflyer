@@ -1,6 +1,6 @@
 import { ArrowRight, Zap, Shield, Users } from 'lucide-react';
 
-const SaasTemplate = () => {
+const TechTemplate = () => {
   return (
     <div className="bg-white">
       {/* Hero Section */}
@@ -78,4 +78,4 @@ const SaasTemplate = () => {
   );
 };
 
-export default SaasTemplate;
+export default TechTemplate;

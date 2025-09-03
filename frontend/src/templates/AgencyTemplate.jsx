@@ -1,9 +1,9 @@
 import { ArrowUpRight, Palette, Target, Lightbulb } from 'lucide-react';
+import TemplateSelectorButton from '../components/template_utilities/TemplateSelectorButton';
 
 const AgencyTemplate = () => {
   return (
-    <div className="bg-black text-white">
-      {/* Hero Section */}
+    <div className="bg-black text-white">      
       <section className="min-h-screen flex items-center">
         <div className="max-w-6xl mx-auto px-4 py-12 sm:py-16 lg:py-20">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 sm:gap-12 items-center">

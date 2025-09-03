@@ -1,4 +1,4 @@
-import SaasTemplate from "../templates/SassTemplate";
+import TechTemplate from "../templates/TechTemplate";
 import AgencyTemplate from "../templates/AgencyTemplate";
 import EcommerceTemplate from "../templates/EcommerceTemplate";
 import PortfolioTemplate from "../templates/PortfolioTemplate";
@@ -8,9 +8,9 @@ import FitnessTemplate from "../templates/FitnessTemplate";
 export const templatesArray = [
   {
     id: "saas",
-    name: "Plataforma Saas",
+    name: "Plataforma Tech",
     description: "Empresa de tecnología.",
-    component: SaasTemplate,
+    component: TechTemplate,
     thumbnail:
       "https://images.pexels.com/photos/3183150/pexels-photo-3183150.jpeg?auto=compress&cs=tinysrgb&w=400",
     color: "from-blue-600 to-purple-600",
