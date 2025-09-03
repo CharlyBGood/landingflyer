@@ -6,10 +6,6 @@ import LandingPreview from './components/LandingPreview.jsx';
 import Navbar from './components/Navbar.jsx';
 import Footer from './components/Footer.jsx';
 import { useNavbarHeight } from './hooks/useNavbarHeight.js';
-import TemplateGallery from './components/TemplateGallery.jsx';
-import { templatesArray } from './utilities/templates-array.js';
-import TemplatesModal from './components/TemplatesModal.jsx';
-import { X } from 'lucide-react';
 
 function App() {
   const [selectedFile, setSelectedFile] = useState(null);
@@ -18,20 +14,6 @@ function App() {
   const [error, setError] = useState('');
   const [inputMode, setInputMode] = useState('image');
   const iframeRef = useRef(null);
-  const [selectedTemplate, setSelectedTemplate] = useState(null);
-  const [templateSectionOpen, setTemplateSectionOpen] = useState(false);
-
-  const handleShowTemplates = () => {
-    setTemplateSectionOpen(!templateSectionOpen);
-  }
-
-  const openModal = (template) => {
-    setSelectedTemplate(template);
-  };
-
-  const closeModal = () => {
-    setSelectedTemplate(null);
-  };
 
   useNavbarHeight();
 
@@ -117,39 +99,7 @@ function App() {
             error={error}
             inputMode={inputMode}
             setInputMode={setInputMode}
-          />
-          <button onClick={handleShowTemplates} className="mt-6 mb-4 px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 transition">
-            Ver templates
-          </button>
-
-          {templateSectionOpen && (
-            <TemplateGallery templates={templatesArray} openModal={openModal} />
-          )}
-
-          <TemplatesModal isOpen={!!selectedTemplate} onClose={closeModal}>
-            {selectedTemplate && (
-              <div className="w-full h-full overflow-y-auto">
-                <div className="sticky top-0 z-50 bg-white/90 backdrop-blur-xs border-b border-gray-200 p-4">
-                  <div className="flex justify-between items-center max-w-6xl mx-auto">
-                    <div>
-                      <h2 className="text-2xl font-bold text-gray-800">{selectedTemplate.name}</h2>
-                      <p className="text-gray-600">{selectedTemplate.description}</p>
-                    </div>
-                    <button
-                      onClick={closeModal}
-                      className="p-2 rounded-full hover:bg-gray-100 transition-colors"
-                    >
-                      <X className="w-6 h-6" />
-                    </button>
-                  </div>
-                </div>
-                <div className="pb-8">
-                  <selectedTemplate.component />
-                </div>
-              </div>
-            )}
-          </TemplatesModal>
-
+          />          
           {generatedHtml && (
             <LandingPreview generatedHtml={generatedHtml} iframeRef={iframeRef} />
           )}

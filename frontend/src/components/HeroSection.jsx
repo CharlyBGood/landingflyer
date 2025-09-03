@@ -1,9 +1,13 @@
 
-import React from 'react';
+import React, { useState } from 'react';
 import ManualForm from './ManualForm.jsx';
 import '../styles/HeroSection.css';
 import HeroCardContainer from './HeroCardContainer.jsx';
 import ExtrasPreviewModal from './ExtrasPreviewModal.jsx';
+import TemplateGallery from './TemplateGallery.jsx';
+import { templatesArray } from '../utilities/templates-array.js';
+import TemplatesModal from './TemplatesModal.jsx';
+import { X } from 'lucide-react';
 
 
 export default function HeroSection({
@@ -16,6 +20,20 @@ export default function HeroSection({
   inputMode,
   setInputMode
 }) {
+  const [selectedTemplate, setSelectedTemplate] = useState(null);
+  const [templateSectionOpen, setTemplateSectionOpen] = useState(false);
+
+  const handleShowTemplates = () => {
+    setTemplateSectionOpen(!templateSectionOpen);
+  }
+
+  const openModal = (template) => {
+    setSelectedTemplate(template);
+  };
+
+  const closeModal = () => {
+    setSelectedTemplate(null);
+  };
 
   const handleFlyerClick = () => {
     setInputMode('image');
@@ -43,10 +61,10 @@ export default function HeroSection({
 
   return (
     <>
-      <header className="mb-8 sm:mb-12 text-center">
-        <h1 className="text-3xl sm:text-4xl lg:text-5xl font-bold mb-2 sm:mb-4 text-sinapsia-light">
+      <header className="text-center">
+        {/* <h1 className="text-3xl sm:text-4xl lg:text-5xl font-bold mb-2 sm:mb-4 text-sinapsia-light">
           Tu sitio web en segundos
-        </h1>
+        </h1> */}
         <p className="text-base sm:text-lg lg:text-xl max-w-3xl mx-auto px-4 mb-6 text-sinapsia-light">
           Elige tu camino y publica tu web profesional de forma automática.<br />
           <span className="text-sinapsia-accent font-semibold">Una solución de <a
@@ -71,6 +89,36 @@ export default function HeroSection({
           />
         )}
       </header>
+
+      <button onClick={handleShowTemplates} className="m-6 px-4 py-2 bg-portfolio-gradient-1 text-portfolio-text rounded hover:bg-portfolio-gradient-2 transition">
+        Elegir template
+      </button>
+      {templateSectionOpen && (
+        <TemplateGallery templates={templatesArray} onTemplateClick={openModal} />
+      )}
+      <TemplatesModal isOpen={!!selectedTemplate} onClose={closeModal}>
+        {selectedTemplate && (
+          <div className="w-full h-full overflow-y-auto">
+            <div className="sticky top-0 z-50 bg-white/90 backdrop-blur-xs border-b border-gray-200 p-4">
+              <div className="flex justify-between items-center max-w-6xl mx-auto">
+                <div>
+                  <h2 className="text-2xl font-bold text-gray-800">{selectedTemplate.name}</h2>
+                  <p className="text-gray-600">{selectedTemplate.description}</p>
+                </div>
+                <button
+                  onClick={closeModal}
+                  className="p-2 rounded-full hover:bg-gray-100 transition-colors"
+                >
+                  <X className="w-6 h-6" />
+                </button>
+              </div>
+            </div>
+            <div className="pb-8">
+              <selectedTemplate.component />
+            </div>
+          </div>
+        )}
+      </TemplatesModal>
 
       <main id="form-section" className="bg-sinapsia-base border border-sinapsia-accent p-4 sm:p-8 rounded-lg mx-auto max-w-4xl mb-4">
         <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 items-center justify-center">
