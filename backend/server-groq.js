@@ -36,7 +36,6 @@ app.get('/api/image/unsplash', async (req, res) => {
             console.error('Error obteniendo imagen de Unsplash:', unsplashError);
             try {
                 imageUrl = await getPexelsImageUrl(term);
-                console.log('Imagen obtenida de Pexels:', imageUrl);
             } catch (pexelsError) {
                 console.error('Error obteniendo imagen de Pexels:', pexelsError);
                 let details = unsplashError.message;
@@ -126,15 +125,19 @@ Usa EXACTAMENTE estos colores como base de la paleta. Convierte automáticamente
             model: process.env.GROQ_MODEL || "meta-llama/llama-4-scout-17b-16e-instruct",
         });
 
-        const generatedText = chatCompletion.choices[0]?.message?.content;
+        let generatedText = chatCompletion.choices[0]?.message?.content;
 
         if (!generatedText) {
             throw new Error('La respuesta de la IA estaba vacía.');
         }
 
-        const generatedHtml = generatedText.replace(/^```html\n?/, '').replace(/```$/, '');
+        // Procesar imágenes y reemplazar src con URLs de Cloudinary
+        const { processImagesAndReplaceSrc } = await import('./services/processImagesAndReplaceSrc.js');
+        const htmlWithCloudinary = await processImagesAndReplaceSrc(generatedText, 'preview'); // Usar 'preview' como siteName temporal
 
-        res.json({ generatedHtml });
+        let generatedHtml = htmlWithCloudinary.replace(/^```html\n?/, '').replace(/```$/, '');
+
+        res.json({ generatedHtml: generatedHtml });
 
     } catch (error) {
         console.error('Error en el proceso de IA con Groq:', error);
@@ -198,7 +201,7 @@ app.get('/api/deploy-status/:siteId/:deployId', async (req, res) => {
     }
 });
 
-const PORT = process.env.PORT_GROQ || 8080; // Usar un puerto diferente para evitar conflictos
+const PORT = process.env.PORT_GROQ || 8080; 
 app.listen(PORT, () => {
     console.log(`Servidor Groq escuchando en el puerto ${PORT}`);
     console.log(`Usando modelo Groq: ${process.env.GROQ_MODEL || 'meta-llama/llama-4-scout-17b-16e-instruct'}`);
