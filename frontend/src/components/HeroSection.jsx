@@ -25,13 +25,14 @@ export default function HeroSection({
 
   const handleShowTemplates = () => {
     setTemplateSectionOpen(!templateSectionOpen);
+    handleScrollToForm();
   }
 
-  const openModal = (template) => {
+  const openTemplatesModal = (template) => {
     setSelectedTemplate(template);
   };
 
-  const closeModal = () => {
+  const closeTemplatesModal = () => {
     setSelectedTemplate(null);
   };
 
@@ -48,8 +49,10 @@ export default function HeroSection({
   };
 
   const [showExtrasModal, setShowExtrasModal] = React.useState(false);
+
   const handlePremiumClick = () => setShowExtrasModal(true);
   const handleCloseExtrasModal = () => setShowExtrasModal(false);
+
   const handleExtrasContinue = () => {
     setShowExtrasModal(false);
     handleScrollToForm();
@@ -94,9 +97,9 @@ export default function HeroSection({
         Elegir template
       </button>
       {templateSectionOpen && (
-        <TemplateGallery templates={templatesArray} onTemplateClick={openModal} />
+        <TemplateGallery templates={templatesArray} onTemplateClick={openTemplatesModal} />
       )}
-      <TemplatesModal isOpen={!!selectedTemplate} onClose={closeModal}>
+      <TemplatesModal isOpen={!!selectedTemplate} onClose={closeTemplatesModal}>
         {selectedTemplate && (
           <div className="w-full h-full overflow-y-auto">
             <div className="sticky top-0 z-50 bg-white/90 backdrop-blur-xs border-b border-gray-200 p-4">
@@ -106,7 +109,7 @@ export default function HeroSection({
                   <p className="text-gray-600">{selectedTemplate.description}</p>
                 </div>
                 <button
-                  onClick={closeModal}
+                  onClick={closeTemplatesModal}
                   className="p-2 rounded-full hover:bg-gray-100 transition-colors"
                 >
                   <X className="w-6 h-6" />

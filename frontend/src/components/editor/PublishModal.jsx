@@ -87,18 +87,18 @@ const PublishModal = ({ isOpen, onClose, onPublish, isPublishing }) => {
               type="button"
               onClick={handleClose}
               disabled={isPublishing}
-              className="flex-1 px-4 py-2 text-sinapsia-light bg-sinapsia-base border border-sinapsia-accent hover:bg-sinapsia-accent/20 rounded-lg transition-colors disabled:opacity-50"
+              className="flex-1 px-4 py-2 text-portfolio-text/90 bg-portfolio-base border border-portfolio-accent hover:bg-portfolio-accent/20 rounded-lg transition-colors disabled:opacity-50"
             >
               Cancelar
             </button>
             <button
               type="submit"
               disabled={isPublishing || !siteName.trim()}
-              className="flex-1 px-4 py-2 bg-sinapsia-accent hover:bg-sinapsia-gradient text-white rounded-lg transition-colors disabled:opacity-50 flex items-center justify-center gap-2"
+              className="flex-1 px-4 py-2 bg-sinapsia-accent hover:bg-sinapsia-gradient text-portfolio-text rounded-lg transition-colors disabled:opacity-50 flex items-center justify-center gap-2"
             >
               {isPublishing ? (
                 <>
-                  <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
+                  <div className="w-4 h-4 border-2 border-portfolio-gradient-3/90 border-t-portfolio-text rounded-full animate-spin"></div>
                   Publicando...
                 </>
               ) : (
@@ -110,18 +110,18 @@ const PublishModal = ({ isOpen, onClose, onPublish, isPublishing }) => {
 
         <div className="mt-4 p-3 bg-sinapsia-base border border-sinapsia-accent rounded-lg">
           <p className="text-sm text-sinapsia-accent">
-            <strong>💡 URL inteligente:</strong> Crearemos una URL corta y memorable usando el nombre de tu empresa
+            <strong>💡 URL temporal:</strong> Crearemos una URL genérica para que puedes acceder a un preview de tu landing page hasta que tu dominio esté configurado.
           </p>
           <p className="text-xs text-sinapsia-light mt-1">
-            Ejemplo: "Panadería San José" → panaderiasr12345.netlify.app
+            Ejemplo: "Panadería San José"
           </p>
         </div>
 
         {isPublishing && (
-          <div className="mt-4 p-3 bg-sinapsia-base border border-yellow-400 rounded-lg">
+          <div className="mt-4 p-3 bg-sinapsia-base border border-portfolio-gradient-3 rounded-lg">
             <p className="text-sm text-yellow-400">
-              <strong>🚀 Publicando con ZIP Method...</strong> Deploy atómico directo a Netlify. 
-              Completado típicamente en menos de 30 segundos.
+              <strong>🚀 Publicando landing page...</strong> 
+              Despliegue automático para que puedas acceder a tu sitio publicado en internet mientras trabajamos en la versión final.
             </p>
           </div>
         )}

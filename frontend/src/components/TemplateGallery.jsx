@@ -3,7 +3,7 @@ import { Eye } from 'lucide-react';
 
 const TemplateGallery = ({ templates, onTemplateClick }) => {
   return (
-    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 w-[90%] m-auto">
+    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 w-full mb-4">
       {templates.map((template) => (
         <div
           key={template.id}
