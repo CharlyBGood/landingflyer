@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import ManualForm from './ManualForm.jsx';
 import '../styles/HeroSection.css';
@@ -20,11 +19,12 @@ export default function HeroSection({
   error,
   inputMode,
   setInputMode,
-  onTemplateSelect
+  onTemplateSelect // This prop comes from App.jsx
 }) {
-  const [selectedTemplate, setSelectedTemplate] = useState(null);
-  const [templateSectionOpen, setTemplateSectionOpen] = useState(false);
-  const [selectedTemplateForGallery, setSelectedTemplateForGallery] = useState(null);
+  const [selectedTemplate, setSelectedTemplate] = useState(null); // State for the modal content
+  const [templateSectionOpen, setTemplateSectionOpen] = useState(false); // State to control if the gallery is shown
+  const [selectedTemplateForGallery, setSelectedTemplateForGallery] = useState(null); // State to control which template is displayed in the gallery (either one or all)
+  const [selectedTemplateId, setSelectedTemplateId] = useState(null); // State to track the ID of the selected template for the X button logic
 
   const handleShowTemplates = () => {
     setTemplateSectionOpen(!templateSectionOpen);
@@ -39,9 +39,22 @@ export default function HeroSection({
     setSelectedTemplate(null);
   };
 
+  // This function is called by TemplateSelectorButton inside the modal
+  // It selects a template, updates the gallery view, and informs App.jsx
   const handleTemplateSelection = (template) => {
-    setSelectedTemplateForGallery(template);
-    onTemplateSelect(template);
+    setSelectedTemplateForGallery(template); // Show only this template in the gallery
+    onTemplateSelect(template); // Inform App.jsx about the selection
+    setSelectedTemplateId(template.id); // Set the ID to control the X button in TemplateGallery
+    closeTemplatesModal(); // Close the modal after selection
+  };
+
+  // This function is called by the X button within TemplateGallery
+  const handleChangeSelected = () => {
+    setSelectedTemplateId(null); // Clear the selected template ID
+    setSelectedTemplateForGallery(null); // Show all templates in the gallery again
+    setTemplateSectionOpen(true); // Ensure the gallery is visible
+    // Optionally, you might want to reset the selection in App.jsx as well if it's critical
+    // onTemplateSelect(null); // Uncomment if App.jsx needs to know about deselection
   };
 
   const handleFlyerClick = () => {
@@ -73,13 +86,10 @@ export default function HeroSection({
   return (
     <>
       <header className="text-center">
-        {/* <h1 className="text-3xl sm:text-4xl lg:text-5xl font-bold mb-2 sm:mb-4 text-sinapsia-light">
-          Tu sitio web en segundos
-        </h1> */}
         <p className="text-base sm:text-lg lg:text-xl max-w-3xl mx-auto px-4 mb-6 text-sinapsia-light">
           Elige tu camino y publica tu web profesional de forma automática.<br />
           <span className="text-sinapsia-accent font-semibold">Una solución de <a
-            href="https://www.sinapsialab.com"
+            href="https://www.sinapsiaLab.com"
             className="gradient-link"
             target="_blank"
             rel="noopener noreferrer"
@@ -91,7 +101,6 @@ export default function HeroSection({
           onBasicClick={handleScrollToForm}
           onPremiumClick={handlePremiumClick}
         />
-        {/* Modal para extras premium (solo preview) */}
         {showExtrasModal && (
           <ExtrasPreviewModal
             isOpen={showExtrasModal}
@@ -105,9 +114,11 @@ export default function HeroSection({
         Elegir template
       </button>
       {templateSectionOpen && (
-        <TemplateGallery 
-          templates={selectedTemplateForGallery ? [selectedTemplateForGallery] : templatesArray} 
-          onTemplateClick={openTemplatesModal} 
+        <TemplateGallery
+          templates={selectedTemplateForGallery ? [selectedTemplateForGallery] : templatesArray}
+          onTemplateClick={openTemplatesModal}
+          selectedTemplateId={selectedTemplateId}
+          changeSelected={handleChangeSelected}
         />
       )}
       <TemplatesModal isOpen={!!selectedTemplate} onClose={closeTemplatesModal}>
@@ -119,10 +130,10 @@ export default function HeroSection({
                   <h2 className="text-2xl font-bold text-gray-800">{selectedTemplate.name}</h2>
                   <p className="text-gray-600">{selectedTemplate.description}</p>
                 </div>
-                <TemplatesSelectorButton 
-                  template={selectedTemplate} 
-                  onSelectTemplate={handleTemplateSelection} 
-                  onCloseModal={closeTemplatesModal} 
+                <TemplatesSelectorButton
+                  template={selectedTemplate}
+                  onSelectTemplate={handleTemplateSelection} // This calls handleTemplateSelection which updates selectedTemplateId
+                  onCloseModal={closeTemplatesModal}
                 />
                 <button
                   onClick={closeTemplatesModal}
@@ -137,7 +148,7 @@ export default function HeroSection({
             </div>
           </div>
         )}
-      </TemplatesModal>      
+      </TemplatesModal>
 
       <main id="form-section" className="bg-sinapsia-base border border-sinapsia-accent p-4 sm:p-8 rounded-lg mx-auto max-w-4xl mb-4">
         <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 items-center justify-center">

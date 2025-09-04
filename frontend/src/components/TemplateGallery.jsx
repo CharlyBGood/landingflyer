@@ -9,10 +9,9 @@ const TemplateGallery = ({ templates, onTemplateClick, selectedTemplateId, chang
           <div
             key={template.id}
             className={`group relative rounded-2xl shadow-lg overflow-hidden hover:shadow-2xl transition-all duration-500 hover:-translate-y-2 cursor-pointer ${isSelected
-              ? 'bg-blue-50 border-2 border-blue-500 shadow-blue-200'
-              : 'bg-white/80'
+              ? 'bg-portfolio-text border-2 border-portfolio-text/70 shadow-portfolio-text'
+              : 'bg-portfolio-text/80'
               }`}
-            onClick={() => onTemplateClick(template)}
           >
             <div className="relative h-48 overflow-hidden">
               <img
@@ -22,14 +21,16 @@ const TemplateGallery = ({ templates, onTemplateClick, selectedTemplateId, chang
               />
               <div className={`absolute inset-0 bg-linear-to-br ${template.color} opacity-20 group-hover:opacity-30 transition-opacity duration-300`} />
               <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                <div className="bg-portfolio-text/90 backdrop-blur-xs rounded-full p-4 transform scale-75 group-hover:scale-100 transition-transform duration-300">
+                <div className="bg-portfolio-text/90 backdrop-blur-xs rounded-full p-4 transform scale-75 group-hover:scale-100 transition-transform duration-300 flex" 
+                  onClick={() => onTemplateClick(template)}
+                >
                   <Eye className="w-8 h-8 text-portfolio-accent" />
                 </div>
               </div>
               {
                 isSelected ? <button
                   onClick={changeSelected}
-                  className="backdrop-blur-xs rounded-full absolute bg-portfolio-text/60 text-portfolio-accent top-0 right-0 p-2 transform scale-75 flex">
+                  className="backdrop-blur-xs rounded-full absolute bg-portfolio-text/60 text-portfolio-accent top-0 right-0 p-2 transform scale-75 flex z-50">
                   <X className='text-2xl text-bolder' />
                 </button> : null
               }
