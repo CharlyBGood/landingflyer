@@ -1,16 +1,22 @@
 import { Eye } from 'lucide-react';
 
 
-const TemplateGallery = ({ templates, onTemplateClick }) => {
+const TemplateGallery = ({ templates, onTemplateClick, selectedTemplateId }) => {
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 w-full mb-4">
-      {templates.map((template) => (
-        <div
-          key={template.id}
-          className="group relative bg-white/80 rounded-2xl shadow-lg overflow-hidden hover:shadow-2xl transition-all duration-500 hover:-translate-y-2 cursor-pointer"
-          onClick={() => onTemplateClick(template)}
-        >
-          <div className="relative h-48 overflow-hidden">
+      {templates.map((template) => {
+        const isSelected = selectedTemplateId === template.id;
+        return (
+          <div
+            key={template.id}
+            className={`group relative rounded-2xl shadow-lg overflow-hidden hover:shadow-2xl transition-all duration-500 hover:-translate-y-2 cursor-pointer ${
+              isSelected 
+                ? 'bg-blue-50 border-2 border-blue-500 shadow-blue-200' 
+                : 'bg-white/80'
+            }`}
+            onClick={() => onTemplateClick(template)}
+          >
+            <div className="relative h-48 overflow-hidden">
             <img
               src={template.thumbnail}
               alt={template.name}
@@ -35,8 +41,9 @@ const TemplateGallery = ({ templates, onTemplateClick }) => {
             </p>
           </div>
           <div className={`h-1 bg-linear-to-r ${template.color} transform scale-x-0 group-hover:scale-x-100 transition-transform duration-300 origin-left`} />
-        </div>
-      ))}
+          </div>
+        );
+      })}
     </div>
   );
 };

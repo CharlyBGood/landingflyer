@@ -8,6 +8,7 @@ import TemplateGallery from './TemplateGallery.jsx';
 import { templatesArray } from '../utilities/templates-array.js';
 import TemplatesModal from './TemplatesModal.jsx';
 import { X } from 'lucide-react';
+import TemplatesSelectorButton from './template_utilities/TemplateSelectorButton.jsx';
 
 
 export default function HeroSection({
@@ -18,10 +19,12 @@ export default function HeroSection({
   selectedFile,
   error,
   inputMode,
-  setInputMode
+  setInputMode,
+  onTemplateSelect
 }) {
   const [selectedTemplate, setSelectedTemplate] = useState(null);
   const [templateSectionOpen, setTemplateSectionOpen] = useState(false);
+  const [selectedTemplateForGallery, setSelectedTemplateForGallery] = useState(null);
 
   const handleShowTemplates = () => {
     setTemplateSectionOpen(!templateSectionOpen);
@@ -34,6 +37,11 @@ export default function HeroSection({
 
   const closeTemplatesModal = () => {
     setSelectedTemplate(null);
+  };
+
+  const handleTemplateSelection = (template) => {
+    setSelectedTemplateForGallery(template);
+    onTemplateSelect(template);
   };
 
   const handleFlyerClick = () => {
@@ -97,7 +105,10 @@ export default function HeroSection({
         Elegir template
       </button>
       {templateSectionOpen && (
-        <TemplateGallery templates={templatesArray} onTemplateClick={openTemplatesModal} />
+        <TemplateGallery 
+          templates={selectedTemplateForGallery ? [selectedTemplateForGallery] : templatesArray} 
+          onTemplateClick={openTemplatesModal} 
+        />
       )}
       <TemplatesModal isOpen={!!selectedTemplate} onClose={closeTemplatesModal}>
         {selectedTemplate && (
@@ -108,6 +119,11 @@ export default function HeroSection({
                   <h2 className="text-2xl font-bold text-gray-800">{selectedTemplate.name}</h2>
                   <p className="text-gray-600">{selectedTemplate.description}</p>
                 </div>
+                <TemplatesSelectorButton 
+                  template={selectedTemplate} 
+                  onSelectTemplate={handleTemplateSelection} 
+                  onCloseModal={closeTemplatesModal} 
+                />
                 <button
                   onClick={closeTemplatesModal}
                   className="p-2 rounded-full hover:bg-gray-100 transition-colors"
@@ -121,7 +137,7 @@ export default function HeroSection({
             </div>
           </div>
         )}
-      </TemplatesModal>
+      </TemplatesModal>      
 
       <main id="form-section" className="bg-sinapsia-base border border-sinapsia-accent p-4 sm:p-8 rounded-lg mx-auto max-w-4xl mb-4">
         <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 items-center justify-center">

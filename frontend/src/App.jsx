@@ -14,6 +14,12 @@ function App() {
   const [error, setError] = useState('');
   const [inputMode, setInputMode] = useState('image');
   const iframeRef = useRef(null);
+  const [templateToUse, setTemplateToUse] = useState(null)
+
+  const handleSelectedTemplate = (template) => {
+    setTemplateToUse(template);
+    console.log(templateToUse);
+  }
 
   useNavbarHeight();
 
@@ -99,6 +105,7 @@ function App() {
             error={error}
             inputMode={inputMode}
             setInputMode={setInputMode}
+            onTemplateSelect={handleSelectedTemplate}
           />          
           {generatedHtml && (
             <LandingPreview generatedHtml={generatedHtml} iframeRef={iframeRef} />

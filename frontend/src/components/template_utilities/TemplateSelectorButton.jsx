@@ -1,10 +1,16 @@
+import { SquareCheckBig } from "lucide-react"
 
-export default function TemplateSelectorButton({selectedTemplate}) {
+export default function TemplateSelectorButton({ template, onSelectTemplate, onCloseModal }) {
+  const handleSelectTemplate = () => {
+    onSelectTemplate(template);
+    onCloseModal();
+  };
+
   return (
-    <button 
-    onClick={selectedTemplate}
-    className="px-4 py-2 bg-blue-500 text-portfolio-text rounded hover:bg-portfolio-accent transition">
-      Seleccionar Template
+    <button
+      onClick={handleSelectTemplate}
+      className="p-1 text-portfolio-gradient-1 rounded-full outline-0 hover:p-2 hover:bg-portfolio-text/80 transition">
+      <SquareCheckBig />
     </button>
   )
 }
