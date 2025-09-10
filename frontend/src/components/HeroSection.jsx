@@ -39,22 +39,17 @@ export default function HeroSection({
     setSelectedTemplate(null);
   };
 
-  // This function is called by TemplateSelectorButton inside the modal
-  // It selects a template, updates the gallery view, and informs App.jsx
   const handleTemplateSelection = (template) => {
-    setSelectedTemplateForGallery(template); // Show only this template in the gallery
-    onTemplateSelect(template); // Inform App.jsx about the selection
-    setSelectedTemplateId(template.id); // Set the ID to control the X button in TemplateGallery
-    closeTemplatesModal(); // Close the modal after selection
+    setSelectedTemplateForGallery(template);
+    onTemplateSelect(template);
+    setSelectedTemplateId(template.id);
+    closeTemplatesModal();
   };
 
-  // This function is called by the X button within TemplateGallery
   const handleChangeSelected = () => {
-    setSelectedTemplateId(null); // Clear the selected template ID
-    setSelectedTemplateForGallery(null); // Show all templates in the gallery again
-    setTemplateSectionOpen(true); // Ensure the gallery is visible
-    // Optionally, you might want to reset the selection in App.jsx as well if it's critical
-    // onTemplateSelect(null); // Uncomment if App.jsx needs to know about deselection
+    setSelectedTemplateId(null);
+    setSelectedTemplateForGallery(null);
+    setTemplateSectionOpen(true);    
   };
 
   const handleFlyerClick = () => {
