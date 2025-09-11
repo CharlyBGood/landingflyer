@@ -4,8 +4,8 @@
   "main": "server.js",
   "type": "module",
   "scripts": {
-    "dev": "nodemon server-groq.js",
-    "start": "node server-groq.js",
+    "dev": "nodemon server-genai.js",
+    "start": "node server-genai.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [],

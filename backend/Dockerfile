@@ -17,4 +17,4 @@ ENV PORT=8080
 EXPOSE 8080
 
 # Usar exec form para mejor manejo de señales
-CMD ["node", "--es-module-specifier-resolution=node", "server-groq.js"]
+CMD ["node", "--es-module-specifier-resolution=node", "server-genai.js"]
