@@ -11,14 +11,14 @@ export default function LandingPreview({ generatedHtml, iframeRef }) {
             <p className="text-gray-300 text-sm sm:text-base lg:text-lg mb-4 sm:mb-6 max-w-3xl mx-auto">
               Abriendo el editor puedes personalizar tu página, guardar los cambios y prepararla para el lanzamiento.
             </p>
-            <div className='flex justify-center'>
-              <a 
-                href="/editor" 
-                target="_blank" 
-                className='inline-flex items-center px-4 sm:px-6 py-2.5 sm:py-3 bg-portfolio-accent hover:bg-portfolio-medium text-white font-semibold text-sm sm:text-base rounded-lg transition-all duration-200 transform hover:-translate-y-0.5 hover:shadow-lg' 
+            <div className='flex justify-center gap-4'>
+              <a
+                href="/editor"
+                target="_blank"
+                className='inline-flex items-center px-4 sm:px-6 py-2.5 sm:py-3 bg-portfolio-accent hover:bg-portfolio-medium text-white font-semibold text-sm sm:text-base rounded-lg transition-all duration-200 transform hover:-translate-y-0.5 hover:shadow-lg'
                 rel="noopener noreferrer"
               >
-                Abrir Editor a Pantalla Completa
+                Vista Previa
               </a>
             </div>
           </div>
