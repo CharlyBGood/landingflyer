@@ -16,8 +16,11 @@
     "node": "20.x"
   },
   "dependencies": {
+    "@ai-sdk/vercel": "^1.0.15",
     "@google-cloud/vertexai": "^1.10.0",
     "@google-cloud/vision": "^5.3.2",
+    "@google/genai": "^1.19.0",
+    "ai": "^5.0.39",
     "axios": "^1.11.0",
     "cheerio": "latest",
     "cloudinary": "^2.7.0",
