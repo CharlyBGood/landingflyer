@@ -13,6 +13,14 @@
 - **📐 RESPONSIVE-FIRST DESIGN**: Always use rem/em/% instead of px. Use clamp() for fluid typography. Prioritize Tailwind CSS over custom CSS.
 - **🚫 NEVER USE `style` ATTRIBUTE**: The `style` attribute is forbidden. Use Tailwind classes or custom CSS classes from `frontend/src/styles/`.
 
+## 🎯 FUNDAMENTAL WORK PRINCIPLES
+
+- **🚫 NEVER CREATE ALTERNATIVE VERSIONS**: When fixing errors or improving existing components, ALWAYS work directly with the existing files. Do NOT create new versions, copies, or alternative files unless explicitly requested by the user.
+- **✅ WORK WITH EXISTING FILES**: Always edit and improve the actual files in use. No TemplateEditorV2, ComponentV2, or any "clean" versions.
+- **🚫 NO OVERCOMPLICATED STRATEGIES**: Keep solutions simple and direct. Avoid complex architectural changes when simple fixes will work.
+- **✅ DIRECT APPROACH**: Fix problems directly in the existing codebase without unnecessary refactoring or restructuring.
+- **⚠️ ASK BEFORE MAJOR CHANGES**: If a significant restructure is truly necessary, ask for explicit permission first and explain why simpler approaches won't work.
+
 # Copilot Instructions for LandingFlyer
 
 ## Project Overview
