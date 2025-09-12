@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useCallback } from 'react';
 import ManualForm from './ManualForm.jsx';
 import '../styles/HeroSection.css';
 import HeroCardContainer from './HeroCardContainer.jsx';
@@ -6,7 +6,8 @@ import ExtrasPreviewModal from './ExtrasPreviewModal.jsx';
 import TemplateGallery from './TemplateGallery.jsx';
 import { templatesArray } from '../utilities/templates-array.js';
 import TemplatesModal from './TemplatesModal.jsx';
-import { X } from 'lucide-react';
+import TemplateEditor from './TemplateEditor.jsx';
+import { X, ChevronLeft, ChevronRight, Edit3 } from 'lucide-react';
 import TemplatesSelectorButton from './template_utilities/TemplateSelectorButton.jsx';
 
 
@@ -25,6 +26,8 @@ export default function HeroSection({
   const [templateSectionOpen, setTemplateSectionOpen] = useState(false); // State to control if the gallery is shown
   const [selectedTemplateForGallery, setSelectedTemplateForGallery] = useState(null); // State to control which template is displayed in the gallery (either one or all)
   const [selectedTemplateId, setSelectedTemplateId] = useState(null); // State to track the ID of the selected template for the X button logic
+  const [currentTemplateIndex, setCurrentTemplateIndex] = useState(0); // State for template navigation
+  const [isEditorOpen, setIsEditorOpen] = useState(false); // State for template editor
 
   const handleShowTemplates = () => {
     setTemplateSectionOpen(!templateSectionOpen);
@@ -32,12 +35,42 @@ export default function HeroSection({
   }
 
   const openTemplatesModal = (template) => {
+    const templateIndex = templatesArray.findIndex(t => t.id === template.id);
+    setCurrentTemplateIndex(templateIndex);
     setSelectedTemplate(template);
   };
 
-  const closeTemplatesModal = () => {
+  const closeTemplatesModal = useCallback(() => {
     setSelectedTemplate(null);
-  };
+  }, []);
+
+  const navigateToNextTemplate = useCallback(() => {
+    const nextIndex = (currentTemplateIndex + 1) % templatesArray.length;
+    setCurrentTemplateIndex(nextIndex);
+    setSelectedTemplate(templatesArray[nextIndex]);
+  }, [currentTemplateIndex]);
+
+  const navigateToPreviousTemplate = useCallback(() => {
+    const prevIndex = currentTemplateIndex === 0 ? templatesArray.length - 1 : currentTemplateIndex - 1;
+    setCurrentTemplateIndex(prevIndex);
+    setSelectedTemplate(templatesArray[prevIndex]);
+  }, [currentTemplateIndex]);
+
+  const openTemplateEditor = useCallback(() => {
+    if (selectedTemplate) {
+      setIsEditorOpen(true);
+    }
+  }, [selectedTemplate]);
+
+  const closeTemplateEditor = useCallback(() => {
+    setIsEditorOpen(false);
+  }, []);
+
+  const handleEditorSave = useCallback((editedContent) => {
+    console.log('Template editado:', editedContent);
+    // Aquí puedes manejar el contenido editado
+    // Por ejemplo, guardarlo en localStorage o enviarlo a un servidor
+  }, []);
 
   const handleTemplateSelection = (template) => {
     setSelectedTemplateForGallery(template);
@@ -49,7 +82,7 @@ export default function HeroSection({
   const handleChangeSelected = () => {
     setSelectedTemplateId(null);
     setSelectedTemplateForGallery(null);
-    setTemplateSectionOpen(true);    
+    setTemplateSectionOpen(true);
   };
 
   const handleFlyerClick = () => {
@@ -116,32 +149,70 @@ export default function HeroSection({
           changeSelected={handleChangeSelected}
         />
       )}
-      <TemplatesModal isOpen={!!selectedTemplate} onClose={closeTemplatesModal}>
+      <TemplatesModal
+        isOpen={!!selectedTemplate}
+        onClose={closeTemplatesModal}
+        onNavigateNext={navigateToNextTemplate}
+        onNavigatePrev={navigateToPreviousTemplate}
+        disableKeyboardNavigation={isEditorOpen}
+      >
         {selectedTemplate && (
-          <div className="w-full h-full overflow-y-auto">
-            <div className="sticky top-0 z-50 bg-white/90 backdrop-blur-xs border-b border-gray-200 p-4">
-              <div className="flex justify-between items-center max-w-6xl mx-auto">
-                <div>
-                  <h2 className="text-2xl font-bold text-gray-800">{selectedTemplate.name}</h2>
-                  <p className="text-gray-600">{selectedTemplate.description}</p>
+          <>
+            {/* Flechas fuera del template, en el espacio del modal */}
+            <button
+              onClick={navigateToPreviousTemplate}
+              className="fixed left-8 top-1/2 transform -translate-y-1/2 z-50 p-4 rounded-full"
+              aria-label="Template anterior"
+            >
+              <ChevronLeft className="w-11 h-11 text-portfolio-text/70" />
+            </button>
+
+            <button
+              onClick={navigateToNextTemplate}
+              className="fixed right-8 top-1/2 transform -translate-y-1/2 z-50 p-4"
+              aria-label="Template siguiente"
+            >
+              <ChevronRight className="w-11 h-11 text-portfolio-text/70 outline-none" />
+            </button>
+
+            {/* Contenido del template */}
+            <div className="w-full h-full overflow-y-auto relative">
+              <div className="sticky top-0 z-40 bg-white/90 backdrop-blur-xs border-b border-gray-200 p-4">
+                <div className="flex justify-between items-center max-w-6xl mx-auto">
+                  <div>
+                    <h2 className="text-2xl font-bold text-gray-800">{selectedTemplate.name}</h2>
+                    <p className="text-gray-600">{selectedTemplate.description}</p>
+                    <p className="text-sm text-gray-500 mt-1">
+                      {currentTemplateIndex + 1} de {templatesArray.length}
+                    </p>
+                  </div>
+                  <div className="flex items-center gap-3">
+                    <button
+                      onClick={openTemplateEditor}
+                      className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+                    >
+                      <Edit3 className="w-4 h-4" />
+                      Editar Template
+                    </button>
+                    <TemplatesSelectorButton
+                      template={selectedTemplate}
+                      onSelectTemplate={handleTemplateSelection}
+                      onCloseModal={closeTemplatesModal}
+                    />
+                    <button
+                      onClick={closeTemplatesModal}
+                      className="p-2 rounded-full hover:bg-gray-100 transition-colors"
+                    >
+                      <X className="w-6 h-6" />
+                    </button>
+                  </div>
                 </div>
-                <TemplatesSelectorButton
-                  template={selectedTemplate}
-                  onSelectTemplate={handleTemplateSelection} // This calls handleTemplateSelection which updates selectedTemplateId
-                  onCloseModal={closeTemplatesModal}
-                />
-                <button
-                  onClick={closeTemplatesModal}
-                  className="p-2 rounded-full hover:bg-gray-100 transition-colors"
-                >
-                  <X className="w-6 h-6" />
-                </button>
+              </div>
+              <div className="pb-8">
+                <selectedTemplate.component />
               </div>
             </div>
-            <div className="pb-8">
-              <selectedTemplate.component />
-            </div>
-          </div>
+          </>
         )}
       </TemplatesModal>
 
@@ -216,6 +287,16 @@ export default function HeroSection({
             </div>
           </div>
         </div>
+      )}
+
+      {/* Template Editor */}
+      {selectedTemplate && (
+        <TemplateEditor
+          isOpen={isEditorOpen}
+          onClose={closeTemplateEditor}
+          template={selectedTemplate}
+          onSave={handleEditorSave}
+        />
       )}
     </>
   );

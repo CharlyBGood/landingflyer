@@ -7,19 +7,15 @@ export const useNavbarHeight = () => {
       if (navbar) {
         const height = navbar.offsetHeight;
         document.documentElement.style.setProperty('--navbar-height', `${height}px`);
-        
-        // Debug opcional (remover en producción)
-        // console.log(`Navbar height updated: ${height}px`);
       }
     };
 
-    // Actualizar inmediatamente
     updateNavbarHeight();
 
     // Observer para cambios en el navbar
     let resizeObserver;
     const navbar = document.querySelector('nav.navbar, nav');
-    
+
     if (navbar && window.ResizeObserver) {
       resizeObserver = new ResizeObserver(() => {
         // Debounce para evitar demasiadas actualizaciones
