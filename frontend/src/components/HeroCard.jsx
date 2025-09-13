@@ -10,7 +10,7 @@ export default function HeroCard({ header, paragraph, priceUSD, priceARS, btnTex
       <h3 className="text-xl font-bold mb-2 text-sinapsia-light">
         {header}
       </h3>
-      <p className="text-sinapsia-light mb-2 text-sm">
+      <p className="text-sinapsia-light mb-2 text-sm w-[85%]">
         {paragraph}
       </p>
       <div className="flex flex-row gap-4 items-center mb-4 w-full justify-center">
