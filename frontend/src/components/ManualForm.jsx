@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import '../styles/ManualForm.css';
 
 const ManualForm = ({ onSubmit, isLoading, onClose }) => {
@@ -21,7 +21,7 @@ const ManualForm = ({ onSubmit, isLoading, onClose }) => {
   });
 
   const businessTypes = [
-    'restaurante', 'servicios', 'productos', 'tecnología', 
+    'restaurante', 'servicios', 'productos', 'tecnología',
     'salud', 'belleza', 'educación', 'entretenimiento', 'otro'
   ];
 
@@ -73,16 +73,15 @@ const ManualForm = ({ onSubmit, isLoading, onClose }) => {
   const handleSubmit = (e) => {
     e.preventDefault();
     onSubmit(formData);
-    if (onClose) onClose(); // Cerrar modal después de enviar
+    if (onClose) onClose();
   };
 
   return (
     <div className="manual-form-container">
       <form onSubmit={handleSubmit} className="manual-form">
-        {/* Información Básica */}
         <div className="form-section">
           <h3>📋 Información Básica</h3>
-          
+
           <div className="form-group">
             <label htmlFor="businessName">Nombre de la Empresa *</label>
             <input
@@ -145,7 +144,7 @@ const ManualForm = ({ onSubmit, isLoading, onClose }) => {
         {/* Colores */}
         <div className="form-section">
           <h3>🎨 Paleta de Colores</h3>
-          
+
           <div className="form-row">
             <div className="form-group">
               <label htmlFor="primaryColor">Color Principal *</label>
@@ -188,7 +187,7 @@ const ManualForm = ({ onSubmit, isLoading, onClose }) => {
         {/* Contacto */}
         <div className="form-section">
           <h3>📞 Información de Contacto</h3>
-          
+
           <div className="form-row">
             <div className="form-group">
               <label htmlFor="phone">Teléfono</label>
@@ -241,7 +240,7 @@ const ManualForm = ({ onSubmit, isLoading, onClose }) => {
         {/* Servicios/Productos */}
         <div className="form-section">
           <h3>🛍️ Productos/Servicios</h3>
-          
+
           {formData.services.map((service, index) => (
             <div key={index} className="service-item">
               <div className="service-header">
@@ -256,7 +255,7 @@ const ManualForm = ({ onSubmit, isLoading, onClose }) => {
                   </button>
                 )}
               </div>
-              
+
               <div className="form-row">
                 <div className="form-group">
                   <label>Nombre *</label>

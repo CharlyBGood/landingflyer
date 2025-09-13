@@ -1,14 +1,14 @@
-import React, { useState, useCallback } from 'react';
+import { useState } from 'react';
 import ManualForm from './ManualForm.jsx';
 import '../styles/HeroSection.css';
 import HeroCardContainer from './HeroCardContainer.jsx';
-import ExtrasPreviewModal from './ExtrasPreviewModal.jsx';
-import TemplateGallery from './TemplateGallery.jsx';
-import { templatesArray } from '../utilities/templates-array.js';
-import TemplatesModal from './TemplatesModal.jsx';
-import TemplateEditor from './TemplateEditor.jsx';
-import { X, ChevronLeft, ChevronRight, Edit3 } from 'lucide-react';
-import TemplatesSelectorButton from './template_utilities/TemplateSelectorButton.jsx';
+// import ExtrasPreviewModal from './ExtrasPreviewModal.jsx';
+// import TemplateGallery from './TemplateGallery.jsx';
+// import { templatesArray } from '../utilities/templates-array.js';
+// import TemplatesModal from './TemplatesModal.jsx';
+// import TemplateEditor from './TemplateEditor.jsx';
+// import { X, ChevronLeft, ChevronRight, Edit3 } from 'lucide-react';
+// import TemplatesSelectorButton from './template_utilities/TemplateSelectorButton.jsx';
 
 
 export default function HeroSection({
@@ -20,70 +20,70 @@ export default function HeroSection({
   error,
   inputMode,
   setInputMode,
-  onTemplateSelect // This prop comes from App.jsx
+  // onTemplateSelect
 }) {
-  const [selectedTemplate, setSelectedTemplate] = useState(null); // State for the modal content
-  const [templateSectionOpen, setTemplateSectionOpen] = useState(false); // State to control if the gallery is shown
-  const [selectedTemplateForGallery, setSelectedTemplateForGallery] = useState(null); // State to control which template is displayed in the gallery (either one or all)
-  const [selectedTemplateId, setSelectedTemplateId] = useState(null); // State to track the ID of the selected template for the X button logic
-  const [currentTemplateIndex, setCurrentTemplateIndex] = useState(0); // State for template navigation
-  const [isEditorOpen, setIsEditorOpen] = useState(false); // State for template editor
+  // const [selectedTemplate, setSelectedTemplate] = useState(null);
+  // const [templateSectionOpen, setTemplateSectionOpen] = useState(false);
+  // const [selectedTemplateForGallery, setSelectedTemplateForGallery] = useState(null);
+  // const [selectedTemplateId, setSelectedTemplateId] = useState(null);
+  // const [currentTemplateIndex, setCurrentTemplateIndex] = useState(0);
+  // const [isEditorOpen, setIsEditorOpen] = useState(false);
 
-  const handleShowTemplates = () => {
-    setTemplateSectionOpen(!templateSectionOpen);
-    handleScrollToForm();
-  }
+  // const handleShowTemplates = () => {
+  //   setTemplateSectionOpen(!templateSectionOpen);
+  //   handleScrollToForm();
+  // }
 
-  const openTemplatesModal = (template) => {
-    const templateIndex = templatesArray.findIndex(t => t.id === template.id);
-    setCurrentTemplateIndex(templateIndex);
-    setSelectedTemplate(template);
-  };
+  // const openTemplatesModal = (template) => {
+  //   const templateIndex = templatesArray.findIndex(t => t.id === template.id);
+  //   setCurrentTemplateIndex(templateIndex);
+  //   setSelectedTemplate(template);
+  // };
 
-  const closeTemplatesModal = useCallback(() => {
-    setSelectedTemplate(null);
-  }, []);
+  // const closeTemplatesModal = useCallback(() => {
+  //   setSelectedTemplate(null);
+  // }, []);
 
-  const navigateToNextTemplate = useCallback(() => {
-    const nextIndex = (currentTemplateIndex + 1) % templatesArray.length;
-    setCurrentTemplateIndex(nextIndex);
-    setSelectedTemplate(templatesArray[nextIndex]);
-  }, [currentTemplateIndex]);
+  // const navigateToNextTemplate = useCallback(() => {
+  //   const nextIndex = (currentTemplateIndex + 1) % templatesArray.length;
+  //   setCurrentTemplateIndex(nextIndex);
+  //   setSelectedTemplate(templatesArray[nextIndex]);
+  // }, [currentTemplateIndex]);
 
-  const navigateToPreviousTemplate = useCallback(() => {
-    const prevIndex = currentTemplateIndex === 0 ? templatesArray.length - 1 : currentTemplateIndex - 1;
-    setCurrentTemplateIndex(prevIndex);
-    setSelectedTemplate(templatesArray[prevIndex]);
-  }, [currentTemplateIndex]);
+  // const navigateToPreviousTemplate = useCallback(() => {
+  //   const prevIndex = currentTemplateIndex === 0 ? templatesArray.length - 1 : currentTemplateIndex - 1;
+  //   setCurrentTemplateIndex(prevIndex);
+  //   setSelectedTemplate(templatesArray[prevIndex]);
+  // }, [currentTemplateIndex]);
 
-  const openTemplateEditor = useCallback(() => {
-    if (selectedTemplate) {
-      setIsEditorOpen(true);
-    }
-  }, [selectedTemplate]);
+  // const openTemplateEditor = useCallback(() => {
+  //   if (selectedTemplate) {
+  //     setIsEditorOpen(true);
+  //   }
+  // }, [selectedTemplate]);
 
-  const closeTemplateEditor = useCallback(() => {
-    setIsEditorOpen(false);
-  }, []);
+  // const closeTemplateEditor = useCallback(() => {
+  //   setIsEditorOpen(false);
+  // }, []);
 
-  const handleEditorSave = useCallback((editedContent) => {
-    console.log('Template editado:', editedContent);
+  // const handleEditorSave = useCallback((editedContent) => {
+  //   console.log('Template editado:', editedContent);
     // Aquí puedes manejar el contenido editado
     // Por ejemplo, guardarlo en localStorage o enviarlo a un servidor
-  }, []);
+  // }, []);
 
-  const handleTemplateSelection = (template) => {
-    setSelectedTemplateForGallery(template);
-    onTemplateSelect(template);
-    setSelectedTemplateId(template.id);
-    closeTemplatesModal();
-  };
+  // const handleTemplateSelection = (template) => {
+  //   setSelectedTemplateForGallery(template);
+  //   onTemplateSelect(template);
+  //   setSelectedTemplateId(template.id);
+  //   closeTemplatesModal();
+  // };
 
-  const handleChangeSelected = () => {
-    setSelectedTemplateId(null);
-    setSelectedTemplateForGallery(null);
-    setTemplateSectionOpen(true);
-  };
+  // const handleChangeSelected = () => {
+  //   setSelectedTemplateId(null);
+  //   setSelectedTemplateForGallery(null);
+  //   setTemplateSectionOpen(true);
+  // };
 
   const handleFlyerClick = () => {
     setInputMode('image');
@@ -97,7 +97,7 @@ export default function HeroSection({
     }
   };
 
-  const [showExtrasModal, setShowExtrasModal] = React.useState(false);
+  const [showExtrasModal, setShowExtrasModal] = useState(false);
 
   const handlePremiumClick = () => setShowExtrasModal(true);
   const handleCloseExtrasModal = () => setShowExtrasModal(false);
@@ -137,7 +137,7 @@ export default function HeroSection({
           />
         )}
       </header>
-
+{/* 
       <button onClick={handleShowTemplates} className="m-6 px-4 py-2 bg-portfolio-gradient-1 text-portfolio-text rounded hover:bg-portfolio-gradient-2 transition">
         Elegir template
       </button>
@@ -148,8 +148,8 @@ export default function HeroSection({
           selectedTemplateId={selectedTemplateId}
           changeSelected={handleChangeSelected}
         />
-      )}
-      <TemplatesModal
+      )} */}
+      {/* <TemplatesModal
         isOpen={!!selectedTemplate}
         onClose={closeTemplatesModal}
         onNavigateNext={navigateToNextTemplate}
@@ -158,7 +158,6 @@ export default function HeroSection({
       >
         {selectedTemplate && (
           <>
-            {/* Flechas fuera del template, en el espacio del modal */}
             <button
               onClick={navigateToPreviousTemplate}
               className="fixed left-8 top-1/2 transform -translate-y-1/2 z-50 p-4 rounded-full"
@@ -174,8 +173,6 @@ export default function HeroSection({
             >
               <ChevronRight className="w-11 h-11 text-portfolio-text/70 outline-none" />
             </button>
-
-            {/* Contenido del template */}
             <div className="w-full h-full overflow-y-auto relative">
               <div className="sticky top-0 z-40 bg-white/90 backdrop-blur-xs border-b border-gray-200 p-4">
                 <div className="flex justify-between items-center max-w-6xl mx-auto">
@@ -214,7 +211,7 @@ export default function HeroSection({
             </div>
           </>
         )}
-      </TemplatesModal>
+      </TemplatesModal> */}
 
       <main id="form-section" className="bg-sinapsia-base border border-sinapsia-accent p-4 sm:p-8 rounded-lg mx-auto max-w-4xl mb-4">
         <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 items-center justify-center">
@@ -240,7 +237,7 @@ export default function HeroSection({
             disabled={isLoading}
             className="btn-sinapsia-secondary w-full sm:w-auto px-4 py-2.5 disabled:bg-gray-500 text-sinapsia-light font-medium text-sm sm:text-base rounded-lg transition-all duration-200 transform hover:-translate-y-0.5 hover:shadow-lg min-w-0 sm:min-w-44"
           >
-            ✏️ Crear desde Cero
+            ✏️ Crear con formulario
           </button>
 
           <button
@@ -266,13 +263,13 @@ export default function HeroSection({
       </main>
 
       {inputMode === 'manual' && (
-        <div className="modal-overlay fixed inset-0 bg-black/80 flex items-center justify-center z-[1000] p-4">
+        <div className="modal-overlay fixed inset-0 bg-portfolio-dark/70 flex items-center justify-center z-[1000] p-4">
           <div className="modal-container bg-sinapsia-gradient w-full max-w-4xl max-h-[90vh] overflow-hidden rounded-2xl shadow-2xl">
-            <div className="bg-sinapsia-deep flex justify-between items-center p-6 sm:p-8 border-b border-gray-600/30">
+            <div className="bg-sinapsia-deep flex justify-between items-center p-6 sm:p-8 border-b border-portfolio-deep/30">
               <h2 className="text-sinapsia-light m-0 text-xl sm:text-2xl font-bold">✏️ Crear Landing Page Personalizada</h2>
               <button
                 onClick={handleCloseModal}
-                className="bg-gray-600 hover:bg-gray-500 text-gray-300 hover:text-sinapsia-light border-0 rounded-full w-10 h-10 flex items-center justify-center cursor-pointer text-xl transition-all duration-200 hover:scale-110"
+                className="bg-portfolio-base hover:bg-portfolio-medium text-gray-300 hover:text-sinapsia-light border-0 rounded-full w-10 h-10 flex items-center justify-center cursor-pointer text-xl transition-all duration-200 hover:scale-110"
                 aria-label="Cerrar"
               >
                 ✕
@@ -289,15 +286,14 @@ export default function HeroSection({
         </div>
       )}
 
-      {/* Template Editor */}
-      {selectedTemplate && (
+      {/* {selectedTemplate && (
         <TemplateEditor
           isOpen={isEditorOpen}
           onClose={closeTemplateEditor}
           template={selectedTemplate}
           onSave={handleEditorSave}
         />
-      )}
+      )} */}
     </>
   );
 }

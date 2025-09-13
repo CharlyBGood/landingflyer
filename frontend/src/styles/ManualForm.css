@@ -1,12 +1,12 @@
-/* ManualForm.css - Dark Theme */
+/* ManualForm.css - Updated to use portfolio palette */
 .manual-form-container {
   max-width: 50rem;
   margin: 0 auto;
   padding: 2rem;
-  background: #1f2937;
+  background: var(--color-portfolio-dark);
   border-radius: 1rem;
   box-shadow: 0 0.5rem 2rem rgba(0, 0, 0, 0.3);
-  color: #f9fafb;
+  color: var(--color-portfolio-text);
 }
 
 .form-header {
@@ -15,14 +15,14 @@
 }
 
 .form-header h2 {
-  color: #f9fafb;
+  color: var(--color-portfolio-text);
   margin-bottom: 0.5rem;
   font-size: 2rem;
   font-weight: 700;
 }
 
 .form-header p {
-  color: #d1d5db;
+  color: var(--color-portfolio-text);
   font-size: 1.1rem;
 }
 
@@ -33,14 +33,14 @@
 }
 
 .form-section {
-  background: #374151;
+  background: var(--color-portfolio-base);
   padding: 1.5rem;
   border-radius: 0.75rem;
-  border: 1px solid #4b5563;
+  border: 1px solid var(--color-portfolio-medium);
 }
 
 .form-section h3 {
-  color: #f9fafb;
+  color: var(--color-portfolio-text);
   margin-bottom: 1.5rem;
   font-size: 1.25rem;
   font-weight: 600;
@@ -56,7 +56,7 @@
 .form-group label {
   display: block;
   margin-bottom: 0.5rem;
-  color: #e5e7eb;
+  color: var(--color-portfolio-text);
   font-weight: 500;
   font-size: 0.95rem;
 }
@@ -66,25 +66,25 @@
 .form-group textarea {
   width: 100%;
   padding: 0.75rem;
-  border: 0.125rem solid #4b5563;
+  border: 0.125rem solid var(--color-portfolio-medium);
   border-radius: 0.5rem;
   font-size: 1rem;
   transition: all 0.2s ease;
-  background: #111827;
-  color: #f9fafb;
+  background: var(--color-portfolio-deep);
+  color: var(--color-portfolio-text);
 }
 
 .form-group input:focus,
 .form-group select:focus,
 .form-group textarea:focus {
   outline: none;
-  border-color: #3b82f6;
-  box-shadow: 0 0 0 0.1875rem rgba(59, 130, 246, 0.1);
+  border-color: var(--color-portfolio-accent);
+  box-shadow: 0 0 0 0.1875rem rgba(58, 37, 64, 0.5);
 }
 
 .form-group input::placeholder,
 .form-group textarea::placeholder {
-  color: #9ca3af;
+  color: var(--color-portfolio-text);
 }
 
 .form-group textarea {
@@ -95,7 +95,7 @@
 .form-group small {
   display: block;
   margin-top: 0.25rem;
-  color: #9ca3af;
+  color: var(--color-portfolio-text);
   font-size: 0.875rem;
 }
 
@@ -120,10 +120,10 @@
 .color-input-group input[type="color"] {
   width: 3.75rem;
   height: 2.8125rem;
-  border: 0.125rem solid #4b5563;
+  border: 0.125rem solid var(--color-portfolio-medium);
   border-radius: 0.5rem;
   cursor: pointer;
-  background: #111827;
+  background: var(--color-portfolio-deep);
 }
 
 .color-input-group input[type="text"] {
@@ -131,10 +131,10 @@
 }
 
 .service-item {
-  background: #111827;
+  background: var(--color-portfolio-deep);
   padding: 1.5rem;
   border-radius: 0.5rem;
-  border: 1px solid #374151;
+  border: 1px solid var(--color-portfolio-medium);
   margin-bottom: 1rem;
 }
 
@@ -146,15 +146,15 @@
 }
 
 .service-header h4 {
-  color: #f9fafb;
+  color: var(--color-portfolio-text);
   font-size: 1.1rem;
   font-weight: 600;
   margin: 0;
 }
 
 .remove-service-btn {
-  background: #ef4444;
-  color: white;
+  background: var(--color-portfolio-gradient-1);
+  color: var(--color-portfolio-text);
   border: none;
   border-radius: 50%;
   width: 1.875rem;
@@ -168,14 +168,14 @@
 }
 
 .remove-service-btn:hover {
-  background: #dc2626;
+  background: var(--color-portfolio-gradient-2);
   transform: scale(1.1);
 }
 
 .add-service-btn {
-  background: #374151;
-  color: #e5e7eb;
-  border: 0.125rem dashed #6b7280;
+  background: var(--color-portfolio-medium);
+  color: var(--color-portfolio-text);
+  border: 0.125rem dashed var(--color-portfolio-accent);
   border-radius: 0.5rem;
   padding: 1rem;
   width: 100%;
@@ -186,9 +186,9 @@
 }
 
 .add-service-btn:hover:not(:disabled) {
-  background: #4b5563;
-  border-color: #9ca3af;
-  color: #f9fafb;
+  background: var(--color-portfolio-accent);
+  border-color: var(--color-portfolio-gradient-3);
+  color: var(--color-portfolio-text);
 }
 
 .add-service-btn:disabled {
@@ -202,7 +202,7 @@
 }
 
 .generate-btn {
-  background: linear-gradient(135deg, #3b82f6 0%, #8b5cf6 100%);
+  background: linear-gradient(135deg, #6d3bf6 0%, #8b5cf6 100%);
   color: white;
   border: none;
   border-radius: 12px;
@@ -231,16 +231,16 @@
 }
 
 .modal-content-form::-webkit-scrollbar-track {
-  background: #374151;
+  background: var(--color-portfolio-medium);
 }
 
 .modal-content-form::-webkit-scrollbar-thumb {
-  background: #6b7280;
+  background: var(--color-portfolio-accent);
   border-radius: 4px;
 }
 
 .modal-content-form::-webkit-scrollbar-thumb:hover {
-  background: #9ca3af;
+  background: var(--color-portfolio-gradient-4);
 }
 
 /* Animaciones de entrada */
