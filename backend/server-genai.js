@@ -69,7 +69,7 @@ app.get('/api/image/unsplash', async (req, res) => {
 // --- ENDPOINT DUAL: Generar Vista Previa (Adaptado a Gemini) ---
 app.post('/api/generate-preview', upload.single('flyerImage'), async (req, res) => {
   try {
-    const promptTemplate = await fs.readFile(path.join(__dirname, 'prompt-grapesjs.md'), 'utf8');
+    const promptTemplate = await fs.readFile(path.join(__dirname, 'prompt-tailwincss.md'), 'utf8');
     let generatedText;
     
     // 🔄 DETECCIÓN DE MODALIDAD
