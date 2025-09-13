@@ -5,7 +5,7 @@ export default function HeroCard({ header, paragraph, priceUSD, priceARS, btnTex
   return (
     <div className="flex-1 bg-sinapsia-base border border-sinapsia-accent rounded-xl p-4 flex flex-col items-center shadow-md relative">
       {recommended && (
-        <span className="absolute -top-3 left-1/2 -translate-x-1/2 bg-sinapsia-accent/80 backdrop-blur-sm text-sinapsia-light text-xs font-bold px-3 py-1 rounded-full shadow-md z-10" style={{backgroundColor: 'rgba(122,69,160,0.85)'}}>Recomendado</span>
+        <span className="absolute -top-3 left-1/2 -translate-x-1/2 bg-sinapsia-accent/80 backdrop-blur-sm text-sinapsia-light text-xs font-bold px-3 py-1 rounded-full shadow-md z-10" style={{ backgroundColor: 'rgba(122,69,160,0.85)' }}>Recomendado</span>
       )}
       <h3 className="text-xl font-bold mb-2 text-sinapsia-light">
         {header}
@@ -26,7 +26,11 @@ export default function HeroCard({ header, paragraph, priceUSD, priceARS, btnTex
           <span>USD {priceUSD}</span>
         </div>
       </div>
-      <button className="btn-sinapsia-primary w-full sm:w-auto px-4 py-2.5 text-sinapsia-light font-medium text-base rounded-lg transition-all duration-200 transform hover:-translate-y-0.5 hover:shadow-lg mb-2" onClick={onClick}>{btnText}</button>
+      {
+        btnText && (
+          <button className="btn-sinapsia-primary w-full sm:w-auto px-4 py-2.5 text-sinapsia-light font-medium text-base rounded-lg transition-all duration-200 transform hover:-translate-y-0.5 hover:shadow-lg mb-2" onClick={onClick}>{btnText}</button>
+        )
+      }
     </div>
   )
 }

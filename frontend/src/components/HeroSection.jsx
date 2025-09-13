@@ -68,8 +68,8 @@ export default function HeroSection({
 
   // const handleEditorSave = useCallback((editedContent) => {
   //   console.log('Template editado:', editedContent);
-    // Aquí puedes manejar el contenido editado
-    // Por ejemplo, guardarlo en localStorage o enviarlo a un servidor
+  // Aquí puedes manejar el contenido editado
+  // Por ejemplo, guardarlo en localStorage o enviarlo a un servidor
   // }, []);
 
   // const handleTemplateSelection = (template) => {
@@ -115,7 +115,7 @@ export default function HeroSection({
     <>
       <header className="text-center">
         <p className="text-base sm:text-lg lg:text-xl max-w-3xl mx-auto px-4 mb-6 text-sinapsia-light">
-          Elige tu camino y publica tu web profesional de forma automática.<br />
+          Publica tu web profesional de forma automática.<br />
           <span className="text-sinapsia-accent font-semibold">Una solución de <a
             href="https://www.sinapsiaLab.com"
             className="gradient-link"
@@ -137,7 +137,7 @@ export default function HeroSection({
           />
         )}
       </header>
-{/* 
+      {/* 
       <button onClick={handleShowTemplates} className="m-6 px-4 py-2 bg-portfolio-gradient-1 text-portfolio-text rounded hover:bg-portfolio-gradient-2 transition">
         Elegir template
       </button>

@@ -10,7 +10,7 @@ export default function HeroCardContainer({ onBasicClick }) {
           Subí un flyer o completá un formulario; obtené una página moderna, responsive y editable.Hosting 1 año + dominio."
           priceUSD={199}
           priceARS={260000}
-          btnText="Comenzar"
+          // btnText="Comenzar"
           onClick={onBasicClick}
         />
       </div>
