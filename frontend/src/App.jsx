@@ -94,23 +94,21 @@ function App() {
   return (
     <div className="min-h-screen bg-sinapsia-bg">
       <Navbar />
-      <section className="hero-section px-4 sm:px-8 lg:px-16 pb-8 sm:pb-12 lg:pb-16 bg-sinapsia-bg">
-        <div className="max-w-7xl mx-auto text-center">
-          <HeroSection
-            isLoading={isLoading}
-            handleGeneratePreview={handleGeneratePreview}
-            handleFileChange={handleFileChange}
-            handleManualSubmit={handleManualSubmit}
-            selectedFile={selectedFile}
-            error={error}
-            inputMode={inputMode}
-            setInputMode={setInputMode}
-            onTemplateSelect={handleSelectedTemplate}
-          />          
-          {generatedHtml && (
-            <LandingPreview generatedHtml={generatedHtml} iframeRef={iframeRef} />
-          )}
-        </div>
+      <section className="main-section px-4 sm:px-8 lg:px-16 h-[100vh] flex flex-col justify-center gap-5 pb-8 sm:pb-12 lg:pb-16 bg-sinapsia-bg">
+        <HeroSection
+          isLoading={isLoading}
+          handleGeneratePreview={handleGeneratePreview}
+          handleFileChange={handleFileChange}
+          handleManualSubmit={handleManualSubmit}
+          selectedFile={selectedFile}
+          error={error}
+          inputMode={inputMode}
+          setInputMode={setInputMode}
+          onTemplateSelect={handleSelectedTemplate}
+        />
+        {generatedHtml && (
+          <LandingPreview generatedHtml={generatedHtml} iframeRef={iframeRef} />
+        )}
       </section>
       <Footer />
     </div>

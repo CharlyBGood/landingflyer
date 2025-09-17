@@ -11,6 +11,7 @@
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  --navbar-height: 4rem;
   
 }
 
@@ -46,6 +47,10 @@ embed,
 object {
   display: inline-block;
   vertical-align: inherit;
+}
+
+.main-section {
+  margin-top: var(--navbar-height)
 }
 
 .gradient-link {

@@ -1,16 +1,4 @@
-:root {
-  --navbar-height: 4rem;
+:root {  
   background: linear-gradient(135deg, #0c070f 0%, #150a1a 25%, #1a0f20 50%, #2a1530 100%);
 }
 
-.hero-section {
-  padding-top: calc(var(--navbar-height) + 1rem);
-
-  @media (min-width: 40rem) {
-    padding-top: calc(var(--navbar-height) + 1.5rem);
-  }
-
-  @media (min-width: 64rem) {
-    padding-top: calc(var(--navbar-height) + 2rem);
-  }
-}

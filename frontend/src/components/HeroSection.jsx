@@ -1,4 +1,4 @@
-import { useState } from 'react';
+// import { useState } from 'react';
 import ManualForm from './ManualForm.jsx';
 import '../styles/HeroSection.css';
 import HeroCardContainer from './HeroCardContainer.jsx';
@@ -90,22 +90,22 @@ export default function HeroSection({
     document.getElementById('file-input').click();
   };
 
-  const handleScrollToForm = () => {
-    const formSection = document.getElementById('form-section');
-    if (formSection) {
-      formSection.scrollIntoView({ behavior: 'smooth' });
-    }
-  };
+  // const handleScrollToForm = () => {
+  //   const formSection = document.getElementById('form-section');
+  //   if (formSection) {
+  //     formSection.scrollIntoView({ behavior: 'smooth' });
+  //   }
+  // };
 
-  const [showExtrasModal, setShowExtrasModal] = useState(false);
+  // const [showExtrasModal, setShowExtrasModal] = useState(false);
 
-  const handlePremiumClick = () => setShowExtrasModal(true);
-  const handleCloseExtrasModal = () => setShowExtrasModal(false);
+  // const handlePremiumClick = () => setShowExtrasModal(true);
+  // const handleCloseExtrasModal = () => setShowExtrasModal(false);
 
-  const handleExtrasContinue = () => {
-    setShowExtrasModal(false);
-    handleScrollToForm();
-  };
+  // const handleExtrasContinue = () => {
+  //   setShowExtrasModal(false);
+  //   handleScrollToForm();
+  // };
 
   const handleCloseModal = () => {
     setInputMode('image');
@@ -113,9 +113,9 @@ export default function HeroSection({
 
   return (
     <>
-      <header className="text-center">
+      <header className="text-center flex flex-col justify-evenly gap-4 items-center">
         <p className="text-base sm:text-lg lg:text-xl max-w-3xl mx-auto px-4 mb-6 text-sinapsia-light">
-          Publica tu web profesional de forma automática.<br />
+          Publica tu Landing Page de forma automática.<br />
           <span className="text-sinapsia-accent font-semibold">Una solución de <a
             href="https://www.sinapsiaLab.com"
             className="gradient-link"
@@ -125,7 +125,9 @@ export default function HeroSection({
             SinapsiaLab
           </a></span>
         </p>
-        <HeroCardContainer
+        <p>Sube un flyer o completa un formulario y crea una Landing Page lista para publicar.</p>
+        <span className="text-sinapsia-accent font-semibold">¡Sin conocimientos técnicos!</span>
+        {/* <HeroCardContainer
           onBasicClick={handleScrollToForm}
           onPremiumClick={handlePremiumClick}
         />
@@ -135,7 +137,7 @@ export default function HeroSection({
             onClose={handleCloseExtrasModal}
             onContinue={handleExtrasContinue}
           />
-        )}
+        )} */}
       </header>
       {/* 
       <button onClick={handleShowTemplates} className="m-6 px-4 py-2 bg-portfolio-gradient-1 text-portfolio-text rounded hover:bg-portfolio-gradient-2 transition">

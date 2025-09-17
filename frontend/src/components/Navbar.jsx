@@ -15,11 +15,12 @@ export default function Navbar() {
         title="SinapsiaLab web"
         className="flex items-center transition-transform duration-200 hover:scale-105 justify-self-center cursor-pointer"
       >
-        <img
+        {/* <img
           src="https://res.cloudinary.com/dr8pwzxzn/image/upload/v1751256447/SinapsiaLabThinn8_lehxp5.png"
           alt="SinapsiaLab svg"
           className="w-[25vw] max-w-[7.5rem] min-w-[6rem] sm:w-[8.75rem] lg:w-[10rem] h-auto transition duration-200 hover:brightness-105"
-        />
+        /> */}
+        <p className="gradient-link">SinapsiaLab</p>
       </a>
     </nav>
   )

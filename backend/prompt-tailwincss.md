@@ -37,7 +37,7 @@ Eres un diseñador web experto especializado en crear landing pages modernas y a
    - Todas las imágenes: `data-editable-image="true"` con ALT descriptivo
    - Obtén imágenes desde: `/api/image/unsplash?term=...`
    - Usa términos específicos del negocio/producto (evita términos genéricos)
-   - Evita imágenes con personas
+   - Evita imágenes con personas realistas
    - Integra imágenes de manera inteligente en el diseño
 
 5. **EDITABILIDAD**:   
