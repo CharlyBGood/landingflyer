@@ -2,6 +2,7 @@
 import ManualForm from './ManualForm.jsx';
 import '../styles/HeroSection.css';
 import HeroCardContainer from './HeroCardContainer.jsx';
+import { useNavbarHeight } from '../hooks/useNavbarHeight.js';
 // import ExtrasPreviewModal from './ExtrasPreviewModal.jsx';
 // import TemplateGallery from './TemplateGallery.jsx';
 // import { templatesArray } from '../utilities/templates-array.js';
@@ -85,6 +86,9 @@ export default function HeroSection({
   //   setTemplateSectionOpen(true);
   // };
 
+  // Use navbar height hook
+  useNavbarHeight();
+
   const handleFlyerClick = () => {
     setInputMode('image');
     document.getElementById('file-input').click();
@@ -113,20 +117,52 @@ export default function HeroSection({
 
   return (
     <>
-      <header className="text-center flex flex-col justify-evenly gap-4 items-center">
-        <p className="text-base sm:text-lg lg:text-xl max-w-3xl mx-auto px-4 mb-6 text-sinapsia-light">
-          Publica tu Landing Page de forma automática.<br />
-          <span className="text-sinapsia-accent font-semibold">Una solución de <a
-            href="https://www.sinapsiaLab.com"
-            className="gradient-link"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            SinapsiaLab
-          </a></span>
-        </p>
-        <p>Sube un flyer o completa un formulario y crea una Landing Page lista para publicar.</p>
-        <span className="text-sinapsia-accent font-semibold">¡Sin conocimientos técnicos!</span>
+      <header className="text-center flex flex-col justify-evenly gap-2 items-center py-6">
+        <div className="max-w-4xl mx-auto px-4">
+          <h1 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-sinapsia-light mb-4">
+            Publicá tu Landing Page gratis en minutos.
+          </h1>
+          <p className="text-lg sm:text-xl lg:text-2xl text-sinapsia-light mb-4">
+            Convertí tu flyer en una web lista para compartir.
+          </p>
+          <p className="text-base sm:text-lg text-sinapsia-light mb-6">
+            Una solución de <a
+              href="https://www.sinapsiaLab.com"
+              className="gradient-link"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              SinapsiaLab
+            </a> para mostrar tu negocio online sin complicaciones.
+          </p>
+          <p className="text-lg sm:text-xl text-sinapsia-accent font-semibold mb-8">
+            🔗 ¡Probalo gratis y llevate tu página en segundos!
+          </p>
+        </div>
+
+        {/* Explicación en 3 pasos */}
+        <div className="max-w-5xl mx-auto px-4 mb-8">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <div className="text-center p-6 bg-sinapsia-base/50 rounded-lg border border-sinapsia-accent/30">
+              <div className="text-3xl mb-3">📤</div>
+              <h3 className="text-lg font-semibold text-sinapsia-light mb-2">1. Subí tu flyer</h3>
+              <p className="text-sinapsia-light/80">o completá el formulario</p>
+            </div>
+            <div className="text-center p-6 bg-sinapsia-base/50 rounded-lg border border-sinapsia-accent/30">
+              <div className="text-3xl mb-3">⚡</div>
+              <h3 className="text-lg font-semibold text-sinapsia-light mb-2">2. Generá tu landing</h3>
+              <p className="text-sinapsia-light/80">automáticamente</p>
+            </div>
+            <div className="text-center p-6 bg-sinapsia-base/50 rounded-lg border border-sinapsia-accent/30">
+              <div className="text-3xl mb-3">🔗</div>
+              <h3 className="text-lg font-semibold text-sinapsia-light mb-2">3. Compartí el link</h3>
+              <p className="text-sinapsia-light/80">con tus clientes</p>
+            </div>
+          </div>
+          <p className="text-center text-sinapsia-accent font-semibold mt-6">
+            ⚡ Sin conocimientos técnicos, en solo minutos.
+          </p>
+        </div>
         {/* <HeroCardContainer
           onBasicClick={handleScrollToForm}
           onPremiumClick={handlePremiumClick}
@@ -215,7 +251,8 @@ export default function HeroSection({
         )}
       </TemplatesModal> */}
 
-      <main id="form-section" className="bg-sinapsia-base border border-sinapsia-accent p-4 sm:p-8 rounded-lg mx-auto max-w-4xl mb-4">
+      <main id="form-section" className="bg-sinapsia-base border border-sinapsia-accent p-6 sm:p-8 rounded-lg mx-auto max-w-4xl mb-8">       
+        
         <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 items-center justify-center">
           <input
             type="file"
@@ -229,7 +266,7 @@ export default function HeroSection({
           <button
             onClick={handleFlyerClick}
             disabled={isLoading}
-            className="btn-sinapsia-primary w-full sm:w-auto px-4 py-2.5 disabled:bg-gray-500 text-sinapsia-light font-medium text-sm sm:text-base rounded-lg transition-all duration-200 transform hover:-translate-y-0.5 hover:shadow-lg min-w-0 sm:min-w-44"
+            className="btn-sinapsia-secondary w-full sm:w-auto px-4 py-2.5 disabled:bg-gray-500 text-sinapsia-light font-medium text-sm sm:text-base rounded-lg transition-all duration-200 transform hover:-translate-y-0.5 hover:shadow-lg min-w-0 sm:min-w-44"
           >
             📄 {selectedFile ? selectedFile.name.substring(0, 20) + '...' : 'Tengo un Flyer'}
           </button>
@@ -263,6 +300,41 @@ export default function HeroSection({
           </p>
         )}
       </main>
+
+      {/* Sección de Upsell */}
+      <section className="max-w-4xl mx-auto px-4 mb-8">
+        <div className="bg-gradient-to-br from-sinapsia-base to-sinapsia-deep border border-sinapsia-accent p-6 sm:p-8 rounded-lg text-center">
+          <h2 className="text-2xl sm:text-3xl font-bold text-sinapsia-light mb-4">
+            Te regalamos tu landing.
+          </h2>
+          <p className="text-xl text-sinapsia-accent font-semibold mb-6">
+            ¿Querés más? 👇
+          </p>
+          
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+            <div className="p-4 bg-sinapsia-base/50 rounded-lg border border-sinapsia-accent/30">
+              <h3 className="text-lg font-semibold text-sinapsia-light mb-2">🌐 Dominio personalizado</h3>
+              <p className="text-sinapsia-light/80">(.com, .com.ar, etc)</p>
+            </div>
+            <div className="p-4 bg-sinapsia-base/50 rounded-lg border border-sinapsia-accent/30">
+              <h3 className="text-lg font-semibold text-sinapsia-light mb-2">🎨 Ediciones y mejoras</h3>
+              <p className="text-sinapsia-light/80">de diseño</p>
+            </div>
+            <div className="p-4 bg-sinapsia-base/50 rounded-lg border border-sinapsia-accent/30">
+              <h3 className="text-lg font-semibold text-sinapsia-light mb-2">📈 Optimización para atraer</h3>
+              <p className="text-sinapsia-light/80">clientes</p>
+            </div>
+            <div className="p-4 bg-sinapsia-base/50 rounded-lg border border-sinapsia-accent/30">
+              <h3 className="text-lg font-semibold text-sinapsia-light mb-2">⚡ Automatizaciones</h3>
+              <p className="text-sinapsia-light/80">que te ahorran tiempo</p>
+            </div>
+          </div>
+          
+          <button className="btn-sinapsia-primary text-lg px-8 py-4 text-sinapsia-light font-bold rounded-lg transition-all duration-200 transform hover:-translate-y-1 hover:shadow-xl">
+            👉 Escalá tu landing
+          </button>
+        </div>
+      </section>
 
       {inputMode === 'manual' && (
         <div className="modal-overlay fixed inset-0 bg-portfolio-dark/70 flex items-center justify-center z-[1000] p-4">
