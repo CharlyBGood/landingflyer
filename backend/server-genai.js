@@ -2,7 +2,6 @@ import 'dotenv/config';
 import express from 'express';
 import cors from 'cors';
 import multer from 'multer';
-// 1. Reemplazamos la dependencia de Groq por la de Google GenAI
 import { GoogleGenAI } from '@google/genai';
 import fs from 'fs/promises';
 import path from 'path';
@@ -19,12 +18,12 @@ const upload = multer({ storage: multer.memoryStorage() });
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-// 2. Inicializar cliente de Google GenAI
+// Inicializar cliente de Google GenAI
 const ai = new GoogleGenAI({
   apiKey: process.env.GEMINI_API_KEY
 });
 
-// Función auxiliar necesaria para convertir el buffer de la imagen al formato de la API de Gemini
+// Función auxiliar para convertir el buffer de la imagen al formato de la API de Gemini
 function fileToGenerativePart(buffer, mimeType) {
   return {
     inlineData: {
@@ -66,37 +65,31 @@ app.get('/api/image/unsplash', async (req, res) => {
   }
 });
 
-// --- ENDPOINT DUAL: Generar Vista Previa (Adaptado a Gemini) ---
-app.post('/api/generate-preview', upload.single('flyerImage'), async (req, res) => {
+// --- ENDPOINT DUAL: Generar Vista Previa (Formulario con imagen opcional + compat flyer) ---
+app.post('/api/generate-preview', upload.fields([{ name: 'flyerImage' }, { name: 'businessImage' }]), async (req, res) => {
   try {
     const promptTemplate = await fs.readFile(path.join(__dirname, 'prompt-tailwincss.md'), 'utf8');
-    let generatedText;
-    
-    // 🔄 DETECCIÓN DE MODALIDAD
-    if (req.file) {
-      // 📷 MODO IMAGEN: Usando la nueva API de @google/genai
-      const imageBuffer = req.file.buffer;
-      const imagePart = fileToGenerativePart(imageBuffer, req.file.mimetype);
-      
-      const response = await ai.models.generateContent({
-        model: process.env.GEMINI_MODEL || 'gemini-2.0-flash-001',
-        contents: [
-          {
-            role: 'user',
-            parts: [
-              { text: promptTemplate },
-              imagePart
-            ]
-          }
-        ]
-      });
 
-      generatedText = response.text;
+    // Parseo seguro de businessData (si viene)
+    const businessDataRaw = req.body.businessData;
+    let businessData = null;
+    if (businessDataRaw) {
+      try {
+        businessData = JSON.parse(businessDataRaw);
+      } catch {
+        return res.status(400).json({ error: 'businessData inválido (JSON malformado)' });
+      }
+    }
 
-    } else if (req.body.businessData) {
-      // 📋 MODO FORMULARIO: La lógica interna no cambia, solo el contenedor final
-      const businessData = JSON.parse(req.body.businessData);
+    // Archivos: priorizar imagen del formulario; usar flyer como fallback (compatibilidad)
+    const formImage = req.files?.businessImage?.[0] || null;
+    const flyerImage = req.files?.flyerImage?.[0] || null;
+    const file = formImage || flyerImage || null;
 
+    // Construcción unificada de parts
+    const parts = [{ text: promptTemplate }];
+
+    if (businessData) {
       const structuredPrompt = `
 **DATOS COMERCIALES ESTRUCTURADOS:**
 
@@ -111,34 +104,37 @@ app.post('/api/generate-preview', upload.single('flyerImage'), async (req, res) 
 - Color Secundario: ${businessData.secondaryColor || businessData.primaryColor}
 
 **Información de Contacto:**
-- Teléfono: ${businessData.contact.phone || 'No especificado'}
-- Email: ${businessData.contact.email || 'No especificado'}
-- Dirección: ${businessData.contact.address || 'No especificado'}
-- Website: ${businessData.contact.website || 'No especificado'}
+- Teléfono: ${businessData.contact?.phone || 'No especificado'}
+- Email: ${businessData.contact?.email || 'No especificado'}
+- Dirección: ${businessData.contact?.address || 'No especificado'}
+- Website: ${businessData.contact?.website || 'No especificado'}
 
 **Productos/Servicios:**
-${businessData.services.map((service, index) => `- ${service.name}: ${service.description} ${service.price ? '($' + service.price + ')' : ''}`).join('\n')}
+${Array.isArray(businessData.services) ? businessData.services.map((service) => `- ${service.name}: ${service.description} ${service.price ? '($' + service.price + ')' : ''}`).join('\n') : '- No especificado'}
 
 **INSTRUCCIONES ESPECIALES:**
-Usa EXACTAMENTE estos colores como base de la paleta. Convierte automáticamente el teléfono a WhatsApp y la dirección a Google Maps si están especificado.
+Usa EXACTAMENTE estos colores como base de la paleta. Convierte automáticamente el teléfono a WhatsApp y la dirección a Google Maps si están especificados.
 `;
-
-      const finalPrompt = promptTemplate + '\n' + structuredPrompt;
-      
-      const response = await ai.models.generateContent({
-        model: process.env.GEMINI_MODEL || 'gemini-2.0-flash-001',
-        contents: finalPrompt
-      });
-
-      generatedText = response.text;
-      
-    } else {
-      return res.status(400).json({
-        error: 'Debes subir una imagen O proporcionar datos del negocio.'
-      });
+      parts.push({ text: structuredPrompt });
     }
 
-    // Esta parte de procesamiento posterior no necesita cambios
+    if (file) {
+      const imagePart = fileToGenerativePart(file.buffer, file.mimetype);
+      parts.push(imagePart);
+    }
+
+    if (parts.length === 1) {
+      return res.status(400).json({ error: 'Debes subir una imagen o proporcionar datos del negocio.' });
+    }
+
+    const response = await ai.models.generateContent({
+      model: process.env.GEMINI_MODEL || 'gemini-2.0-flash-001',
+      contents: [{ role: 'user', parts }]
+    });
+
+    const generatedText = response.text;
+
+    // Procesamiento posterior (sin cambios)
     const { processImagesAndReplaceSrc } = await import('./services/processImagesAndReplaceSrc.js');
     const htmlWithCloudinary = await processImagesAndReplaceSrc(generatedText, 'preview'); // Usar 'preview' como siteName temporal
     let generatedHtml = htmlWithCloudinary.replace(/^```html\n?/, '').replace(/```$/, '');
@@ -146,7 +142,6 @@ Usa EXACTAMENTE estos colores como base de la paleta. Convierte automáticamente
     res.json({ generatedHtml: generatedHtml });
 
   } catch (error) {
-    // Se actualiza el mensaje de error para reflejar que el error es con Gemini
     console.error('Error en el proceso de IA con Gemini:', error);
     res.status(500).json({ error: 'Error al generar la vista previa con IA.', details: error.message });
   }
