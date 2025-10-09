@@ -18,7 +18,13 @@ cloudinary.config({
 export async function uploadImageToCloudinary(fileBuffer, publicId, folder = '') {
   return new Promise((resolve, reject) => {
     const stream = cloudinary.uploader.upload_stream(
-      { public_id: publicId, folder },
+      {
+        public_id: publicId,
+        folder,
+        resource_type: 'image',
+        overwrite: false,
+        unique_filename: false,
+      },
       (error, result) => {
         if (error) return reject(error);
         resolve(result.secure_url);

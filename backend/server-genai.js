@@ -135,9 +135,8 @@ Usa EXACTAMENTE estos colores como base de la paleta. Convierte automáticamente
     const generatedText = response.text;
 
     // Procesamiento posterior (sin cambios)
-    const { processImagesAndReplaceSrc } = await import('./services/processImagesAndReplaceSrc.js');
-    const htmlWithCloudinary = await processImagesAndReplaceSrc(generatedText, 'preview'); // Usar 'preview' como siteName temporal
-    let generatedHtml = htmlWithCloudinary.replace(/^```html\n?/, '').replace(/```$/, '');
+  // Option A: no rehosting during preview. Return HTML with proxy image URLs.
+  let generatedHtml = (generatedText || '').replace(/^```html\n?/, '').replace(/```$/, '');
 
     res.json({ generatedHtml: generatedHtml });
 
