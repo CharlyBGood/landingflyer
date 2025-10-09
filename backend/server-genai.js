@@ -133,12 +133,18 @@ Usa EXACTAMENTE estos colores como base de la paleta. Convierte automáticamente
     });
 
     const generatedText = response.text;
+    let generatedHtml = (generatedText || '').replace(/^```html\n?/, '').replace(/```$/, '');
 
-    // Procesamiento posterior (sin cambios)
-  // Option A: no rehosting during preview. Return HTML with proxy image URLs.
-  let generatedHtml = (generatedText || '').replace(/^```html\n?/, '').replace(/```$/, '');
+    // Rehost provider images during preview to ensure absolute URLs and avoid collisions
+    try {
+      const siteNameForPreview = (businessData?.businessName || '').toString().trim() || 'preview';
+      const { processImagesAndReplaceSrc } = await import('./services/processImagesAndReplaceSrc.js');
+      generatedHtml = await processImagesAndReplaceSrc(generatedHtml, siteNameForPreview);
+    } catch (e) {
+      console.warn('Preview rehost skipped due to error:', e?.message || e);
+    }
 
-    res.json({ generatedHtml: generatedHtml });
+    res.json({ generatedHtml });
 
   } catch (error) {
     console.error('Error en el proceso de IA con Gemini:', error);

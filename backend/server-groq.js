@@ -131,10 +131,20 @@ Usa EXACTAMENTE estos colores como base de la paleta. Convierte automáticamente
             throw new Error('La respuesta de la IA estaba vacía.');
         }
 
-    // Option A: no rehosting during preview. Return HTML with proxy image URLs directly.
-    let generatedHtml = (generatedText || '').replace(/^```html\n?/, '').replace(/```$/, '');
+        let generatedHtml = (generatedText || '').replace(/^```html\n?/, '').replace(/```$/, '');
+        // Rehost provider images during preview to ensure absolute URLs and avoid collisions
+        try {
+            let siteNameForPreview = 'preview';
+            if (req.body?.businessData) {
+                try { const bd = JSON.parse(req.body.businessData); siteNameForPreview = (bd?.businessName || '').toString().trim() || 'preview'; } catch { /* ignore */ }
+            }
+            const { processImagesAndReplaceSrc } = await import('./services/processImagesAndReplaceSrc.js');
+            generatedHtml = await processImagesAndReplaceSrc(generatedHtml, siteNameForPreview);
+        } catch (e) {
+            console.warn('Preview rehost skipped due to error (Groq):', e?.message || e);
+        }
 
-        res.json({ generatedHtml: generatedHtml });
+        res.json({ generatedHtml });
 
     } catch (error) {
         console.error('Error en el proceso de IA con Groq:', error);
