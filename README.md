@@ -161,7 +161,7 @@ Usuario selecciona flyer → Upload multipart/form-data → Backend recibe image
 
 ### **2. Procesamiento con IA**
 ```
-server.js carga prompt.md → VertexAI (Gemini 2.0) analiza imagen + prompt → 
+server-genai.js carga prompt-tailwincss.md → Gemini GenAI API (Gemini 2.5 Pro) analiza imagen y datos + prompt →
 Genera HTML completo con CSS embebido
 ```
 
@@ -395,32 +395,35 @@ localStorage sync       // Sincronización automática
 
 ## 🚀 Despliegue
 
-### **Backend en Google Cloud Run**
+### **Backend: Despliegue Docker universal**
 
-#### **Build y Deploy**:
+El backend (`server-genai.js`) es una app Node.js Express que puede desplegarse en cualquier servidor compatible con Docker (VPS, cloud, on-premise, etc). Solo requiere acceso a internet para llamar a la API de Gemini GenAI.
+
+#### **Build y Deploy Docker**
 ```bash
-# Configurar proyecto
-gcloud config set project tu-proyecto-gcp
+# Build de la imagen Docker (desde la raíz del proyecto)
+docker build -t landingflyer-backend ./backend
 
-# Build imagen
-gcloud builds submit --tag gcr.io/tu-proyecto/landingflyer-backend
-
-# Deploy a Cloud Run
-gcloud run deploy landingflyer-backend \
-  --image gcr.io/tu-proyecto/landingflyer-backend \
-  --platform managed \
-  --region us-central1 \
-  --allow-unauthenticated
+# Ejecutar el contenedor (puerto 8080 por defecto)
+docker run -d -p 8080:8080 \
+   -e GEMINI_API_KEY=tu-api-key-genai \
+   -e GEMINI_MODEL=gemini-2.5-pro \
+   --name landingflyer-backend landingflyer-backend
 ```
 
-#### **Configuración Cloud Run**:
-- **CPU**: 1 vCPU
-- **Memoria**: 512 MB
-- **Concurrencia**: 100 requests
-- **Timeout**: 60 segundos
-- **Variables de entorno**: Automáticas desde service account
+Puedes desplegarlo en:
+- **Google Cloud Run** (serverless, recomendado para autoescalado)
+- **VPS (IONOS, DigitalOcean, AWS EC2, etc)**
+- **Servidores on-premise**
 
-### **Frontend (Netlify/Vercel)**
+Solo necesitas Docker y definir las variables de entorno requeridas.
+
+#### **Variables de entorno mínimas**
+- `GEMINI_API_KEY` (obligatoria)
+- `GEMINI_MODEL` (ej: gemini-2.5-pro)
+- `PORT_GEMINI` (opcional, default 8080)
+
+#### **Frontend (Netlify/Vercel)**
 
 #### **Build**:
 ```bash
