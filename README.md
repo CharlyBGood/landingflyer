@@ -2,7 +2,7 @@
 
 **Generador inteligente de Landing Pages a partir de Flyers usando IA**
 
-LandingFlyer es una aplicación web que transforma flyers tradicionales en landing pages modernas y responsive utilizando Google Vertex AI (Gemini). El sistema permite generar, previsualizar, editar y personalizar landing pages de forma intuitiva.
+LandingFlyer es una aplicación web que transforma flyers tradicionales en landing pages modernas y responsive utilizando la API de Google GenAI (Gemini 2.5 Pro). El sistema permite generar, previsualizar, editar y personalizar landing pages de forma intuitiva.
 
 ---
 
@@ -50,32 +50,32 @@ LandingFlyer es una aplicación web que transforma flyers tradicionales en landi
 │                    ARQUITECTURA LANDINGFLYER                │
 └─────────────────────────────────────────────────────────────┘
 
-Frontend (React + Vite)                 Backend (Express + VertexAI)
-┌─────────────────────────┐             ┌─────────────────────────┐
-│                         │             │                         │
-│  ┌─────────────────┐    │   HTTP      │  ┌─────────────────┐    │
-│  │   HeroSection   │    │   POST      │  │   server.js     │    │
-│  └─────────────────┘    │   /api/     │  └─────────────────┘    │
-│           │             │   generate  │           │             │
-│  ┌─────────────────┐    │   preview   │  ┌─────────────────┐    │
-│  │ LandingPreview  │    │             │  │   prompt.md     │    │
-│  └─────────────────┘    │◄────────────┤  └─────────────────┘    │
-│           │             │             │           │             │
-│  ┌─────────────────┐    │             │  ┌─────────────────┐    │
-│  │    Editor       │    │             │  │ VertexAI API    │    │
-│  │ (Visual Editor) │    │             │  │ (Gemini 2.0)    │    │
-│  └─────────────────┘    │             │  └─────────────────┘    │
-│           │             │             │                         │
-│  ┌─────────────────┐    │             │                         │
-│  │  localStorage   │    │             │                         │
-│  │ (Persistence)   │    │             │                         │
-│  └─────────────────┘    │             │                         │
-└─────────────────────────┘             └─────────────────────────┘
+Frontend (React + Vite)                 Backend (Express + Gemini GenAI API)
+┌─────────────────────────┐             ┌─────────────────────────────┐
+│                         │             │                             │
+│  ┌─────────────────┐    │   HTTP      │  ┌──────────────────────┐   │
+│  │   HeroSection   │    │   POST      │  │  server-genai.js     │   │
+│  └─────────────────┘    │   /api/     │  └──────────────────────┘   │
+│           │             │   generate  │           │                 │
+│  ┌─────────────────┐    │   preview   │  ┌──────────────────────┐   │
+│  │ LandingPreview  │    │             │  │ prompt-tailwincss.md │   │
+│  └─────────────────┘    │◄────────────┤  └──────────────────────┘   │
+│           │             │             │           │                 │
+│  ┌─────────────────┐    │             │  ┌──────────────────────┐   │
+│  │    Editor       │    │             │  │ Gemini GenAI API     │   │
+│  │ (Visual Editor) │    │             │  │ (Gemini 2.5 Pro)     │   │
+│  └─────────────────┘    │             │  └──────────────────────┘   │
+│           │             │             │                             │
+│  ┌─────────────────┐    │             │                             │
+│  │  localStorage   │    │             │                             │
+│  │ (Persistence)   │    │             │                             │
+│  └─────────────────┘    │             │                             │
+└─────────────────────────┘             └─────────────────────────────┘
 ```
 
 ### **Flujo de Datos:**
 1. **Usuario sube flyer** → Frontend captura imagen
-2. **Frontend envía** → Backend procesa con VertexAI
+2. **Frontend envía** → Backend procesa con Gemini GenAI API
 3. **IA genera HTML** → Backend retorna landing page
 4. **Preview inmediato** → Frontend muestra resultado
 5. **Editor visual** → Usuario personaliza contenido
@@ -96,7 +96,7 @@ Frontend (React + Vite)                 Backend (Express + VertexAI)
 ### **Backend**
 - **Node.js 20** - Runtime
 - **Express 5.1.0** - Framework web
-- **Google Cloud VertexAI 1.10.0** - Servicios de IA
+- **Google GenAI (Gemini 2.5 Pro)** - Servicios de IA
 - **Multer 2.0.2** - Manejo de archivos
 - **CORS 2.8.5** - Políticas de seguridad
 - **dotenv 17.2.1** - Variables de entorno
@@ -104,7 +104,7 @@ Frontend (React + Vite)                 Backend (Express + VertexAI)
 ### **Infraestructura**
 - **Google Cloud Run** - Hosting del backend
 - **Docker** - Containerización
-- **Google Vertex AI** - Motor de IA (Gemini 2.0 Flash)
+- **Google GenAI API** - Motor de IA (Gemini 2.5 Pro)
 - **Service Account** - Autenticación GCP
 
 ---
@@ -201,9 +201,9 @@ Preparación para descarga/hosting
 
 1. **Variables de entorno** (`.env`):
 ```bash
-GCLOUD_PROJECT=tu-proyecto-gcp
-GOOGLE_APPLICATION_CREDENTIALS=./credentials.json
-PORT=8080
+GEMINI_API_KEY=tu-api-key-genai
+GEMINI_MODEL=gemini-2.5-pro
+PORT_GEMINI=8080
 ```
 
 2. **Instalación de dependencias**:
@@ -313,8 +313,8 @@ flyerImage: [archivo de imagen]
 
 **Proceso Interno**:
 1. Validación de archivo
-2. Carga de `prompt.md`
-3. Llamada a VertexAI con imagen + prompt
+2. Carga de `prompt-tailwincss.md`
+3. Llamada a Gemini GenAI API con imagen + prompt
 4. Procesamiento de respuesta
 5. Limpieza de HTML (eliminación de markdown)
 6. Retorno de HTML completo
@@ -354,7 +354,7 @@ El archivo `prompt.md` define el comportamiento de la IA usando el sistema "Styl
    - Performance optimizado
 
 #### **Tecnología**:
-- **Modelo**: Gemini 2.0 Flash (VertexAI)
+- **Modelo**: Gemini 2.5 Pro (Google GenAI API)
 - **Modalidad**: Multimodal (texto + imagen)
 - **Output**: HTML completo con CSS embebido
 
