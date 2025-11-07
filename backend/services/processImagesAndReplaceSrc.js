@@ -36,13 +36,77 @@ function hashBuffer(buf) {
   return crypto.createHash('sha1').update(buf).digest('hex').slice(0, 20);
 }
 
+function ensureAbsoluteProxyUrls(htmlContent, baseImageUrl) {
+  if (!baseImageUrl) {
+    return htmlContent;
+  }
+
+  const normalizedBase = baseImageUrl.replace(/\/$/, '');
+  let updatedHtml = htmlContent;
+
+  const absolutize = (input) => {
+    if (!input) return input;
+    const trimmed = input.trim();
+    if (/^(?:[a-z]+:)?\/\//i.test(trimmed) || trimmed.startsWith('data:')) {
+      return trimmed;
+    }
+    if (trimmed.startsWith('/api/image/')) {
+      return `${normalizedBase}${trimmed}`;
+    }
+    return trimmed;
+  };
+
+  updatedHtml = updatedHtml.replace(/(src=["'])([^"'>\s]+)(["'])/g, (match, prefix, url, suffix) => {
+    const absolute = absolutize(url);
+    return absolute === url ? match : `${prefix}${absolute}${suffix}`;
+  });
+
+  updatedHtml = updatedHtml.replace(/(srcset=["'])([^"']+)(["'])/g, (match, prefix, value, suffix) => {
+    const entries = value.split(',').map((entry) => {
+      const trimmed = entry.trim();
+      if (!trimmed) return trimmed;
+      const parts = trimmed.split(/\s+/);
+      const url = parts[0];
+      const descriptor = parts.slice(1).join(' ');
+      const absolute = absolutize(url);
+      return descriptor ? `${absolute} ${descriptor}` : absolute;
+    });
+    const joined = entries.join(', ');
+    return `${prefix}${joined}${suffix}`;
+  });
+
+  updatedHtml = updatedHtml.replace(/url\((['"]?)(\/api\/image\/[^'"\)]+)(['"]?)\)/g, (match, quoteStart, path, quoteEnd) => {
+    const absolute = absolutize(path);
+    const closingQuote = typeof quoteEnd === 'string' && quoteEnd.length ? quoteEnd : quoteStart;
+    return `url(${quoteStart}${absolute}${closingQuote})`;
+  });
+
+  return updatedHtml;
+}
+
 /**
  * Sube todas las imágenes del HTML a Cloudinary y reemplaza los src por las URLs públicas, manteniendo el HTML original intacto.
  * @param {string} htmlContent - HTML original.
  * @param {string} siteName - Nombre/carpeta destino en Cloudinary.
- * @returns {Promise<string>} HTML con URLs Cloudinary.
+ * @param {object} [options]
+ * @param {'preview'|'publish'} [options.mode='publish'] - Controla el comportamiento de rehosteo.
+ * @param {boolean} [options.rehost] - Forzar rehost o deshabilitarlo explícitamente.
+ * @param {string} [options.baseImageUrl] - URL base para rutas /api/image cuando no se rehostea.
+ * @returns {Promise<string>} HTML con URLs finales.
  */
-export async function processImagesAndReplaceSrc(htmlContent, siteName) {
+export async function processImagesAndReplaceSrc(htmlContent, siteName, options = {}) {
+  const {
+    mode = 'publish',
+    rehost,
+    baseImageUrl = ''
+  } = options;
+
+  const shouldRehost = typeof rehost === 'boolean' ? rehost : mode !== 'preview';
+
+  if (!shouldRehost) {
+    return ensureAbsoluteProxyUrls(htmlContent, baseImageUrl);
+  }
+
   const $ = load(htmlContent, { decodeEntities: false });
   const srcMap = new Map(); // originalUrl -> cloudinaryUrl
   const cacheByKey = new Map(); // cacheKey -> cloudinaryUrl

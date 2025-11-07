@@ -11,9 +11,13 @@ import { getUnsplashImageUrl } from './services/UnsplashService.js';
 import { getPexelsImageUrl } from './services/PexelsService.js';
 
 const app = express();
+app.set('trust proxy', true);
 app.use(cors());
 app.use(express.json());
 const upload = multer({ storage: multer.memoryStorage() });
+
+const PORT = process.env.PORT_GEMINI || 8080;
+const PUBLIC_BACKEND_BASE_URL = (process.env.PUBLIC_BACKEND_URL || '').replace(/\/$/, '');
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -135,13 +139,26 @@ Usa EXACTAMENTE estos colores como base de la paleta. Convierte automáticamente
     const generatedText = response.text;
     let generatedHtml = (generatedText || '').replace(/^```html\n?/, '').replace(/```$/, '');
 
-    // Rehost provider images during preview to ensure absolute URLs and avoid collisions
+    // Ajustar rutas de imágenes para la vista previa sin subirlas a Cloudinary
     try {
       const siteNameForPreview = (businessData?.businessName || '').toString().trim() || 'preview';
       const { processImagesAndReplaceSrc } = await import('./services/processImagesAndReplaceSrc.js');
-      generatedHtml = await processImagesAndReplaceSrc(generatedHtml, siteNameForPreview);
+
+      const inferredBaseUrl = (() => {
+        if (PUBLIC_BACKEND_BASE_URL) return PUBLIC_BACKEND_BASE_URL;
+        const host = req.get('host');
+        if (host) {
+          return `${req.protocol}://${host}`.replace(/\/$/, '');
+        }
+        return `http://localhost:${PORT}`;
+      })();
+
+      generatedHtml = await processImagesAndReplaceSrc(generatedHtml, siteNameForPreview, {
+        mode: 'preview',
+        baseImageUrl: inferredBaseUrl
+      });
     } catch (e) {
-      console.warn('Preview rehost skipped due to error:', e?.message || e);
+      console.warn('Preview image URL adjustment skipped due to error:', e?.message || e);
     }
 
     res.json({ generatedHtml });
@@ -209,8 +226,6 @@ app.get('/api/deploy-status/:siteId/:deployId', async (req, res) => {
   }
 });
 
-// 6. Se actualiza el puerto y los mensajes de inicio del servidor
-const PORT = process.env.PORT_GEMINI || 8080;
 app.listen(PORT, () => {
   console.log(`Servidor Gemini escuchando en el puerto ${PORT}`);
   console.log(`Usando modelo Gemini: ${process.env.GEMINI_MODEL || 'gemini-1.5-flash'}`);

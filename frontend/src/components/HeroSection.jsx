@@ -135,11 +135,7 @@ export default function HeroSection({
               SinapsiaLab
             </a> para mostrar tu negocio online sin complicaciones.
           </p>
-          <p className="text-lg sm:text-xl text-sinapsia-accent font-semibold mb-8">
-            🔗 ¡Probalo gratis y llevate tu página en segundos!
-          </p>
         </div>
-
         {/* Explicación en 3 pasos */}
         <div className="max-w-5xl mx-auto px-4 mb-8">
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
@@ -163,96 +159,9 @@ export default function HeroSection({
             ⚡ Sin conocimientos técnicos, en solo minutos.
           </p>
         </div>
-        {/* <HeroCardContainer
-          onBasicClick={handleScrollToForm}
-          onPremiumClick={handlePremiumClick}
-        />
-        {showExtrasModal && (
-          <ExtrasPreviewModal
-            isOpen={showExtrasModal}
-            onClose={handleCloseExtrasModal}
-            onContinue={handleExtrasContinue}
-          />
-        )} */}
       </header>
-      {/* 
-      <button onClick={handleShowTemplates} className="m-6 px-4 py-2 bg-portfolio-gradient-1 text-portfolio-text rounded hover:bg-portfolio-gradient-2 transition">
-        Elegir template
-      </button>
-      {templateSectionOpen && (
-        <TemplateGallery
-          templates={selectedTemplateForGallery ? [selectedTemplateForGallery] : templatesArray}
-          onTemplateClick={openTemplatesModal}
-          selectedTemplateId={selectedTemplateId}
-          changeSelected={handleChangeSelected}
-        />
-      )} */}
-      {/* <TemplatesModal
-        isOpen={!!selectedTemplate}
-        onClose={closeTemplatesModal}
-        onNavigateNext={navigateToNextTemplate}
-        onNavigatePrev={navigateToPreviousTemplate}
-        disableKeyboardNavigation={isEditorOpen}
-      >
-        {selectedTemplate && (
-          <>
-            <button
-              onClick={navigateToPreviousTemplate}
-              className="fixed left-8 top-1/2 transform -translate-y-1/2 z-50 p-4 rounded-full"
-              aria-label="Template anterior"
-            >
-              <ChevronLeft className="w-11 h-11 text-portfolio-text/70" />
-            </button>
 
-            <button
-              onClick={navigateToNextTemplate}
-              className="fixed right-8 top-1/2 transform -translate-y-1/2 z-50 p-4"
-              aria-label="Template siguiente"
-            >
-              <ChevronRight className="w-11 h-11 text-portfolio-text/70 outline-none" />
-            </button>
-            <div className="w-full h-full overflow-y-auto relative">
-              <div className="sticky top-0 z-40 bg-white/90 backdrop-blur-xs border-b border-gray-200 p-4">
-                <div className="flex justify-between items-center max-w-6xl mx-auto">
-                  <div>
-                    <h2 className="text-2xl font-bold text-gray-800">{selectedTemplate.name}</h2>
-                    <p className="text-gray-600">{selectedTemplate.description}</p>
-                    <p className="text-sm text-gray-500 mt-1">
-                      {currentTemplateIndex + 1} de {templatesArray.length}
-                    </p>
-                  </div>
-                  <div className="flex items-center gap-3">
-                    <button
-                      onClick={openTemplateEditor}
-                      className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
-                    >
-                      <Edit3 className="w-4 h-4" />
-                      Editar Template
-                    </button>
-                    <TemplatesSelectorButton
-                      template={selectedTemplate}
-                      onSelectTemplate={handleTemplateSelection}
-                      onCloseModal={closeTemplatesModal}
-                    />
-                    <button
-                      onClick={closeTemplatesModal}
-                      className="p-2 rounded-full hover:bg-gray-100 transition-colors"
-                    >
-                      <X className="w-6 h-6" />
-                    </button>
-                  </div>
-                </div>
-              </div>
-              <div className="pb-8">
-                <selectedTemplate.component />
-              </div>
-            </div>
-          </>
-        )}
-      </TemplatesModal> */}
-
-      <main id="form-section" className="bg-sinapsia-base border border-sinapsia-accent p-6 sm:p-8 rounded-lg mx-auto max-w-4xl mb-8">       
-        
+      <main id="form-section" className="bg-sinapsia-base border border-sinapsia-accent p-6 sm:p-8 rounded-lg mx-auto max-w-4xl mb-8">
         <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 items-center justify-center">
           <input
             type="file"
@@ -262,7 +171,6 @@ export default function HeroSection({
             disabled={isLoading}
             className="sr-only"
           />
-
           <button
             onClick={handleFlyerClick}
             disabled={isLoading}
@@ -270,7 +178,6 @@ export default function HeroSection({
           >
             📄 {selectedFile ? selectedFile.name.substring(0, 20) + '...' : 'Tengo un Flyer'}
           </button>
-
           <button
             onClick={() => setInputMode('manual')}
             disabled={isLoading}
@@ -278,7 +185,6 @@ export default function HeroSection({
           >
             ✏️ Crear con formulario
           </button>
-
           <button
             onClick={inputMode === 'image' ? handleGeneratePreview : () => { }}
             disabled={isLoading || (inputMode === 'image' && !selectedFile)}
@@ -287,54 +193,17 @@ export default function HeroSection({
             {isLoading ? 'Generando...' : 'Generar Vista Previa'}
           </button>
         </div>
-
         {isLoading && (
           <p className="text-center text-gray-300 mt-4 sm:mt-6 text-sm sm:text-base">
             Analizando diseño y construyendo tu web...
           </p>
         )}
-
         {error && (
           <p className="text-center text-red-400 mt-4 sm:mt-6 text-sm sm:text-base px-4">
             {error}
           </p>
         )}
       </main>
-
-      {/* Sección de Upsell */}
-      <section className="max-w-4xl mx-auto px-4 mb-8">
-        <div className="bg-gradient-to-br from-sinapsia-base to-sinapsia-deep border border-sinapsia-accent p-6 sm:p-8 rounded-lg text-center">
-          <h2 className="text-2xl sm:text-3xl font-bold text-sinapsia-light mb-4">
-            Te regalamos tu landing.
-          </h2>
-          <p className="text-xl text-sinapsia-accent font-semibold mb-6">
-            ¿Querés más? 👇
-          </p>
-          
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
-            <div className="p-4 bg-sinapsia-base/50 rounded-lg border border-sinapsia-accent/30">
-              <h3 className="text-lg font-semibold text-sinapsia-light mb-2">🌐 Dominio personalizado</h3>
-              <p className="text-sinapsia-light/80">(.com, .com.ar, etc)</p>
-            </div>
-            <div className="p-4 bg-sinapsia-base/50 rounded-lg border border-sinapsia-accent/30">
-              <h3 className="text-lg font-semibold text-sinapsia-light mb-2">🎨 Ediciones y mejoras</h3>
-              <p className="text-sinapsia-light/80">de diseño</p>
-            </div>
-            <div className="p-4 bg-sinapsia-base/50 rounded-lg border border-sinapsia-accent/30">
-              <h3 className="text-lg font-semibold text-sinapsia-light mb-2">📈 Optimización para atraer</h3>
-              <p className="text-sinapsia-light/80">clientes</p>
-            </div>
-            <div className="p-4 bg-sinapsia-base/50 rounded-lg border border-sinapsia-accent/30">
-              <h3 className="text-lg font-semibold text-sinapsia-light mb-2">⚡ Automatizaciones</h3>
-              <p className="text-sinapsia-light/80">que te ahorran tiempo</p>
-            </div>
-          </div>
-          
-          <button className="btn-sinapsia-primary text-lg px-8 py-4 text-sinapsia-light font-bold rounded-lg transition-all duration-200 transform hover:-translate-y-1 hover:shadow-xl">
-            👉 Escalá tu landing
-          </button>
-        </div>
-      </section>
 
       {inputMode === 'manual' && (
         <div className="modal-overlay fixed inset-0 bg-portfolio-dark/70 flex items-center justify-center z-[1000] p-4">
