@@ -84,6 +84,12 @@ function ensureAbsoluteProxyUrls(htmlContent, baseImageUrl) {
   return updatedHtml;
 }
 
+function isProxyImageUrl(value) {
+  if (!value) return false;
+  const trimmed = value.trim();
+  return /^(?:https?:\/\/[^'"\s]+)?\/api\/image\/(unsplash|pexels)\?/i.test(trimmed);
+}
+
 /**
  * Sube todas las imágenes del HTML a Cloudinary y reemplaza los src por las URLs públicas, manteniendo el HTML original intacto.
  * @param {string} htmlContent - HTML original.
@@ -122,7 +128,7 @@ export async function processImagesAndReplaceSrc(htmlContent, siteName, options 
   imgElements.each((i, el) => {
     const src = $(el).attr('src');
     if (!src) return;
-    if (/^\/api\/image\/(unsplash|pexels)\?/i.test(src)) {
+    if (isProxyImageUrl(src)) {
       srcsToReplace.push(src);
     }
     const srcset = $(el).attr('srcset');
@@ -130,7 +136,7 @@ export async function processImagesAndReplaceSrc(htmlContent, siteName, options 
       // srcset: comma-separated list of "url [descriptor]"
       srcset.split(',').forEach(part => {
         const url = (part || '').trim().split('\u0020')[0]; // split on space
-        if (url && /^\/api\/image\/(unsplash|pexels)\?/i.test(url)) {
+        if (url && isProxyImageUrl(url)) {
           srcsToReplace.push(url);
         }
       });
@@ -142,8 +148,13 @@ export async function processImagesAndReplaceSrc(htmlContent, siteName, options 
   styleBlocks.each((i, el) => {
     const css = $(el).html();
     if (!css) return;
-    const matches = [...css.matchAll(/url\((['"]?)(\/api\/image\/(unsplash|pexels)\?[^'"\)]+)\1\)/g)];
-    matches.forEach(m => styleUrls.push(m[2]));
+    const matches = [...css.matchAll(/url\((['"]?)([^'"\)]+)\1\)/g)];
+    matches.forEach((m) => {
+      const candidate = m[2];
+      if (isProxyImageUrl(candidate)) {
+        styleUrls.push(candidate);
+      }
+    });
   });
 
   // 3) URLs en atributos style inline
@@ -151,8 +162,13 @@ export async function processImagesAndReplaceSrc(htmlContent, siteName, options 
   $('[style]').each((i, el) => {
     const style = $(el).attr('style');
     if (!style) return;
-    const matches = [...style.matchAll(/url\((['"]?)(\/api\/image\/(unsplash|pexels)\?[^'"\)]+)\1\)/g)];
-    matches.forEach(m => inlineStyleUrls.push(m[2]));
+    const matches = [...style.matchAll(/url\((['"]?)([^'"\)]+)\1\)/g)];
+    matches.forEach((m) => {
+      const candidate = m[2];
+      if (isProxyImageUrl(candidate)) {
+        inlineStyleUrls.push(candidate);
+      }
+    });
   });
 
   // 4) Migración de URLs Cloudinary antiguas del folder preview
