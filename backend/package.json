@@ -6,7 +6,8 @@
   "scripts": {
     "dev": "nodemon server-genai.js",
     "start": "node server-genai.js",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "echo \"no build required\""
   },
   "keywords": [],
   "author": "charlybgood",
