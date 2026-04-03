@@ -1,0 +1,20 @@
+name = "landingflyer-api"
+main = "src/index.ts"
+compatibility_date = "2025-03-30"
+compatibility_flags = ["nodejs_compat"]
+
+[vars]
+GEMINI_MODEL = "gemini-2.0-flash-001"
+
+# Secrets (set via `wrangler secret put <NAME>`):
+# GEMINI_API_KEY
+# NETLIFY_API_TOKEN
+# CLOUDINARY_CLOUD_NAME
+# CLOUDINARY_API_KEY
+# CLOUDINARY_API_SECRET
+# UNSPLASH_ACCESS_KEY
+# PEXELS_API_KEY
+
+[[kv_namespaces]]
+binding = "IMAGE_CACHE"
+id = "d6b78e9cd73b434f9d9be14d42f728a1"
