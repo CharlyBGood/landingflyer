@@ -20,6 +20,8 @@
 - **🚫 NO OVERCOMPLICATED STRATEGIES**: Keep solutions simple and direct. Avoid complex architectural changes when simple fixes will work.
 - **✅ DIRECT APPROACH**: Fix problems directly in the existing codebase without unnecessary refactoring or restructuring.
 - **⚠️ ASK BEFORE MAJOR CHANGES**: If a significant restructure is truly necessary, ask for explicit permission first and explain why simpler approaches won't work.
+- **🧩 MODULAR RESPONSIBILITIES ONLY**: If new frontend/editor pieces are needed, split responsibilities into small, focused components and hooks.
+- **📏 MAX 300 LINES PER COMPONENT**: Do not create components over 300 lines. If logic grows, extract subcomponents/hooks/services to keep files clean and maintainable.
 
 # Copilot Instructions for LandingFlyer
 

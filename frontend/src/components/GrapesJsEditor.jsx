@@ -48,7 +48,7 @@ const GrapesJsEditor = () => {
       const controller = new AbortController();
       const timeoutId = setTimeout(() => controller.abort(), 120000);
 
-      const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:8080';
+      const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:8787';
       const response = await fetch(`${apiUrl}/api/publish`, {
         method: 'POST',
         headers: {

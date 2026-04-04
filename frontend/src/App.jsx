@@ -33,7 +33,7 @@ function App() {
     formData.append('flyerImage', selectedFile);
 
     try {
-      const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:8080';
+      const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:8787';
       const response = await axios.post(`${apiUrl}/api/generate-preview`, formData);
       setGeneratedHtml(response.data.generatedHtml);
 
@@ -55,7 +55,7 @@ function App() {
     formData.append('businessData', JSON.stringify(businessData));
 
     try {
-      const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:8080';
+      const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:8787';
       const response = await axios.post(`${apiUrl}/api/generate-preview`, formData);
       setGeneratedHtml(response.data.generatedHtml);
 
