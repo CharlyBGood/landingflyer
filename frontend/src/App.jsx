@@ -1,11 +1,11 @@
 import { useState, useEffect, useRef } from 'react';
-import axios from 'axios';
 import './App.css';
 import HeroSection from './components/HeroSection.jsx';
 import LandingPreview from './components/LandingPreview.jsx';
 import Navbar from './components/Navbar.jsx';
 import Footer from './components/Footer.jsx';
 import { useNavbarHeight } from './hooks/useNavbarHeight.js';
+import { API_URL, apiHeaders } from './utilities/api.js';
 
 function App() {
   const [selectedFile, setSelectedFile] = useState(null);
@@ -33,12 +33,17 @@ function App() {
     formData.append('flyerImage', selectedFile);
 
     try {
-      const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:8787';
-      const response = await axios.post(`${apiUrl}/api/generate-preview`, formData);
-      setGeneratedHtml(response.data.generatedHtml);
+      const response = await fetch(`${API_URL}/api/generate-preview`, {
+        method: 'POST',
+        headers: apiHeaders(),
+        body: formData,
+      });
+      if (!response.ok) throw new Error(`HTTP ${response.status}`);
+      const data = await response.json();
+      setGeneratedHtml(data.generatedHtml);
 
-      localStorage.setItem('editableHtml', response.data.generatedHtml);
-      localStorage.setItem('originalTemplate', response.data.generatedHtml);
+      localStorage.setItem('editableHtml', data.generatedHtml);
+      localStorage.setItem('originalTemplate', data.generatedHtml);
     } catch (err) {
       setError('Hubo un error al generar la página.', err);
     } finally {
@@ -55,12 +60,17 @@ function App() {
     formData.append('businessData', JSON.stringify(businessData));
 
     try {
-      const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:8787';
-      const response = await axios.post(`${apiUrl}/api/generate-preview`, formData);
-      setGeneratedHtml(response.data.generatedHtml);
+      const response = await fetch(`${API_URL}/api/generate-preview`, {
+        method: 'POST',
+        headers: apiHeaders(),
+        body: formData,
+      });
+      if (!response.ok) throw new Error(`HTTP ${response.status}`);
+      const data = await response.json();
+      setGeneratedHtml(data.generatedHtml);
 
-      localStorage.setItem('editableHtml', response.data.generatedHtml);
-      localStorage.setItem('originalTemplate', response.data.generatedHtml);
+      localStorage.setItem('editableHtml', data.generatedHtml);
+      localStorage.setItem('originalTemplate', data.generatedHtml);
     } catch (err) {
       setError('Hubo un error al generar la página.', err);
     } finally {

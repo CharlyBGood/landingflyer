@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef, useCallback } from 'react';
 import { PencilIcon, CheckIcon, GlobeIcon } from '../utilities';
+import { API_URL, apiHeaders } from '../utilities/api.js';
 import { useIframeEditor } from '../hooks/useIframeEditor';
 import PublishModal from './editor/PublishModal.jsx';
 import PublishSuccessModal from './editor/PublishSuccessModal.jsx';
@@ -217,10 +218,9 @@ function Editor() {
       const controller = new AbortController();
       const timeoutId = setTimeout(() => controller.abort(), 120000);
 
-      const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:8787';
-      const response = await fetch(`${apiUrl}/api/publish`, {
+      const response = await fetch(`${API_URL}/api/publish`, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: apiHeaders({ 'Content-Type': 'application/json' }),
         body: JSON.stringify({ htmlContent: publishHtml, siteName }),
         signal: controller.signal,
       });

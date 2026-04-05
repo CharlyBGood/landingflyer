@@ -13,3 +13,5 @@ export * from './domUtils';
 
 export * from './hexColorUtils';
 
+export * from './api';
+

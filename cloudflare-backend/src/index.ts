@@ -35,7 +35,6 @@ app.use('*', cors({
 // Requiere header X-API-Key en rutas /api/*
 // El health check queda abierto para monitoreo
 app.use('/api/*', async (c, next) => {
-  const apiKey = c.req.header('X-API-Key');
   const expectedKey = c.env.API_KEY;
 
   // Si no hay API_KEY configurada como secret, skip (para no romper durante setup)
@@ -43,6 +42,9 @@ app.use('/api/*', async (c, next) => {
     await next();
     return;
   }
+
+  // Aceptar API key via header O query param (para img src que no pueden enviar headers)
+  const apiKey = c.req.header('X-API-Key') || c.req.query('key');
 
   if (!apiKey || apiKey !== expectedKey) {
     return c.json({ error: 'Unauthorized', message: 'Missing or invalid API key' }, 401);

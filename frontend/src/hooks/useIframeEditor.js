@@ -1,4 +1,5 @@
 import { useCallback } from 'react';
+import { API_URL, API_KEY, apiHeaders } from '../utilities/api.js';
 
 export function useIframeEditor({ iframeRef, uploadFilesRef, setHasPendingEdits }) {
 
@@ -72,7 +73,7 @@ export function useIframeEditor({ iframeRef, uploadFilesRef, setHasPendingEdits 
     doc.body.setAttribute('data-lf-edit', 'on');
     assignImageIds(doc);
 
-    const apiUrl = (import.meta.env.VITE_API_URL || 'http://localhost:8787').replace(/\/+$/, '');
+    const apiUrl = API_URL;
 
     // --- Image search panel ---
     const panelId = 'lf-img-search-panel';
@@ -291,7 +292,8 @@ export function useIframeEditor({ iframeRef, uploadFilesRef, setHasPendingEdits 
         const prov = panel?.dataset.provider || 'unsplash';
         sel = { provider: prov, query: sel.query };
       }
-      const url = `${apiUrl}/api/image/${sel.provider}?term=${encodeURIComponent(sel.query)}`;
+      const keyParam = API_KEY ? `&key=${encodeURIComponent(API_KEY)}` : '';
+      const url = `${apiUrl}/api/image/${sel.provider}?term=${encodeURIComponent(sel.query)}${keyParam}`;
       targetImg.setAttribute('src', url);
       targetImg.setAttribute('data-lf-term', sel.query);
       targetImg.setAttribute('data-lf-provider', sel.provider);
@@ -303,7 +305,7 @@ export function useIframeEditor({ iframeRef, uploadFilesRef, setHasPendingEdits 
             const prov = targetImg.getAttribute('data-lf-provider');
             if (prov === 'pexels' && !targetImg.__lfTriedFallback__) {
               targetImg.__lfTriedFallback__ = true;
-              targetImg.setAttribute('src', `${apiUrl}/api/image/unsplash?term=${encodeURIComponent(sel.query)}`);
+              targetImg.setAttribute('src', `${apiUrl}/api/image/unsplash?term=${encodeURIComponent(sel.query)}${keyParam}`);
               targetImg.setAttribute('data-lf-provider', 'unsplash');
               showToast('Pexels no respondió; usando Unsplash');
             }
@@ -323,7 +325,9 @@ export function useIframeEditor({ iframeRef, uploadFilesRef, setHasPendingEdits 
       const activeProv = panel?.dataset.provider || 'unsplash';
       try {
         // Use backend proxy for suggestions to avoid exposing API keys
-        const res = await fetch(`${apiUrl}/api/image/${activeProv}?term=${encodeURIComponent(q)}&suggest=true`);
+        const res = await fetch(`${apiUrl}/api/image/${activeProv}?term=${encodeURIComponent(q)}&suggest=true`, {
+          headers: apiHeaders(),
+        });
         if (res.ok && res.headers.get('content-type')?.includes('json')) {
           const data = await res.json();
           const items = data?.results || data?.photos || [];
