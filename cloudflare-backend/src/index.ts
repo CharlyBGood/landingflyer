@@ -11,17 +11,23 @@ const app = new Hono<{ Bindings: Env }>();
 // --- CAPA 1: CORS restringido ---
 // Solo permite requests desde tus dominios
 const ALLOWED_ORIGINS = [
+  // LandingFlyer (Vercel)
   'https://landingflyer.vercel.app',
   'https://landingflyer.sinapsialab.com',
   'https://landingflyer-charlybgoods-projects.vercel.app',
-  'http://localhost:5173', // dev local Vite
-  'http://localhost:4321', // dev local Astro
+  // SinapsiaLab (Namecheap / Vercel)
+  'https://sinapsialab.com',
+  'https://www.sinapsialab.com',
+  'https://sinapsialab-astro.vercel.app',
+  // Dev local
+  'http://localhost:5173', // Vite
+  'http://localhost:4321', // Astro
 ];
 
 app.use('*', cors({
   origin: (origin) => {
     // Permitir Vercel preview deploys (*.vercel.app)
-    if (origin && /^https:\/\/landingflyer[a-z0-9-]*\.vercel\.app$/.test(origin)) {
+    if (origin && /^https:\/\/(landingflyer|sinapsialab)[a-z0-9-]*\.vercel\.app$/.test(origin)) {
       return origin;
     }
     return ALLOWED_ORIGINS.includes(origin) ? origin : '';
