@@ -1,4 +1,4 @@
-
+import { useState } from 'react';
 import StepIndicator from './StepIndicator';
 import CartNavButton from './CartNavButton';
 import PublicationTypeSelection from './PublicationTypeSelection';
@@ -74,4 +74,3 @@ export default function CartModal({ isOpen, onClose, onConfirm }) {
     </div>
   );
 }
-import React, { useState } from 'react';

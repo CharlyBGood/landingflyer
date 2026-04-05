@@ -1,3 +1,11 @@
+.editor-page {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  overflow: hidden;
+  background: var(--sinapsia-base, #181c24);
+}
+
 .editor-toolbar {
   position: fixed;
   top: 0;
@@ -16,15 +24,6 @@
   flex-direction: column;
   gap: 0.5rem;
   transition: all 0.3s ease;
-}
-
-input[type="color"] {
-  width: 1.5em;
-  height: 1.5em;
-  border: none;
-  border-radius: 1em;
-  cursor: pointer;
-  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 @media (min-width: 640px) {
@@ -57,6 +56,7 @@ input[type="color"] {
   }
 }
 
+/* ===== BUTTONS ===== */
 .edit-mode-btn,
 .save-changes-btn {
   display: flex;
@@ -74,7 +74,6 @@ input[type="color"] {
 }
 
 @media (min-width: 640px) {
-
   .edit-mode-btn,
   .save-changes-btn {
     padding: 0.75rem 1.25rem;
@@ -83,7 +82,6 @@ input[type="color"] {
   }
 }
 
-/* ===== BOTÓN DE EDICIÓN ===== */
 .edit-mode-btn {
   background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
   color: white;
@@ -118,7 +116,20 @@ input[type="color"] {
     0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
-/* ===== BOTÓN DE GUARDAR ===== */
+.discard-btn {
+  background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+  box-shadow:
+    0 2px 8px rgba(245, 158, 11, 0.25),
+    0 1px 2px rgba(0, 0, 0, 0.1);
+}
+
+.discard-btn:hover {
+  background: linear-gradient(135deg, #d97706 0%, #b45309 100%);
+  box-shadow:
+    0 4px 12px rgba(245, 158, 11, 0.3),
+    0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
 .save-changes-btn {
   background: linear-gradient(135deg, #10b981 0%, #059669 100%);
   color: white;
@@ -139,9 +150,7 @@ input[type="color"] {
   transform: translateY(0);
 }
 
-/* ===== BOTÓN DE PUBLICAR ===== */
 .publish-btn-custom {
-  /* El botón usa Tailwind CSS, solo override específicos si es necesario */
   box-shadow: 0 2px 8px rgba(139, 92, 246, 0.25), 0 1px 2px rgba(0, 0, 0, 0.1);
 }
 
@@ -160,10 +169,12 @@ input[type="color"] {
   }
 }
 
+/* ===== INSTRUCTIONS BAR ===== */
 .toolbar-instructions {
   display: flex;
   justify-content: center;
   margin-top: 0.25rem;
+  animation: slideDown 0.3s ease-out;
 }
 
 @media (min-width: 640px) {
@@ -212,74 +223,39 @@ input[type="color"] {
   line-height: 1.2;
 }
 
-.content-area {
-  margin-top: 0;
-  padding-top: var(--toolbar-height, 4rem);
-  min-height: calc(100vh - var(--toolbar-height, 4rem));
-  transition: padding-top 0.3s ease;
+/* ===== IFRAME CONTENT ===== */
+.editor-content {
+  flex: 1;
+  overflow: hidden;
 }
 
-
-@media (min-width: 1024px) {
-  .content-area {
-    margin-top: 0;
-    min-height: auto;
-  }
+.editor-iframe {
+  width: 100%;
+  border: none;
+  display: block;
+  background: white;
 }
 
-@keyframes slideDown {
-  from {
-    opacity: 0;
-    transform: translateY(-10px);
-  }
-
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-.toolbar-instructions {
-  animation: slideDown 0.3s ease-out;
-}
-
+/* ===== FOCUS ===== */
 .edit-mode-btn:focus,
 .save-changes-btn:focus {
   outline: 2px solid #3b82f6;
   outline-offset: 2px;
 }
 
-/* Solo aplicar estilos cuando está en modo edición Y tiene contenteditable="true" */
-.content-area[data-edit-mode="true"] [contenteditable="true"] {
-  cursor: text !important;
-  position: relative;
-  outline: 2px dashed #007bff !important;
-  outline-offset: 2px;
-}
-
-/* Asegurar que NO hay estilos cuando no está en modo edición */
-.content-area[data-edit-mode="false"] [data-editable="true"],
-.content-area:not([data-edit-mode="true"]) [data-editable="true"] {
-  outline: none !important;
-}
-
-.content-area button[contenteditable="true"],
-.content-area .btn[contenteditable="true"],
-.content-area .button[contenteditable="true"] {
-  cursor: text !important;
-  user-select: text;
-  -webkit-user-select: text;
-}
-
-.content-area a[contenteditable="true"] {
-  cursor: text !important;
-  user-select: text;
-  -webkit-user-select: text;
-  text-decoration: none;
+/* ===== ANIMATIONS ===== */
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 @media (prefers-reduced-motion: reduce) {
-
   .edit-mode-btn,
   .save-changes-btn {
     transition: none;
@@ -293,84 +269,4 @@ input[type="color"] {
   .toolbar-instructions {
     animation: none;
   }
-}
-
-.content-area section:has(.bg-btn-container),
-.content-area div:has(.bg-btn-container),
-.content-area header:has(.bg-btn-container),
-.content-area main:has(.bg-btn-container),
-.content-area footer:has(.bg-btn-container) {
-  position: relative;
-}
-
-.bg-btn-container {
-  position: absolute;
-  top: 0;
-  right: 0;
-  pointer-events: auto;
-  z-index: 1001;
-}
-
-.editor-bg-btn {
-  position: absolute;
-  top: 10px;
-  right: 10px;
-  z-index: 1000;
-  background: rgba(59, 130, 246, 0.95);
-  color: white;
-  border: none;
-  border-radius: 8px;
-  cursor: pointer;
-  font-size: 0.75rem;
-  font-weight: 500;
-  letter-spacing: 0.025em;
-  display: flex;
-  align-items: center;
-  gap: 0.25rem;
-  padding: 0.5rem 0.75rem;
-  box-shadow:
-    0 2px 8px rgba(0, 0, 0, 0.15),
-    0 1px 3px rgba(0, 0, 0, 0.1);
-  backdrop-filter: blur(4px);
-  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
-  user-select: none;
-  -webkit-user-select: none;
-}
-
-.editor-bg-btn:hover {
-  background: rgba(37, 99, 235, 0.95);
-  transform: translateY(-1px);
-  box-shadow:
-    0 4px 12px rgba(59, 130, 246, 0.25),
-    0 2px 6px rgba(0, 0, 0, 0.15);
-}
-
-.editor-bg-btn:active {
-  transform: translateY(0);
-  box-shadow:
-    0 2px 4px rgba(0, 0, 0, 0.1),
-    0 1px 2px rgba(0, 0, 0, 0.05);
-}
-
-.editor-bg-btn:focus {
-  outline: 2px solid rgba(59, 130, 246, 0.5);
-  outline-offset: 2px;
-}
-
-@media (max-width: 640px) {
-  .editor-bg-btn {
-    font-size: 0.7rem;
-    padding: 0.375rem 0.625rem;
-    gap: 0.125rem;
-    top: 8px;
-    right: 8px;
-  }
-}
-
-.editor-bg-btn--success {
-  background: rgba(16, 185, 129, 0.95);
-}
-
-.editor-bg-btn--success:hover {
-  background: rgba(5, 150, 105, 0.95);
 }

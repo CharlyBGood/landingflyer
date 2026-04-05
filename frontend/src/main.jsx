@@ -2,8 +2,7 @@ import React from 'react'
 import ReactDOM from 'react-dom/client'
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import App from './App.jsx'
-import GrapesJsEditor from './components/GrapesJsEditor.jsx';
-import TailwindPreview from './components/TailwindPreview.jsx';
+import Editor from './components/Editor.jsx';
 import './index.css'
 
 ReactDOM.createRoot(document.getElementById('root')).render(
@@ -11,8 +10,7 @@ ReactDOM.createRoot(document.getElementById('root')).render(
     <BrowserRouter>
       <Routes>
         <Route path="/" element={<App />} />
-        <Route path="/editor" element={<TailwindPreview />} />
-        <Route path="/grapesjs" element={<GrapesJsEditor />} />
+        <Route path="/editor" element={<Editor />} />
       </Routes>
     </BrowserRouter>
   </React.StrictMode>,
