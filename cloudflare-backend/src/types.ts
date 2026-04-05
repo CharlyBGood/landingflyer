@@ -6,6 +6,7 @@ export interface Env {
   GEMINI_MODEL: string;
 
   // Secrets
+  API_KEY: string;
   GEMINI_API_KEY: string;
   NETLIFY_API_TOKEN: string;
   CLOUDINARY_CLOUD_NAME: string;
