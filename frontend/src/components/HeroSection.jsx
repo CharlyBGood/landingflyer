@@ -199,9 +199,16 @@ export default function HeroSection({
           </p>
         )}
         {error && (
-          <p className="text-center text-red-400 mt-4 sm:mt-6 text-sm sm:text-base px-4">
-            {error}
-          </p>
+          <div
+            role="alert"
+            aria-live="polite"
+            className="mt-4 sm:mt-6 mx-auto max-w-md flex items-center gap-3 px-4 py-3 rounded-xl bg-portfolio-dark/60 border border-red-400/40 backdrop-blur-sm"
+          >
+            <span aria-hidden="true" className="text-xl leading-none">⚠️</span>
+            <p className="m-0 text-sm sm:text-base text-sinapsia-light">
+              {error}
+            </p>
+          </div>
         )}
       </main>
 

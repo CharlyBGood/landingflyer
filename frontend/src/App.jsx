@@ -44,8 +44,8 @@ function App() {
 
       localStorage.setItem('editableHtml', data.generatedHtml);
       localStorage.setItem('originalTemplate', data.generatedHtml);
-    } catch (err) {
-      setError('Hubo un error al generar la página.', err);
+    } catch {
+      setError('No pudimos generar tu página. Intentá en unos momentos.');
     } finally {
       setIsLoading(false);
     }
@@ -71,8 +71,8 @@ function App() {
 
       localStorage.setItem('editableHtml', data.generatedHtml);
       localStorage.setItem('originalTemplate', data.generatedHtml);
-    } catch (err) {
-      setError('Hubo un error al generar la página.', err);
+    } catch {
+      setError('No pudimos generar tu página. Intentá en unos momentos.');
     } finally {
       setIsLoading(false);
     }

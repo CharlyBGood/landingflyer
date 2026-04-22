@@ -45,13 +45,23 @@ generate.post('/', async (c) => {
       imageMimeType = file.type;
     }
 
-    // Generate HTML with Gemini
-    const model = c.env.GEMINI_MODEL || 'gemini-2.0-flash-001';
-    let generatedHtml = await generateWithGemini(c.env.GEMINI_API_KEY, model, {
-      imageBuffer,
-      imageMimeType,
-      businessData: businessData ?? undefined,
-    });
+    // Generate HTML with Gemini (with fallback chain)
+    const primaryModel = c.env.GEMINI_MODEL || 'gemini-2.0-flash-001';
+    const fallbacks = [c.env.GEMINI_FALLBACK1, c.env.GEMINI_FALLBACK2].filter(
+      (m): m is string => Boolean(m)
+    );
+    const { html, modelUsed } = await generateWithGemini(
+      c.env.GEMINI_API_KEY,
+      primaryModel,
+      {
+        imageBuffer,
+        imageMimeType,
+        businessData: businessData ?? undefined,
+      },
+      fallbacks
+    );
+    console.log(`[generate-preview] modelo usado: ${modelUsed}`);
+    let generatedHtml = html;
 
     // Adjust image URLs for preview mode
     try {
