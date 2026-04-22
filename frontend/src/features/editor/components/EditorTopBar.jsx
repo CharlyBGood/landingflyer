@@ -1,4 +1,4 @@
-import { PencilIcon, CheckIcon, GlobeIcon, XMarkIcon } from '../../../utilities/Icons.jsx';
+import { PencilIcon, CheckIcon, GlobeIcon, XMarkIcon, UndoIcon, RedoIcon } from '../../../utilities/Icons.jsx';
 import EditorStatusChip from './EditorStatusChip.jsx';
 
 /**
@@ -9,16 +9,20 @@ export default function EditorTopBar({
   editing,
   dirty,
   justSaved,
+  canUndo = false,
+  canRedo = false,
   onToggleEditing,
   onSave,
   onDiscard,
   onReset,
   onPublish,
+  onUndo,
+  onRedo,
 }) {
   return (
     <header
       className="
-        fixed top-0 inset-x-0 z-40
+        shrink-0
         bg-sinapsia-base/95 backdrop-blur
         border-b border-sinapsia-accent/40
         shadow-[0_1px_3px_rgba(124,58,237,0.08),0_4px_20px_rgba(24,28,36,0.10)]
@@ -57,6 +61,25 @@ export default function EditorTopBar({
                   hideLabelOnMobile
                 />
               )}
+
+              <span className="mx-1 w-px h-5 bg-sinapsia-accent/30" aria-hidden="true" />
+
+              <ToolbarButton
+                onClick={onUndo}
+                disabled={!canUndo}
+                variant="ghost"
+                icon={<UndoIcon size={16} />}
+                ariaLabel="Deshacer (Ctrl+Z)"
+                iconOnly
+              />
+              <ToolbarButton
+                onClick={onRedo}
+                disabled={!canRedo}
+                variant="ghost"
+                icon={<RedoIcon size={16} />}
+                ariaLabel="Rehacer (Ctrl+Y)"
+                iconOnly
+              />
             </>
           )}
 
@@ -110,6 +133,7 @@ function ToolbarButton({
   label,
   ariaLabel,
   hideLabelOnMobile = false,
+  iconOnly = false,
 }) {
   const variants = {
     primary:
@@ -127,18 +151,22 @@ function ToolbarButton({
       onClick={onClick}
       disabled={disabled}
       aria-label={ariaLabel || label}
+      title={iconOnly ? (ariaLabel || label) : undefined}
       className={`
         inline-flex items-center gap-1.5
-        px-2.5 py-1.5 sm:px-3 sm:py-2
+        ${iconOnly ? 'w-9 h-9 justify-center' : 'px-2.5 py-1.5 sm:px-3 sm:py-2'}
         text-sm font-medium
         rounded-lg
         transition-colors duration-150
+        disabled:opacity-40 disabled:cursor-not-allowed
         focus:outline-none focus:ring-2 focus:ring-sinapsia-accent focus:ring-offset-2 focus:ring-offset-sinapsia-base
         ${variants[variant]}
       `}
     >
       {icon}
-      <span className={hideLabelOnMobile ? 'hidden sm:inline' : ''}>{label}</span>
+      {!iconOnly && label && (
+        <span className={hideLabelOnMobile ? 'hidden sm:inline' : ''}>{label}</span>
+      )}
     </button>
   );
 }
