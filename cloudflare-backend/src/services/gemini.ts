@@ -1,5 +1,5 @@
 import { arrayBufferToBase64 } from '../utils/helpers.js';
-import { LANDING_PAGE_PROMPT } from '../prompt.js';
+import { buildLandingPagePrompt } from '../prompt.js';
 import type { BusinessData } from '../types.js';
 
 interface GeminiPart {
@@ -55,7 +55,8 @@ async function callGemini(
 }
 
 function buildParts(options: GenerateOptions): GeminiPart[] {
-  const parts: GeminiPart[] = [{ text: LANDING_PAGE_PROMPT }];
+  // Build the prompt per-request so the year stays fresh.
+  const parts: GeminiPart[] = [{ text: buildLandingPagePrompt() }];
 
   if (options.businessData) {
     const bd = options.businessData;
