@@ -1,15 +1,16 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { API_URL, apiHeaders } from '../../utilities/api.js';
-import { useIframeEditor } from '../../hooks/useIframeEditor.js';
 import PublishModal from '../../components/editor/PublishModal.jsx';
 import PublishSuccessModal from '../../components/editor/PublishSuccessModal.jsx';
 import CartModal from '../../components/cart/CartModal.jsx';
 import EditorTopBar from './components/EditorTopBar.jsx';
 import SelectionToolbar from './components/SelectionToolbar.jsx';
 import LinkEditDialog from './components/LinkEditDialog.jsx';
+import ImagePickerPanel from './components/ImagePickerPanel.jsx';
 import { useEditorPersistence } from './hooks/useEditorPersistence.js';
 import { useEditorHistory } from './hooks/useEditorHistory.js';
 import { useIframeSelection } from './hooks/useIframeSelection.js';
+import { useIframeEditor } from './hooks/useIframeEditor.js';
 import { extractCleanHtml, stripEditModeFromDoc } from './utils/htmlSanitize.js';
 import {
   execIframeCommand,
@@ -20,6 +21,7 @@ import {
   unwrapAnchor,
   dispatchSyntheticInput,
 } from './utils/selectionCommands.js';
+import { applyProviderImage, applyUploadImage, providerFromTerm } from './utils/imageCommands.js';
 
 const TAILWIND_CDN_SNIPPET = `
 <script src="https://cdn.tailwindcss.com"></script>
@@ -80,11 +82,17 @@ export default function EditorPage() {
   const [publishResult, setPublishResult] = useState(null);
 
   const [linkDialog, setLinkDialog] = useState({ open: false, initial: null, defaultText: '' });
+  const [imageTarget, setImageTarget] = useState(null); // { id, rect, defaultTerm }
 
-  const { enableEditingInIframe, disableEditingInIframe } = useIframeEditor({
+  const handleImageClick = useCallback(({ image, id, rect }) => {
+    const defaultTerm = (image.getAttribute('data-lf-term') || image.getAttribute('alt') || '').trim();
+    setImageTarget({ id, rect, defaultTerm });
+  }, []);
+
+  const { enableEditingInIframe, disableEditingInIframe, getImageById } = useIframeEditor({
     iframeRef,
-    uploadFilesRef,
     setHasPendingEdits: setDirty,
+    onImageClick: handleImageClick,
   });
 
   // Rewire editor handlers after a wholesale DOM restore (undo/redo/link).
@@ -104,9 +112,28 @@ export default function EditorPage() {
 
   const selection = useIframeSelection({
     iframeRef,
-    enabled: editing && !linkDialog.open,
+    enabled: editing && !linkDialog.open && !imageTarget,
     refreshKey: previewKey,
   });
+
+  // Close the image picker on iframe scroll/resize (rect would go stale).
+  useEffect(() => {
+    if (!imageTarget) return;
+    const win = iframeRef.current?.contentWindow;
+    if (!win) return;
+    const close = () => setImageTarget(null);
+    win.addEventListener('scroll', close, true);
+    win.addEventListener('resize', close);
+    return () => {
+      win.removeEventListener('scroll', close, true);
+      win.removeEventListener('resize', close);
+    };
+  }, [imageTarget]);
+
+  // Clear image picker if the user exits edit mode.
+  useEffect(() => {
+    if (!editing) setImageTarget(null);
+  }, [editing]);
 
   // Write HTML into iframe and toggle edit mode
   useEffect(() => {
@@ -268,6 +295,35 @@ export default function EditorPage() {
     }
   };
 
+  // --- Image picker ---
+
+  const handleImagePickerClose = () => setImageTarget(null);
+
+  const handleImageApply = ({ provider, query }) => {
+    if (!imageTarget?.id) return;
+    const img = getImageById(imageTarget.id);
+    if (!img) return;
+    const parsed = providerFromTerm(query, provider);
+    history.snapshot();
+    applyProviderImage(img, parsed);
+    setDirty(true);
+    const doc = iframeRef.current?.contentDocument;
+    if (doc) dispatchSyntheticInput(doc);
+    setImageTarget(null);
+  };
+
+  const handleImageUpload = (file) => {
+    if (!imageTarget?.id || !file) return;
+    const img = getImageById(imageTarget.id);
+    if (!img) return;
+    history.snapshot();
+    applyUploadImage(img, file, uploadFilesRef);
+    setDirty(true);
+    const doc = iframeRef.current?.contentDocument;
+    if (doc) dispatchSyntheticInput(doc);
+    setImageTarget(null);
+  };
+
   const handlePublish = () => setShowCart(true);
   const handleCartConfirm = () => {
     setShowCart(false);
@@ -324,7 +380,7 @@ export default function EditorPage() {
   };
 
   const selectionToolbarVisible =
-    editing && !linkDialog.open && selection.rect && (selection.hasSelection || selection.anchor);
+    editing && !linkDialog.open && !imageTarget && selection.rect && (selection.hasSelection || selection.anchor);
 
   return (
     <div className="h-screen flex flex-col overflow-hidden bg-sinapsia-base">
@@ -372,6 +428,16 @@ export default function EditorPage() {
         defaultText={linkDialog.defaultText}
         onSubmit={handleLinkSubmit}
         onRemove={handleLinkRemove}
+      />
+
+      <ImagePickerPanel
+        open={Boolean(imageTarget)}
+        imageRect={imageTarget?.rect || null}
+        iframeRef={iframeRef}
+        defaultTerm={imageTarget?.defaultTerm || ''}
+        onClose={handleImagePickerClose}
+        onApply={handleImageApply}
+        onUpload={handleImageUpload}
       />
 
       <CartModal
