@@ -7,15 +7,54 @@ interface GeminiPart {
   inlineData?: { mimeType: string; data: string };
 }
 
-export async function generateWithGemini(
+interface GenerateOptions {
+  imageBuffer?: ArrayBuffer;
+  imageMimeType?: string;
+  businessData?: BusinessData;
+}
+
+interface GenerateResult {
+  html: string;
+  modelUsed: string;
+}
+
+/** Gemma models don't support vision — skip them when an image is present. */
+function modelSupportsVision(model: string): boolean {
+  return !/^gemma/i.test(model);
+}
+
+/** Retryable = quota, rate limit, or server-side transient errors. */
+function isRetryableStatus(status: number): boolean {
+  return status === 429 || status >= 500;
+}
+
+async function callGemini(
   apiKey: string,
   model: string,
-  options: {
-    imageBuffer?: ArrayBuffer;
-    imageMimeType?: string;
-    businessData?: BusinessData;
+  parts: GeminiPart[]
+): Promise<{ ok: true; text: string } | { ok: false; status: number; body: string }> {
+  const response = await fetch(
+    `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${apiKey}`,
+    {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ contents: [{ role: 'user', parts }] }),
+    }
+  );
+
+  if (!response.ok) {
+    const body = await response.text();
+    return { ok: false, status: response.status, body };
   }
-): Promise<string> {
+
+  const data = await response.json<{
+    candidates?: Array<{ content?: { parts?: Array<{ text?: string }> } }>;
+  }>();
+  const text = data.candidates?.[0]?.content?.parts?.[0]?.text ?? '';
+  return { ok: true, text };
+}
+
+function buildParts(options: GenerateOptions): GeminiPart[] {
   const parts: GeminiPart[] = [{ text: LANDING_PAGE_PROMPT }];
 
   if (options.businessData) {
@@ -61,27 +100,48 @@ Usa EXACTAMENTE estos colores como base de la paleta. Convierte automáticamente
     });
   }
 
-  const response = await fetch(
-    `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${apiKey}`,
-    {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        contents: [{ role: 'user', parts }],
-      }),
-    }
-  );
+  return parts;
+}
 
-  if (!response.ok) {
-    const error = await response.text();
-    throw new Error(`Gemini API error ${response.status}: ${error}`);
+/**
+ * Try the primary model, then fall back through the chain on 429/5xx.
+ * Skips non-vision models when an image is present.
+ */
+export async function generateWithGemini(
+  apiKey: string,
+  primaryModel: string,
+  options: GenerateOptions,
+  fallbackModels: string[] = []
+): Promise<GenerateResult> {
+  const parts = buildParts(options);
+  const hasImage = Boolean(options.imageBuffer && options.imageMimeType);
+
+  const chain = [primaryModel, ...fallbackModels].filter(Boolean);
+  const errors: string[] = [];
+
+  for (const model of chain) {
+    if (hasImage && !modelSupportsVision(model)) {
+      console.log(`[gemini] skipping ${model} (no vision support, image present)`);
+      continue;
+    }
+
+    console.log(`[gemini] trying ${model}`);
+    const result = await callGemini(apiKey, model, parts);
+
+    if (result.ok) {
+      console.log(`[gemini] success with ${model}`);
+      const html = result.text.replace(/^```html\n?/, '').replace(/```$/, '');
+      return { html, modelUsed: model };
+    }
+
+    const msg = `${model} → ${result.status}: ${result.body.slice(0, 200)}`;
+    errors.push(msg);
+    console.warn(`[gemini] ${msg}`);
+
+    if (!isRetryableStatus(result.status)) {
+      throw new Error(`Gemini API error ${result.status}: ${result.body}`);
+    }
   }
 
-  const data = await response.json<{
-    candidates: Array<{ content: { parts: Array<{ text: string }> } }>;
-  }>();
-
-  const text = data.candidates?.[0]?.content?.parts?.[0]?.text ?? '';
-  // Strip markdown code fences if present
-  return text.replace(/^```html\n?/, '').replace(/```$/, '');
+  throw new Error(`All Gemini models exhausted. Attempts:\n${errors.join('\n')}`);
 }

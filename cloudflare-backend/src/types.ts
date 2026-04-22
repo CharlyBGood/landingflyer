@@ -4,6 +4,8 @@ export interface Env {
 
   // Vars
   GEMINI_MODEL: string;
+  GEMINI_FALLBACK1?: string;
+  GEMINI_FALLBACK2?: string;
 
   // Secrets
   API_KEY: string;
