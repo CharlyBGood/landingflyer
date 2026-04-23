@@ -1,0 +1,13 @@
+# Claude Code local state and worktrees (per-machine, never commit)
+.claude/
+
+# OS / editor noise
+.DS_Store
+Thumbs.db
+*.swp
+*.swo
+
+# Environment files with secrets (each package may have its own, but guard here too)
+.env
+.env.local
+.env.*.local
